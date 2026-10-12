@@ -323,7 +323,10 @@ button, input, textarea { font: inherit; color: inherit; }
   }
   const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   const valueOf = it => { const e = edits.get(it.key); return e && 'value' in e ? e.value : it.original; };
-  const isEdited = it => edits.has(it.key);
+  // 已套用、而且網站現在的文字就是這個值：不再標成「已改」，只留一個「已套用」標記
+  const isApplied = (it, e = edits.get(it.key)) => !!e && e.status === 'applied';
+  const isEdited = it => edits.has(it.key) && !(isApplied(it) && same(edits.get(it.key).value, it.original));
+  const pendingKeys = () => [...edits.entries()].filter(([k, e]) => e.status !== 'applied').map(([k]) => k);
   const docId = key => key.replace(/[^A-Za-z0-9_\-.~:@+]/g, '_');
 
   // ---------- 畫板 ----------
@@ -359,7 +362,7 @@ button, input, textarea { font: inherit; color: inherit; }
     if (it.kind === 'image') return paintImage(wrap, it);
     const e = edits.get(it.key);
     const role = it.kind === 'list' ? (it.role === 'answers' ? 'answers' : 'r-lines') : 'r-' + (it.role || 'p');
-    const btn = h('button', { class: 'ed ' + role + (e ? ' is-edited' : ''), type: 'button', 'aria-label': it.label + '（點一下修改）', onclick: () => openEditor(wrap, it) }, viewNode(it));
+    const btn = h('button', { class: 'ed ' + role + (isEdited(it) ? ' is-edited' : ''), type: 'button', 'aria-label': it.label + '（點一下修改）', onclick: () => openEditor(wrap, it) }, viewNode(it));
     wrap.append(labelRow(it), btn);
     if (e && e.note) wrap.append(h('p', { class: 'note-txt', text: '備註：' + e.note }));
   }
@@ -407,7 +410,7 @@ button, input, textarea { font: inherit; color: inherit; }
   function renderTabs() {
     const host = $('#tabs'); host.replaceChildren();
     TABS.forEach(([id, name]) => {
-      const n = [...edits.keys()].filter(k => { const it = items.get(k); return it && (id === 'images' ? it.kind === 'image' : it.screen.tab === id); }).length;
+      const n = pendingKeys().filter(k => { const it = items.get(k); return it && (id === 'images' ? it.kind === 'image' : it.screen.tab === id); }).length;
       host.append(h('button', { class: 'tab', role: 'tab', type: 'button', 'aria-selected': String(tab === id), id: 'tab-' + id,
         onclick: () => { tab = id; try { localStorage.setItem('mm-tab', id); } catch (e) {} renderTabs(); renderRail(); renderBoards(); window.scrollTo(0, 0); } },
         name, n ? h('span', { class: 'count', text: n }) : null));
@@ -418,7 +421,7 @@ button, input, textarea { font: inherit; color: inherit; }
     const rail = $('#rail'); rail.replaceChildren(h('h2', { text: '畫面' }));
     const list = tab === 'images' ? [] : (screensOf[tab] || []);
     list.forEach(s => {
-      const n = [...edits.keys()].filter(k => items.get(k) && items.get(k).screen === s).length;
+      const n = pendingKeys().filter(k => items.get(k) && items.get(k).screen === s).length;
       rail.append(h('a', { href: '#ab-' + s.id, onclick: ev => { ev.preventDefault(); jump(s.id); } }, h('span', { text: s.title }), n ? h('span', { class: 'count', text: n }) : null));
     });
   }
@@ -497,7 +500,7 @@ button, input, textarea { font: inherit; color: inherit; }
       warn,
       h('div', { class: 'row' }, saveBtn,
         h('button', { class: 'bbtn', type: 'button', onclick: close }, '取消'),
-        e ? h('button', { class: 'bbtn is-text spacer', type: 'button', onclick: async () => { if (await revert(it)) close(); } }, '還原原文') : null));
+        e && e.status !== 'applied' ? h('button', { class: 'bbtn is-text spacer', type: 'button', onclick: async () => { if (await revert(it)) close(); } }, '還原原文') : null));
     wrap.replaceChildren(labelRow(it), box);
     fit(); ta.focus();
   }
@@ -557,11 +560,12 @@ button, input, textarea { font: inherit; color: inherit; }
   function fmt(v) { return Array.isArray(v) ? v.join('\n') : (v == null ? '' : String(v)); }
   function renderChanges() {
     const host = $('#changes'); host.replaceChildren();
-    const n = edits.size;
+    const n = pendingKeys().length;
     $('#total').textContent = n; $('#total2').textContent = n; $('#total3').textContent = n;
-    if (!n) { host.append(h('p', { class: 'tiny', style: 'color:var(--muted);font-size:13.5px', text: '還沒有修改。關掉這個清單，點畫板上任何一段字就能開始改。' })); return; }
+    if (!edits.size) { host.append(h('p', { class: 'tiny', style: 'color:var(--muted);font-size:13.5px', text: '還沒有修改。關掉這個清單，點畫板上任何一段字就能開始改。' })); return; }
     const groups = new Map();
-    [...edits.values()].sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt))).forEach(e => {
+    // 待套用的在前，已套用的在後；各自依時間新到舊
+    [...edits.values()].sort((a, b) => ((a.status === 'applied') - (b.status === 'applied')) || String(b.updatedAt).localeCompare(String(a.updatedAt))).forEach(e => {
       const it = items.get(e.key); if (!it) return;
       const g = (it.screen.tab === 'youth' ? '青年場・' : it.screen.tab === 'family' ? '親子場・' : it.screen.tab === 'npc' ? '' : '共用・') + it.screen.title;
       if (!groups.has(g)) groups.set(g, []);
