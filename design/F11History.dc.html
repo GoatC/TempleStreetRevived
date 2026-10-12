@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>親子場 歷史介紹</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="screen" style="height: {{ frameH }}px;">
+  <div class="topbar">
+    <button class="btn btn-back" type="button">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>關卡選單
+    </button>
+    <div class="topbar-right">
+      <span class="topbar-tag">{{ no }}・已完成</span>
+      <span class="ver-tag is-family">親子場</span>
+    </div>
+  </div>
+  <div class="content" style="gap: 20px; padding-top: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <p class="kicker"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-7-7-12a7 7 0 0 1 14 0c0 5-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>{{ place }}</p>
+      <h1 class="h1" style="font-size: 26px; line-height: 36px;">{{ title }}</h1>
+    </div>
+    <div class="ph" style="height: 180px; flex: none;">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="12" width="52" height="40" rx="2"></rect><circle cx="22" cy="26" r="5"></circle><path d="M6 46l16-14 12 10 8-6 16 12"></path></svg>
+      <span>現場照片：{{ place }}</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label" style="color: #a42006;">一句話重點</p>
+      <p class="keypoint">{{ keyline }}</p>
+    </div>
+    <sc-if value="{{ open }}" hint-placeholder-val="{{ false }}">
+      <section id="history-more" style="display: flex; flex-direction: column; gap: 4px;">
+        <h2 class="h2">本關答案</h2>
+        <sc-for list="{{ answers }}" as="a" hint-placeholder-count="3">
+          <div class="ans-row"><span class="ans-q">{{ a.q }}</span><span class="ans-a">{{ a.a }}</span></div>
+        </sc-for>
+      </section>
+      <section style="display: flex; flex-direction: column; gap: 12px;">
+        <h2 class="h2">歷史補充</h2>
+        <sc-for list="{{ paras }}" as="pp" hint-placeholder-count="2">
+          <p class="p">{{ pp.text }}</p>
+        </sc-for>
+        <p class="small">{{ source }}</p>
+      </section>
+    </sc-if>
+    <button class="btn btn-secondary" type="button" onClick="{{ toggle }}" aria-expanded="{{ expandedAttr }}" aria-controls="history-more">{{ toggleLabel }}
+      <sc-if value="{{ closed }}" hint-placeholder-val="{{ true }}"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></sc-if>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ false }}"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></sc-if>
+    </button>
+  </div>
+  <div class="actions">
+    <button class="btn btn-primary" type="button">返回關卡選單</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"level":{"editor":"enum","options":["1","2","3","4","5","6","7"],"default":"5","section":"關卡"},"expanded":{"editor":"boolean","default":false,"section":"狀態"},"frameH":{"editor":"int","default":844,"min":844,"max":2000,"section":"版面"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  data() {
+    return [
+      {
+        no: '第一關', place: '慈祐宮', title: '找到守護神',
+        keyline: '慈祐宮主祀媽祖。早年慈祐宮面向新莊港渡口，媽祖守護著往來的船商與渡海移民。',
+        answers: [['主要供奉的神明', '天上聖母（媽祖）'], ['入廟走哪個門', 'A．左門－青龍'], ['龍嘴朝哪個方向', 'A．斜上'], ['地藏王的法器', '錫杖、明珠']],
+        paras: [
+          '慈祐宮主祀天上聖母，也就是媽祖，是新莊重要的媽祖信仰中心。相關資料顯示，雍正七年（1729）已進行天后宮修建；乾隆十三年（1748）新莊街大火後廟宇受損，乾隆十八年（1753）重建並改稱「慈祐宮」。嘉慶年間開山殿逐步完成，形成今日多殿式格局。',
+          '早期慈祐宮面向新莊港渡口，新莊水運繁盛時，媽祖作為航海與渡海移民的重要守護神，也成為船商與居民的精神寄託。慈祐宮除了正殿供奉媽祖，開山殿亦供奉地藏王菩薩，因此本關會同時接觸媽祖信仰與地藏王的法器意涵。'
+        ],
+        source: '資料依據：新莊區公所、新莊慈祐宮資料'
+      },
+      {
+        no: '第二關', place: '五間老店', title: '新莊廟街的味道與聲音',
+        keyline: '糕餅、麥芽糖、中藥、打鐵、製鼓：廟街的老店，留住了新莊的氣味、聲音與手藝。',
+        answers: [['第一家', '翁裕美商行'], ['第二家', '金合和糕餅'], ['第三家', '億德堂蔘藥行'], ['第四家', '日日用打鐵舖'], ['第五家', '响仁和']],
+        paras: [
+          '新莊廟街過去不只是宗教空間，也是居民採買、做生意與工作的重要街道，因此留下糕餅、麥芽糖、中藥、打鐵與製鼓等產業。',
+          '翁裕美商行長期以傳統方式製作麥芽糖；金合和糕餅是新莊百年糕餅老店，鹹光餅是代表性產品之一；億德堂蔘藥行延續廟街中藥材與日常養生的傳統；日日用打鐵舖保存手工鍛造技藝；响仁和自1927年創立，製鼓技藝傳承多代。',
+          '這些老店共同留下的不只是商品，也保存了新莊街區的氣味、聲音與手工技藝。'
+        ],
+        source: '資料依據：新莊區公所、新北市觀光旅遊網、新莊廟街相關店家資料'
+      },
+      {
+        no: '第三關', place: '戲館巷', title: '找到戲曲角色',
+        keyline: '日治時期，許多布袋戲團與戲班在這一帶活動，這條巷子因此被稱為「戲館巷」。',
+        answers: [['臉部彩繪最明顯的角色', '淨'], ['女性造型的角色', '旦']],
+        paras: [
+          '戲館巷位於新莊路359巷。日治時期，多家布袋戲團與戲班曾在此一帶活動，包括小西園、哈哈笑、新盛花樓、宛若真、新福軒、錦上花樓、小世界及盧虛觀等，因此此巷逐漸被稱為「戲館巷」，新莊也曾有「北管布袋戲藪」的美稱。',
+          '戲班文化並不只有舞台演出，還包含後場樂師、教唱、角色行當、服裝與臉譜，因此今天在壁畫上看到的生、旦、淨、末、丑，也是這段地方戲曲歷史的延伸。'
+        ],
+        source: '資料依據：新莊區公所〈主題巷弄〉'
+      },
+      {
+        no: '第四關', place: '米市巷', title: '壁畫裡的港口',
+        keyline: '早年船隻在新莊卸貨、買米，這條巷子就是搬運米糧的通道，「米市巷」因此得名。',
+        answers: [['船', '7 艘'], ['船夫', '3 位'], ['加分題：斗笠與辮子', '戴斗笠 4 位、綁辮子 10 位']],
+        paras: [
+          '米市巷位於新莊路387巷。早年船隻抵達新莊後，工人會將貨物自船上卸下，再沿著巷道搬運到新莊街上的商家；船家返程前也會購入米糧裝船，因此這條巷道成為米糧搬運與交易的重要通道，逐漸留下「米市巷」之名。',
+          '今日巷內壁畫重新呈現船隻、搬運者與街市生活，讓玩家可以直接從畫面觀察當年新莊水運與米糧集散的街區記憶。'
+        ],
+        source: '資料依據：新莊區公所〈主題巷弄〉'
+      },
+      {
+        no: '第五關', place: '武聖廟', title: '不用門神的大門',
+        keyline: '武聖廟的大門不畫門神，因為關聖帝君本身就武藝高強；大門改用 108 顆門釘裝飾。',
+        answers: [['主要供奉的神明', '關聖帝君（關公）'], ['大門的裝飾', '門釘（108 顆）'], ['為什麼不畫門神', 'A．關聖帝君本身就是武藝高強的神祇，不需再由門神守護']],
+        paras: [
+          '新莊武聖廟創建於清乾隆二十五年（1760），主祀關聖帝君。咸豐三年（1853）新莊發生漳泉械鬥時廟宇被焚毀，之後於同治七年（1868）擴大修建。正殿奉祀關羽，並陪祀關平太子與周倉將軍。',
+          '武聖廟有一項很特別的建築特色：大門不畫門神，而以108顆門釘裝飾。新莊區公所資料指出，因關聖帝君本身即為武藝高強的神祇，所以不需再由門神守護；108顆門釘則沿用傳統門扇形式。'
+        ],
+        source: '資料依據：新莊區公所〈市定古蹟－武聖廟〉'
+      },
+      {
+        no: '第六關', place: '廣福宮', title: '看介紹欄找答案',
+        keyline: '廣福宮是新莊唯一的國定古蹟：木雕全未上彩，石雕用的是觀音山石。',
+        answers: [['主要供奉的神明', '三山國王'], ['木雕的色彩', '全未上彩'], ['石雕的石材', '觀音山石']],
+        paras: [
+          '廣福宮昔稱「三山國王廟」，主祀三山國王，是新莊唯一的國定古蹟。三山國王信仰源自廣東潮州地區，廣福宮由廣東潮州籍移民捐建，也是北臺灣早期客家移民信仰的重要歷史見證。',
+          '現有官方資料記載廣福宮建於乾隆四十五年（1780）；光緒八年（1882）遭遇大火，光緒十四年（1888）由潮屬九縣籍人士發起重建，1936年再次重修。1985年依當時制度公告為臺閩地區二級古蹟，後因文化資產分級制度調整，現為國定古蹟。',
+          '廟內保存觀音山石雕、未上彩木雕與傳統街屋式廟宇格局，是新莊重要的文化資產。'
+        ],
+        source: '資料依據：臺灣宗教文化地圖、新莊區公所、新北市客家文化典藏資料庫'
+      },
+      {
+        no: '第七關', place: '潮江寺', title: '一棟建築裡的兩種信仰',
+        keyline: '一樓是福德祠、二樓是潮江寺：一棟建築裡，住著兩種信仰。',
+        answers: [['二樓供奉的神明', '觀世音菩薩（觀音佛祖）'], ['一樓福德祠的神明', '福德正神（土地公）'], ['二樓門上的四字箴言', '右門：江水澄心　左門：潮音振耳'], ['正門口的對聯', '右聯：潮音覺世慈悲是佛　左聯：江岸渡人福德為神'], ['看台面向的巷弄', '米市巷'], ['窗戶的開閉方式', '4 種']],
+        paras: [
+          '潮江寺位於米市巷一帶，原址與早期新莊河港發展有關。臺灣宗教文化地圖記載，這裡早期曾作為臨河防守的戍臺，一樓也曾提供碼頭工人休息。',
+          '相傳民眾在河中撿到形似觀世音菩薩的石頭，供奉於二樓，後來又將旁邊土地公廟的福德正神移至一樓，形成今日一樓福德祠、二樓潮江寺的格局。現存建築於1935年重修，1964年再修，並於2013年登錄為歷史建築。'
+        ],
+        source: '資料依據：臺灣宗教文化地圖、新莊區公所'
+      }
+    ];
+  }
+
+  renderVals() {
+    var self = this;
+    var p = this.props;
+    var num = function (v, d) {
+      if (v === undefined || v === null || v === '') return d;
+      var n = Number(v);
+      return isNaN(n) ? d : n;
+    };
+    var all = this.data();
+    var idx = Math.max(1, Math.min(all.length, num(p.level, 5))) - 1;
+    var lv = all[idx];
+    var key = String(p.level) + '|' + String(p.expanded);
+    var initial = p.expanded === true || p.expanded === 'true';
+    var open = (this.state && this.state.key === key) ? !!this.state.open : initial;
+    return {
+      frameH: num(p.frameH, 844),
+      no: lv.no,
+      place: lv.place,
+      title: lv.title,
+      keyline: lv.keyline,
+      answers: lv.answers.map(function (a) { return { q: a[0], a: a[1] }; }),
+      paras: lv.paras.map(function (t) { return { text: t }; }),
+      source: lv.source,
+      open: open,
+      closed: !open,
+      toggleLabel: open ? '收合' : '看更多',
+      expandedAttr: open ? 'true' : 'false',
+      toggle: function () { self.setState({ key: key, open: !open }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

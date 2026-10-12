@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>親子場 關卡頁（任務清單）</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="screen" style="height: {{ frameH }}px;">
+  <div class="topbar">
+    <button class="btn btn-back" type="button">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>關卡選單
+    </button>
+    <div class="topbar-right">
+      <span class="topbar-tag">{{ levelNo }}</span>
+      <span class="ver-tag is-family">親子場</span>
+    </div>
+  </div>
+  <div class="lvbar">
+    <div class="lvbar-row">
+      <p class="lvbar-count">任務 {{ doneCount }}/{{ total }}</p>
+      <span class="lvbar-hint">提示 已用 {{ hints }}/2<span class="pips" aria-hidden="true"><span class="pip {{ pip1 }}"></span><span class="pip {{ pip2 }}"></span></span></span>
+    </div>
+    <div class="seg" role="img" aria-label="任務進度 {{ doneCount }}/{{ total }}">
+      <sc-for list="{{ segs }}" as="s" hint-placeholder-count="5"><span class="seg-i {{ s.cls }}"></span></sc-for>
+      <sc-if value="{{ hasBonus }}" hint-placeholder-val="{{ false }}"><svg class="star {{ starCls }}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg></sc-if>
+    </div>
+  </div>
+  <div class="content" style="gap: 10px;">
+    <div style="display: flex; flex-direction: column; gap: 2px; margin-bottom: 4px;">
+      <p class="kicker"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-7-7-12a7 7 0 0 1 14 0c0 5-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>{{ place }}</p>
+      <h1 class="h2">{{ title }}</h1>
+    </div>
+    <p class="route-note"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="19" r="2"></circle><circle cx="19" cy="5" r="2"></circle><path d="M7 19h7a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h7"></path></svg>清單順序是建議路線，可自由選擇任務。</p>
+
+    <sc-if value="{{ passPending }}" hint-placeholder-val="{{ false }}">
+      <div class="pass-banner">
+        <div class="pass-head">
+          <span class="mini-seal"><span>過關</span></span>
+          <p class="p" style="font-weight: 700;">必答任務都完成了，本關過關！</p>
+        </div>
+        <p class="small">加分題可以挑戰，也可以直接看歷史故事。</p>
+        <button class="btn btn-secondary" type="button">查看歷史故事</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ allDone }}" hint-placeholder-val="{{ false }}">
+      <div class="pass-banner">
+        <div class="pass-head">
+          <span class="mini-seal"><span>完成</span></span>
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <p class="p" style="font-weight: 700;">本關任務全部完成！</p>
+            <sc-if value="{{ starEarned }}" hint-placeholder-val="{{ false }}">
+              <p class="small" style="display: flex; align-items: center; gap: 6px;"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>加分題答對，得到 {{ stars }} 顆星</p>
+            </sc-if>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="button">查看歷史故事
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+        </button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasSeen }}" hint-placeholder-val="{{ false }}">
+      <div class="hint-list">
+        <sc-for list="{{ seenHints }}" as="h" hint-placeholder-count="1">
+          <p class="hint-item"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6"></path><path d="M9 4c-4 3-4 12 0 15h6c4-3 4-12 0-15"></path><path d="M12 1.5V4M12 19v3M7 11.5h10"></path></svg><span><b>{{ h.label }}</b>　{{ h.text }}</span></p>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-for list="{{ items }}" as="t" hint-placeholder-count="5">
+
+      <sc-if value="{{ t.isDone }}" hint-placeholder-val="{{ false }}">
+        <div class="task-row">
+          <span class="task-check"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span>
+          <span class="task-row-main">
+            <span class="task-row-title">{{ t.rowTitle }}</span>
+            <span class="task-row-sub">{{ t.summary }}</span>
+          </span>
+          <sc-if value="{{ t.resSelf }}" hint-placeholder-val="{{ true }}"><span class="tag tag-res">{{ t.selfLabel }}</span></sc-if>
+          <sc-if value="{{ t.resReveal }}" hint-placeholder-val="{{ false }}"><span class="tag tag-res"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12c3-6 17-6 20 0-3 6-17 6-20 0z"></path><circle cx="12" cy="12" r="3"></circle></svg>已揭曉</span></sc-if>
+          <sc-if value="{{ t.resStar }}" hint-placeholder-val="{{ false }}"><span class="tag tag-bonus"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>加分</span></sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ t.isClosed }}" hint-placeholder-val="{{ true }}">
+        <button class="task-toggle" type="button" onClick="{{ t.toggle }}" aria-expanded="false" aria-label="{{ t.toggleAria }}">
+          <span class="num">{{ t.n }}</span>
+          <span class="task-row-main">
+            <span class="task-row-title">{{ t.title }}</span>
+            <span class="task-row-sub">{{ t.closedSub }}</span>
+          </span>
+          <sc-if value="{{ t.bonus }}" hint-placeholder-val="{{ false }}"><span class="tag tag-bonus"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>加分題</span></sc-if>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+      </sc-if>
+
+      <sc-if value="{{ t.isOpen }}" hint-placeholder-val="{{ false }}">
+        <div class="task" id="{{ t.panelId }}">
+          <button class="task-head-btn" type="button" onClick="{{ t.toggle }}" aria-expanded="true" aria-label="收合任務 {{ t.n }}">
+            <span class="num is-on">{{ t.n }}</span>
+            <span class="task-row-main">
+              <span class="task-type">任務 {{ t.n }}・{{ t.typeLabel }}</span>
+              <span class="task-title">{{ t.title }}</span>
+            </span>
+            <sc-if value="{{ t.bonus }}" hint-placeholder-val="{{ false }}"><span class="tag tag-bonus"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>加分題</span></sc-if>
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+          </button>
+          <p class="task-body">{{ t.prompt }}</p>
+          <sc-if value="{{ t.bonus }}" hint-placeholder-val="{{ false }}">
+            <p class="task-note"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>答對可以得到一顆星；不答也不影響過關。</p>
+          </sc-if>
+
+          <sc-if value="{{ t.isPhotoOnly }}" hint-placeholder-val="{{ false }}">
+            <div class="ph" style="height: 140px;">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 20h10l5-7h18l5 7h10v32H8z"></path><circle cx="32" cy="36" r="10"></circle></svg>
+              <span>拍照範例圖（選填）</span>
+            </div>
+            <p class="task-note">照片存在你們自己的手機裡，不需要上傳。</p>
+          </sc-if>
+
+          <sc-if value="{{ t.needPhoto }}" hint-placeholder-val="{{ false }}">
+            <div class="step">
+              <p class="step-title"><span class="num">1</span>{{ t.photoLabel }}</p>
+              <div class="ph" style="height: 120px;">
+                <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 20h10l5-7h18l5 7h10v32H8z"></path><circle cx="32" cy="36" r="10"></circle></svg>
+                <span>拍照範例圖（選填）</span>
+              </div>
+              <sc-if value="{{ t.hasPhotoNote }}" hint-placeholder-val="{{ false }}">
+                <p class="task-note"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 17H2z"></path><path d="M12 10v4"></path><path d="M12 17.2v.3"></path></svg>{{ t.photoNote }}</p>
+              </sc-if>
+              <p class="task-note">照片存在你們自己的手機裡，不需要上傳。</p>
+              <button class="btn btn-primary" type="button" onClick="{{ t.photoDone }}">
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3.5l2-3h5l2 3H20v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>我拍好了
+              </button>
+            </div>
+            <p class="step-next"><span class="num is-off">2</span>拍好照片後，再{{ t.after }}</p>
+          </sc-if>
+
+          <sc-if value="{{ t.photoDoneRow }}" hint-placeholder-val="{{ false }}">
+            <p class="task-note" style="font-weight: 700; align-items: center;"><span class="task-check" style="width: 28px; height: 28px;"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span>已拍照，接著{{ t.after }}</p>
+          </sc-if>
+
+          <sc-if value="{{ t.isChoice }}" hint-placeholder-val="{{ false }}">
+            <div class="{{ t.optsCls }}">
+              <sc-for list="{{ t.options }}" as="o" hint-placeholder-count="3">
+                <button class="opt {{ o.cls }}" type="button" onClick="{{ o.pick }}" aria-pressed="{{ o.pressed }}"><span class="opt-key">{{ o.k }}</span><span>{{ o.label }}</span></button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ t.isMulti }}" hint-placeholder-val="{{ false }}">
+            <div class="{{ t.mfCls }}">
+              <sc-for list="{{ t.fields }}" as="f" hint-placeholder-count="2">
+                <div class="field">
+                  <label class="field-label" for="{{ f.id }}">{{ f.label }}</label>
+                  <input id="{{ f.id }}" class="input {{ f.cls }}" type="text" inputmode="{{ f.mode }}" value="{{ f.value }}" onChange="{{ f.change }}" placeholder="{{ f.placeholder }}">
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ t.isNumber }}" hint-placeholder-val="{{ false }}">
+            <div class="numpad-display {{ t.displayCls }}" aria-live="polite">
+              <sc-if value="{{ t.hasDigits }}" hint-placeholder-val="{{ false }}"><span>{{ t.digits }}</span><span class="numpad-unit">{{ t.unit }}</span></sc-if>
+              <sc-if value="{{ t.noDigits }}" hint-placeholder-val="{{ true }}"><span class="numpad-ph">用下方的數字鍵輸入</span></sc-if>
+            </div>
+            <div class="numpad">
+              <sc-for list="{{ t.keys }}" as="k" hint-placeholder-count="12">
+                <button class="key {{ k.cls }}" type="button" onClick="{{ k.press }}" aria-label="{{ k.aria }}">{{ k.label }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ t.isText }}" hint-placeholder-val="{{ false }}">
+            <div class="field">
+              <label class="field-label" for="{{ t.textId }}">你的答案</label>
+              <input id="{{ t.textId }}" class="input {{ t.textCls }}" type="text" value="{{ t.textValue }}" onChange="{{ t.textChange }}" placeholder="{{ t.placeholder }}">
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ t.hasError }}" hint-placeholder-val="{{ false }}">
+            <p class="err" role="alert"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 17H2z"></path><path d="M12 10v4"></path><path d="M12 17.2v.3"></path></svg>{{ t.errorText }}</p>
+          </sc-if>
+
+          <div class="task-actions">
+            <sc-if value="{{ t.canHint }}" hint-placeholder-val="{{ false }}">
+              <button class="btn btn-hint" type="button" onClick="{{ t.openHint }}">
+                <span class="btn-left"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6"></path><path d="M9 4c-4 3-4 12 0 15h6c4-3 4-12 0-15"></path><path d="M12 1.5V4M12 19v3M7 11.5h10"></path></svg>查看提示</span>
+                <span class="meta">{{ t.hintMeta }}<span class="pips"><span class="pip {{ t.pip1 }}"></span><span class="pip {{ t.pip2 }}"></span></span></span>
+              </button>
+            </sc-if>
+            <sc-if value="{{ t.canReveal }}" hint-placeholder-val="{{ false }}">
+              <button class="btn btn-reveal" type="button" onClick="{{ t.openReveal }}">
+                <span class="btn-left"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12c3-6 17-6 20 0-3 6-17 6-20 0z"></path><circle cx="12" cy="12" r="3"></circle></svg>揭曉答案</span>
+                <span class="meta">提示已用完</span>
+              </button>
+            </sc-if>
+            <sc-if value="{{ t.isPhotoOnly }}" hint-placeholder-val="{{ false }}">
+              <button class="btn btn-primary" type="button" onClick="{{ t.photoDone }}">
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3.5l2-3h5l2 3H20v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>我拍好了
+              </button>
+            </sc-if>
+            <sc-if value="{{ t.showSubmit }}" hint-placeholder-val="{{ false }}">
+              <button class="btn btn-primary" type="button" onClick="{{ t.submit }}">送出答案</button>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ modalHint }}" hint-placeholder-val="{{ false }}">
+    <div class="scrim" style="height: {{ frameH }}px;">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="lv-hint-title">
+        <div class="modal-head">
+          <span class="modal-icon"><svg class="ico" style="width: 28px; height: 28px;" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6"></path><path d="M9 4c-4 3-4 12 0 15h6c4-3 4-12 0-15"></path><path d="M12 1.5V4M12 19v3M7 11.5h10"></path></svg></span>
+          <h2 class="h2" id="lv-hint-title">{{ hintTitle }}</h2>
+        </div>
+        <p class="p">{{ hintBody }}</p>
+        <div class="modal-actions">
+          <button class="btn btn-primary" type="button" onClick="{{ confirmHint }}">{{ hintConfirm }}</button>
+          <button class="btn btn-secondary" type="button" onClick="{{ closeModal }}">取消</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ modalHintShow }}" hint-placeholder-val="{{ false }}">
+    <div class="scrim" style="height: {{ frameH }}px;">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="lv-hint-show-title">
+        <div class="modal-head" style="justify-content: space-between;">
+          <h2 class="h2" id="lv-hint-show-title">{{ hintShowTitle }}</h2>
+          <span class="tag tag-done">{{ hintLeft }}</span>
+        </div>
+        <p class="p">{{ hintShowText }}</p>
+        <div class="modal-actions">
+          <button class="btn btn-primary" type="button" onClick="{{ closeModal }}">我知道了</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ modalReveal }}" hint-placeholder-val="{{ false }}">
+    <div class="scrim" style="height: {{ frameH }}px;">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="lv-reveal-title">
+        <div class="modal-head">
+          <span class="modal-icon"><svg class="ico" style="width: 28px; height: 28px;" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12c3-6 17-6 20 0-3 6-17 6-20 0z"></path><circle cx="12" cy="12" r="3"></circle></svg></span>
+          <h2 class="h2" id="lv-reveal-title">要揭曉這題的答案嗎？</h2>
+        </div>
+        <p class="p">揭曉後會直接顯示答案，這個任務一樣算完成。</p>
+        <div class="modal-actions">
+          <button class="btn btn-primary" type="button" onClick="{{ confirmReveal }}">揭曉答案</button>
+          <button class="btn btn-secondary" type="button" onClick="{{ closeModal }}">再觀察一下</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"level":{"editor":"enum","options":["1","2","3","4","5","6","7"],"default":"1","section":"關卡"},"openAt":{"editor":"int","default":-1,"min":-1,"max":6,"section":"狀態"},"doneAt":{"editor":"text","default":"","section":"狀態"},"revealedAt":{"editor":"text","default":"","section":"狀態"},"hintUsed":{"editor":"enum","options":["0","1","2"],"default":"0","section":"狀態"},"photoOk":{"editor":"boolean","default":false,"section":"狀態"},"showError":{"editor":"boolean","default":false,"section":"狀態"},"fillChoice":{"editor":null},"fillDigits":{"editor":null},"fillA":{"editor":null},"fillB":{"editor":null},"fillText":{"editor":null},"frameH":{"editor":"int","default":844,"min":844,"max":2000,"section":"版面"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  levels() {
+    var shopPhoto = '在店外拍下店面或招牌';
+    var shopNote = '在店外拍就好，不需要進店或購買，也不要向店家詢問答案。';
+    var shop = function (title, clue, contains, show) {
+      return { type: 'text', photo: shopPhoto, photoNote: shopNote, after: '輸入店名', title: title, prompt: clue, contains: contains, show: show, placeholder: '輸入店名' };
+    };
+    return [
+      {
+        no: '第一關', place: '慈祐宮', title: '找到守護神',
+        hints: [
+          '從廟內往外看，先分清青龍與白虎的位置，再決定入內要走哪一側。',
+          '青龍在左門一側；觀察龍頭時，看龍嘴開口延伸的方向。地藏王的法器則是一杖一珠。'
+        ],
+        tasks: [
+          { type: 'photo', title: '拍下慈祐宮', prompt: '找到慈祐宮，拍下廟名或正面。' },
+          { type: 'text', title: '主要供奉的神明', prompt: '請問慈祐宮主要供奉哪位神明？', contains: ['媽祖', '天上聖母'], show: '天上聖母（媽祖）', placeholder: '輸入神明的名稱' },
+          { type: 'choice', title: '入廟走哪個門', prompt: '從廟的角度向外看，準備入內參拜時應走哪一個門？', options: [['A', '左門－青龍'], ['B', '中門'], ['C', '右門－白虎']], answer: 'A' },
+          { type: 'choice', title: '龍嘴朝哪個方向', prompt: '觀察青龍一側的龍頭，龍嘴朝向哪個方向？', options: [['A', '斜上'], ['B', '斜下'], ['C', '向左'], ['D', '向右']], answer: 'A' },
+          { type: 'multi', title: '地藏王的法器', prompt: '在慈祐宮找到地藏王菩薩。祂常見的兩件法器是什麼？', fields: ['法器一', '法器二'], placeholders: ['法器名稱', '法器名稱'], answer: [['錫杖'], ['明珠']], anyOrder: true, show: '錫杖、明珠' }
+        ]
+      },
+      {
+        no: '第二關', place: '五間老店', title: '新莊廟街的味道與聲音',
+        hints: [
+          '五間都在地圖上標示範圍內；先從最明顯的招牌、商品或工藝線索找起。',
+          '甜味是翁裕美、鹹光餅是金合和、藥香是億德堂、鐵聲是日日用、鼓聲是响仁和。'
+        ],
+        tasks: [
+          shop('第一家老店', '線索：金黃色、甜甜的，拉開時能牽出細絲。', ['翁裕美'], '翁裕美商行'),
+          shop('第二家老店', '線索：中間有孔，是新莊代表性的鹹光餅老店。', ['金合和'], '金合和糕餅'),
+          shop('第三家老店', '線索：櫃上放著蔘茸、藥材與藥包，走近可聞到藥香。', ['億德堂'], '億德堂蔘藥行'),
+          shop('第四家老店', '線索：把鐵燒紅後，一鎚一鎚敲打成形，會發出叮叮噹噹的聲音。', ['日日用'], '日日用打鐵舖'),
+          shop('第五家老店', '線索：用牛皮與木頭製作，完成後最重要的是響亮鼓聲。', ['响仁和', '響仁和'], '响仁和')
+        ]
+      },
+      {
+        no: '第三關', place: '戲館巷', title: '找到戲曲角色',
+        hints: [
+          '先找臉上顏色最明顯、最像花臉的角色。',
+          '花臉是「淨」，女性角色是「旦」。'
+        ],
+        tasks: [
+          { type: 'text', photo: '找到角色，拍下這面壁畫', after: '填寫行當', title: '臉部彩繪最明顯的角色', prompt: '找到臉部彩繪最明顯的角色並拍下。請填寫他的戲曲行當。', answer: ['淨', '净'], show: '淨', placeholder: '輸入行當（一個字）' },
+          { type: 'text', photo: '找到角色，拍下這面壁畫', after: '填寫行當', title: '女性造型的角色', prompt: '找到女性造型、頭飾較明顯的角色並拍下。請填寫她的戲曲行當。', answer: ['旦'], show: '旦', placeholder: '輸入行當（一個字）' }
+        ]
+      },
+      {
+        no: '第四關', place: '米市巷', title: '壁畫裡的港口',
+        hints: [
+          '先找整艘船，再看船上的人物。',
+          '船有 7 艘，船夫有 3 位；加分題再找斗笠與辮子。'
+        ],
+        tasks: [
+          { type: 'photo', title: '拍下米市巷壁畫', prompt: '找到同時出現船與人物的米市巷壁畫並拍下。' },
+          { type: 'number', title: '數一數船', prompt: '指定壁畫中共有幾艘船？', answer: '7', unit: '艘' },
+          { type: 'number', title: '數一數船夫', prompt: '指定壁畫中共有幾位船夫？', answer: '3', unit: '位' },
+          { type: 'multi', bonus: true, numeric: true, title: '斗笠與辮子', prompt: '戴斗笠的人有幾位？綁辮子的人有幾位？', fields: ['戴斗笠的人', '綁辮子的人'], placeholders: ['幾位', '幾位'], answer: [['4'], ['10']], show: '戴斗笠 4 位、綁辮子 10 位' }
+        ]
+      },
+      {
+        no: '第五關', place: '武聖廟', title: '不用門神的大門',
+        hints: [
+          '先從廟名與主祀資訊找出神明。',
+          '仔細看門板上一顆一顆凸起的裝飾。'
+        ],
+        tasks: [
+          { type: 'photo', title: '拍下武聖廟', prompt: '找到武聖廟，拍下廟名或正面。' },
+          { type: 'text', title: '主要供奉的神明', prompt: '請問武聖廟主要供奉哪位神明？', contains: ['關聖帝君', '關公', '關帝', '關羽'], show: '關聖帝君（關公）', placeholder: '輸入神明的名稱' },
+          { type: 'photo', title: '拍下大門', prompt: '拍下武聖廟的大門。' },
+          { type: 'text', title: '大門的裝飾', prompt: '武聖廟的大門沒有畫門神，改用什麼裝飾？', contains: ['門釘'], show: '門釘（108 顆）', placeholder: '輸入你看到的裝飾' },
+          { type: 'choice', title: '為什麼不畫門神', prompt: '武聖廟的大門為什麼不畫門神，而改用門釘裝飾？', options: [['A', '關聖帝君本身就是武藝高強的神祇，不需再由門神守護'], ['B', '因為廟門太窄，畫不下門神'], ['C', '為了讓木門變得更輕'], ['D', '只是後來修繕時臨時更換']], answer: 'A' }
+        ]
+      },
+      {
+        no: '第六關', place: '廣福宮', title: '看介紹欄找答案',
+        hints: [
+          '答案不用進廟裡找，先到廣福宮旁邊的介紹欄。',
+          '在「廣福古建築之美」介紹欄裡找「木雕」與「石雕」兩個小標題。'
+        ],
+        tasks: [
+          { type: 'photo', title: '拍下廣福宮', prompt: '找到廣福宮，拍下廟名或正面。' },
+          { type: 'text', title: '主要供奉的神明', prompt: '請問廣福宮主要供奉哪位神明？', contains: ['三山國王'], show: '三山國王', placeholder: '輸入神明的名稱' },
+          { type: 'text', title: '木雕的色彩', prompt: '廣福宮木雕最大的色彩特色是什麼？', contains: ['未上彩', '沒有上彩', '沒上彩'], show: '全未上彩', placeholder: '輸入介紹欄上的說法' },
+          { type: 'text', title: '石雕的石材', prompt: '廣福宮石雕主要使用哪裡的石材？', contains: ['觀音山'], show: '觀音山石', placeholder: '輸入石材的產地' }
+        ]
+      },
+      {
+        no: '第七關', place: '潮江寺', title: '一棟建築裡的兩種信仰',
+        hints: [
+          '二樓面向巷弄的兩扇門，各有一組四字箴言；正門口另有一副較長的對聯。請按「右、左」順序抄錄。',
+          '看台題請確認它面向的巷弄；窗戶題要數的是「不同的開閉方式」，不是窗戶總數。'
+        ],
+        tasks: [
+          { type: 'photo', title: '拍下潮江寺正面', prompt: '站在潮江寺外，拍下整棟正面，讓一樓福德祠與二樓潮江寺都能被看見。' },
+          { type: 'text', title: '二樓供奉的神明', prompt: '請問潮江寺主要供奉哪位神明？', contains: ['觀音', '觀世音'], show: '觀世音菩薩（觀音佛祖）', placeholder: '輸入神明的名稱' },
+          { type: 'text', title: '一樓福德祠的神明', prompt: '潮江寺一樓的福德祠主要供奉哪位神明？', contains: ['福德正神', '土地公'], show: '福德正神（土地公）', placeholder: '輸入神明的名稱' },
+          { type: 'multi', title: '二樓門上的四字箴言', prompt: '觀察二樓面向巷弄的兩扇門，將門上的四字箴言完整填上。', fields: ['右門', '左門'], placeholders: ['四個字', '四個字'], answer: [['江水澄心'], ['潮音振耳']], show: '右門：江水澄心　左門：潮音振耳' },
+          { type: 'multi', stack: true, title: '正門口的對聯', prompt: '觀察潮江寺正門口的對聯，將左右兩聯完整填上。', fields: ['右聯', '左聯'], placeholders: ['八個字', '八個字'], answer: [['潮音覺世慈悲是佛'], ['江岸渡人福德為神']], show: '右聯：潮音覺世慈悲是佛　左聯：江岸渡人福德為神' },
+          { type: 'text', title: '看台面向哪裡', prompt: '觀察潮江寺的看台。看台面向哪一條巷弄？', contains: ['米市'], show: '米市巷', placeholder: '輸入巷弄名稱' },
+          { type: 'number', title: '窗戶的開閉方式', prompt: '仔細觀察潮江寺的窗戶，共有幾種不同的開閉方式？', answer: '4', unit: '種' }
+        ]
+      }
+    ];
+  }
+
+  num(v, d) {
+    if (v === undefined || v === null || v === '') return d;
+    var n = Number(v);
+    return isNaN(n) ? d : n;
+  }
+
+  flag(v) {
+    return v === true || v === 'true';
+  }
+
+  list(v) {
+    if (v === undefined || v === null || v === '') return [];
+    return String(v).split(',').map(function (s) { return Number(String(s).trim()); }).filter(function (n) { return !isNaN(n); });
+  }
+
+  blank() {
+    return { photoOk: false, choice: null, digits: '', fields: ['', ''], text: '', error: '' };
+  }
+
+  pick(p) {
+    var all = this.levels();
+    var i = Math.max(1, Math.min(all.length, this.num(p.level, 1))) - 1;
+    return all[i];
+  }
+
+  propKey(p) {
+    return [p.level, p.openAt, p.doneAt, p.revealedAt, p.hintUsed, p.photoOk, p.fillChoice, p.fillDigits, p.fillA, p.fillB, p.fillText, p.showError].join('|');
+  }
+
+  initialState(p, key) {
+    var self = this;
+    var tasks = this.pick(p).tasks;
+    var done = this.list(p.doneAt);
+    var rev = this.list(p.revealedAt);
+    var results = tasks.map(function (t, i) {
+      if (rev.indexOf(i) >= 0) return 'revealed';
+      if (done.indexOf(i) >= 0) return 'self';
+      return null;
+    });
+    var open = this.num(p.openAt, -1);
+    var drafts = tasks.map(function () { return self.blank(); });
+    if (open < 0 || open >= tasks.length || results[open] !== null) open = -1;
+    if (open >= 0) {
+      drafts[open] = {
+        photoOk: this.flag(p.photoOk),
+        choice: p.fillChoice ? String(p.fillChoice) : null,
+        digits: p.fillDigits ? String(p.fillDigits) : '',
+        fields: [p.fillA ? String(p.fillA) : '', p.fillB ? String(p.fillB) : ''],
+        text: p.fillText ? String(p.fillText) : '',
+        error: this.flag(p.showError) ? 'wrong' : ''
+      };
+    }
+    return {
+      key: key,
+      open: open,
+      hints: Math.max(0, Math.min(2, this.num(p.hintUsed, 0))),
+      results: results,
+      drafts: drafts,
+      modal: null
+    };
+  }
+
+  cur() {
+    var key = this.propKey(this.props);
+    if (this.state && this.state.key === key) return this.state;
+    return this.initialState(this.props, key);
+  }
+
+  renderVals() {
+    var self = this;
+    var lv = this.pick(this.props);
+    var tasks = lv.tasks;
+    var st = this.cur();
+    var HMAX = 2;
+    var total = tasks.length;
+
+    var norm = function (x) {
+      return String(x === undefined || x === null ? '' : x).replace(/[\s　，、。．・·\/／\-－:：（）()]/g, '');
+    };
+    var isSet = function (r) {
+      return r !== null && r !== undefined;
+    };
+    var set = function (patch) {
+      self.setState(Object.assign({}, self.cur(), patch));
+    };
+    var setDraft = function (i, patch) {
+      var s = self.cur();
+      var drafts = s.drafts.slice();
+      drafts[i] = Object.assign({}, drafts[i] || self.blank(), patch);
+      self.setState(Object.assign({}, s, { drafts: drafts }));
+    };
+    var complete = function (i, result) {
+      var s = self.cur();
+      var results = s.results.slice();
+      var drafts = s.drafts.slice();
+      results[i] = result;
+      drafts[i] = self.blank();
+      self.setState(Object.assign({}, s, { results: results, drafts: drafts, open: -1, modal: null }));
+    };
+    var toggle = function (i) {
+      var s = self.cur();
+      self.setState(Object.assign({}, s, { open: s.open === i ? -1 : i, modal: null }));
+    };
+    var accepts = function (t, value) {
+      var v = norm(value);
+      var ok = false;
+      if (!v) return false;
+      (t.answer || []).forEach(function (a) { if (norm(a) === v) ok = true; });
+      (t.contains || []).forEach(function (c) { if (v.indexOf(norm(c)) >= 0) ok = true; });
+      return ok;
+    };
+    var fieldOk = function (t, idx, value) {
+      var v = norm(value);
+      var ok = false;
+      if (!v) return false;
+      ((t.answer && t.answer[idx]) || []).forEach(function (a) { if (norm(a) === v) ok = true; });
+      return ok;
+    };
+    var submit = function (i) {
+      var s = self.cur();
+      var t = tasks[i];
+      var d = s.drafts[i] || self.blank();
+      var filled = true;
+      var ok = false;
+      var a = '';
+      var b = '';
+      if (!t) return;
+      if (t.type === 'choice') {
+        filled = !!d.choice;
+        ok = d.choice === t.answer;
+      } else if (t.type === 'number') {
+        filled = d.digits !== '';
+        ok = d.digits === String(t.answer);
+      } else if (t.type === 'text') {
+        filled = norm(d.text) !== '';
+        ok = accepts(t, d.text);
+      } else if (t.type === 'multi') {
+        a = (d.fields && d.fields[0]) || '';
+        b = (d.fields && d.fields[1]) || '';
+        filled = norm(a) !== '' && norm(b) !== '';
+        ok = (fieldOk(t, 0, a) && fieldOk(t, 1, b)) || (!!t.anyOrder && fieldOk(t, 0, b) && fieldOk(t, 1, a));
+      }
+      if (!filled) {
+        setDraft(i, { error: 'empty' });
+        return;
+      }
+      if (ok) {
+        complete(i, 'self');
+      } else {
+        setDraft(i, { error: 'wrong' });
+      }
+    };
+    var photoDone = function (i) {
+      var t = tasks[i];
+      if (!t) return;
+      if (t.type === 'photo') {
+        complete(i, 'self');
+      } else {
+        setDraft(i, { photoOk: true });
+      }
+    };
+    var openHint = function () { set({ modal: 'hint' }); };
+    var confirmHint = function () {
+      var s = self.cur();
+      set({ hints: Math.min(HMAX, s.hints + 1), modal: 'hintShow' });
+    };
+    var openReveal = function () { set({ modal: 'reveal' }); };
+    var confirmReveal = function () {
+      var s = self.cur();
+      if (s.open >= 0) {
+        complete(s.open, 'revealed');
+      } else {
+        set({ modal: null });
+      }
+    };
+    var closeModal = function () { set({ modal: null }); };
+
+    var typeName = function (t) {
+      if (t.type === 'photo') return '拍照任務';
+      if (t.photo) return '拍照＋文字題';
+      if (t.type === 'number') return '數字題';
+      if (t.type === 'choice') return '選擇題';
+      if (t.type === 'multi') return '填空題';
+      return '文字題';
+    };
+    var summary = function (t, r) {
+      var label = '';
+      if (t.type === 'photo') return '已拍照';
+      if (t.type === 'choice') {
+        (t.options || []).forEach(function (o) { if (o[0] === t.answer) label = o[0] + '．' + o[1]; });
+        return label;
+      }
+      if (t.type === 'number') return String(t.answer) + ' ' + (t.unit || '');
+      return t.show || '';
+    };
+    var makeKeys = function (i) {
+      return ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'clear', '0', 'back'].map(function (k) {
+        if (k === 'clear') {
+          return { label: '清除', aria: '清除全部', cls: 'key-fn', press: function () { setDraft(i, { digits: '', error: '' }); } };
+        }
+        if (k === 'back') {
+          return { label: '刪除', aria: '刪除一個數字', cls: 'key-fn', press: function () { var dd = self.cur().drafts[i] || self.blank(); setDraft(i, { digits: dd.digits.slice(0, -1), error: '' }); } };
+        }
+        return { label: k, aria: '數字 ' + k, cls: '', press: function () { var dd = self.cur().drafts[i] || self.blank(); if (dd.digits.length >= 4) return; setDraft(i, { digits: dd.digits + k, error: '' }); } };
+      });
+    };
+
+    var pip1 = st.hints >= 1 ? 'is-used' : '';
+    var pip2 = st.hints >= 2 ? 'is-used' : '';
+    var hintsOut = st.hints >= HMAX;
+
+    var items = tasks.map(function (t, i) {
+      var r = st.results[i];
+      var isDone = isSet(r);
+      var isOpen = !isDone && st.open === i;
+      var helpable = !t.bonus && t.type !== 'photo';
+      var vm = {
+        n: i + 1,
+        title: t.title,
+        prompt: t.prompt,
+        typeLabel: typeName(t),
+        bonus: !!t.bonus,
+        isDone: isDone,
+        isOpen: isOpen,
+        isClosed: !isDone && !isOpen,
+        rowTitle: (i + 1) + '．' + t.title,
+        closedSub: typeName(t) + (hintsOut && helpable ? '・可揭曉答案' : ''),
+        toggleAria: '任務 ' + (i + 1) + '，' + t.title + '，' + typeName(t) + (t.bonus ? '，加分題' : '') + '，點開作答',
+        panelId: 'task-panel-' + i,
+        toggle: function () { toggle(i); }
+      };
+      if (isDone) {
+        vm.summary = summary(t, r);
+        vm.resSelf = r === 'self' && !t.bonus;
+        vm.resReveal = r === 'revealed';
+        vm.resStar = r === 'self' && !!t.bonus;
+        vm.selfLabel = t.type === 'photo' ? '已完成' : '自行解出';
+      }
+      if (isOpen) {
+        var d = st.drafts[i] || self.blank();
+        var showAnswer = t.type !== 'photo' && (!t.photo || !!d.photoOk);
+        var opts = t.options || [];
+        var grid = opts.length === 4 && opts.every(function (o) { return o[1].length <= 4; });
+        vm.isPhotoOnly = t.type === 'photo';
+        vm.needPhoto = !!t.photo && !d.photoOk;
+        vm.photoDoneRow = !!t.photo && !!d.photoOk;
+        vm.photoLabel = t.photo || '';
+        vm.hasPhotoNote = !!t.photoNote;
+        vm.photoNote = t.photoNote || '';
+        vm.after = t.after || '作答';
+        vm.isChoice = showAnswer && t.type === 'choice';
+        vm.isMulti = showAnswer && t.type === 'multi';
+        vm.isNumber = showAnswer && t.type === 'number';
+        vm.isText = showAnswer && t.type === 'text';
+        vm.showSubmit = showAnswer;
+        vm.canHint = helpable && !hintsOut;
+        vm.canReveal = helpable && showAnswer && hintsOut;
+        vm.hintMeta = '已用 ' + st.hints + '/' + HMAX;
+        vm.pip1 = pip1;
+        vm.pip2 = pip2;
+        vm.hasError = !!d.error;
+        vm.errorText = d.error === 'empty' ? '請先作答，再按「送出答案」。' : '答案似乎不正確，再觀察一次現場吧。';
+        vm.optsCls = grid ? 'opts opts-grid' : 'opts';
+        vm.options = opts.map(function (o) {
+          var on = d.choice === o[0];
+          return {
+            k: o[0],
+            label: o[1],
+            cls: on ? 'is-on' : '',
+            pressed: on ? 'true' : 'false',
+            pick: function () { setDraft(i, { choice: o[0], error: '' }); }
+          };
+        });
+        vm.mfCls = t.stack ? 'mfields is-stack' : 'mfields';
+        vm.fields = (t.fields || []).map(function (label, k) {
+          return {
+            id: 'task' + i + '-field' + k,
+            label: label,
+            value: (d.fields && d.fields[k]) || '',
+            mode: t.numeric ? 'numeric' : 'text',
+            placeholder: (t.placeholders || [])[k] || '',
+            cls: d.error === 'wrong' ? 'is-error' : '',
+            change: function (e) {
+              var dd = self.cur().drafts[i] || self.blank();
+              var nf = (dd.fields || ['', '']).slice();
+              nf[k] = e.target.value;
+              setDraft(i, { fields: nf, error: '' });
+            }
+          };
+        });
+        vm.digits = d.digits;
+        vm.hasDigits = d.digits !== '';
+        vm.noDigits = d.digits === '';
+        vm.unit = t.unit || '';
+        vm.displayCls = d.error === 'wrong' ? 'is-error' : 'is-focus';
+        vm.keys = makeKeys(i);
+        vm.textId = 'task' + i + '-answer';
+        vm.textValue = d.text;
+        vm.textCls = d.error === 'wrong' ? 'is-error' : '';
+        vm.placeholder = t.placeholder || '輸入你的答案';
+        vm.textChange = function (e) { setDraft(i, { text: e.target.value, error: '' }); };
+        vm.submit = function () { submit(i); };
+        vm.photoDone = function () { photoDone(i); };
+        vm.openHint = openHint;
+        vm.openReveal = openReveal;
+      }
+      return vm;
+    });
+
+    var doneCount = st.results.filter(isSet).length;
+    var requiredDone = tasks.every(function (t, i) { return !!t.bonus || isSet(st.results[i]); });
+    var stars = tasks.filter(function (t, i) { return !!t.bonus && st.results[i] === 'self'; }).length;
+    var segs = tasks.map(function (t, i) {
+      var r = st.results[i];
+      var c = [];
+      if (t.bonus) c.push('is-bonus');
+      if (r === 'self' && t.bonus) {
+        c.push('is-star');
+      } else if (isSet(r)) {
+        c.push('is-done');
+      } else if (i === st.open) {
+        c.push('is-now');
+      }
+      return { cls: c.join(' ') };
+    });
+
+    return {
+      frameH: this.num(this.props.frameH, 844),
+      levelNo: lv.no,
+      place: lv.place,
+      title: lv.title,
+      total: total,
+      doneCount: doneCount,
+      hints: st.hints,
+      pip1: pip1,
+      pip2: pip2,
+      segs: segs,
+      hasBonus: tasks.some(function (t) { return !!t.bonus; }),
+      starCls: stars > 0 ? '' : 'is-empty',
+      hasSeen: st.hints > 0,
+      seenHints: lv.hints.slice(0, st.hints).map(function (h, k) { return { label: k === 0 ? '提示一' : '提示二', text: h }; }),
+      passPending: requiredDone && doneCount < total,
+      allDone: doneCount === total,
+      starEarned: stars > 0,
+      stars: stars,
+      items: items,
+      modalHint: st.modal === 'hint',
+      modalHintShow: st.modal === 'hintShow',
+      modalReveal: st.modal === 'reveal',
+      hintTitle: st.hints === 0 ? '要查看提示一嗎？' : '這是本關最後一次提示',
+      hintBody: st.hints === 0 ? '本關共有兩次提示機會，看完還剩 1 次。' : '確定要查看嗎？看完之後，還沒完成的任務可以選擇揭曉答案。',
+      hintConfirm: st.hints === 0 ? '確認查看' : '查看最後提示',
+      hintShowTitle: st.hints >= 2 ? '提示二' : '提示一',
+      hintShowText: lv.hints[Math.max(0, st.hints - 1)] || '',
+      hintLeft: st.hints >= HMAX ? '提示已用完' : '剩餘 ' + (HMAX - st.hints) + ' 次提示',
+      confirmHint: confirmHint,
+      confirmReveal: confirmReveal,
+      closeModal: closeModal
+    };
+  }
+}
+</script>
+</body>
+</html>

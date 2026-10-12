@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>T00 入口頁（場次選擇）</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#603514}a:hover{color:#a42006}
+</style>
+</helmet>
+<div class="screen">
+  <div class="content" style="padding: 40px 24px 24px; align-items: center; text-align: center; gap: 20px;">
+    <img src="/_blob/a9caf96e60f7e7300f4a7fd20a0e970f" alt="新莊妙妙廟 Temple Street Revived 標誌" style="width: 184px; height: auto; display: block;">
+    <p class="caps" style="font-weight: 700; color: #a42006;">新莊廟街・實境解謎</p>
+    <h1 class="h1" style="font-size: 34px; line-height: 44px;">妙妙貓的廟街委託</h1>
+    <p class="p" style="max-width: 320px;">請選擇你們今天參加的場次。</p>
+  </div>
+  <div class="actions">
+    <a class="ver-btn" href="{{ youthHref }}">
+      <span class="ver-main">
+        <span class="ver-name">青年場</span>
+        <span class="ver-desc">六個關卡、三個 NPC 任務，<br>以推理解謎為主</span>
+        <sc-if value="{{ youthOn }}" hint-placeholder-val="{{ false }}"><span class="ver-prog">進行中：{{ youthProg }}</span></sc-if>
+      </span>
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+    </a>
+    <a class="ver-btn" href="{{ familyHref }}">
+      <span class="ver-main">
+        <span class="ver-name">親子場</span>
+        <span class="ver-desc">七個關卡、三個 NPC 任務，<br>以觀察和拍照為主</span>
+        <sc-if value="{{ familyOn }}" hint-placeholder-val="{{ false }}"><span class="ver-prog">進行中：{{ familyProg }}</span></sc-if>
+      </span>
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+    </a>
+    <p class="small" style="text-align: center;">請依工作人員告知的場次選擇</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"youthProgress":{"editor":"boolean","default":false,"section":"青年場進度"},"youthLevels":{"editor":"int","default":1,"min":0,"max":6,"section":"青年場進度"},"youthNpc":{"editor":"int","default":0,"min":0,"max":3,"section":"青年場進度"},"familyProgress":{"editor":"boolean","default":false,"section":"親子場進度"},"familyLevels":{"editor":"int","default":2,"min":0,"max":7,"section":"親子場進度"},"familyNpc":{"editor":"int","default":1,"min":0,"max":3,"section":"親子場進度"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var p = this.props;
+    var flag = function (v) { return v === true || v === 'true'; };
+    var num = function (v, d, max) {
+      if (v === undefined || v === null || v === '') return d;
+      var n = Number(v);
+      return isNaN(n) ? d : Math.max(0, Math.min(max, n));
+    };
+    var youthOn = flag(p.youthProgress);
+    var familyOn = flag(p.familyProgress);
+    return {
+      youthOn: youthOn,
+      familyOn: familyOn,
+      youthProg: '關卡 ' + num(p.youthLevels, 1, 6) + '/6、NPC ' + num(p.youthNpc, 0, 3) + '/3',
+      familyProg: '關卡 ' + num(p.familyLevels, 2, 7) + '/7、NPC ' + num(p.familyNpc, 1, 3) + '/3',
+      youthHref: youthOn ? 'T02Continue.dc.html' : 'Main.dc.html',
+      familyHref: familyOn ? 'F02StartContinue.dc.html' : 'F02Start.dc.html'
+    };
+  }
+}
+</script>
+</body>
+</html>

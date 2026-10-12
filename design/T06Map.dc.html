@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>T06 廟街地圖（青年場）</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="screen" style="height: {{ frameH }}px;">
+  <div class="topbar">
+    <button class="btn btn-back" type="button">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>關卡選單
+    </button>
+    <div class="topbar-right">
+      <span class="topbar-tag">廟街地圖</span>
+      <span class="ver-tag is-youth">青年場</span>
+    </div>
+  </div>
+  <div class="content" style="gap: 12px;">
+    <p class="route-note"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path></svg>東在上、北在左；沿新莊路的距離依比例</p>
+    <button class="map-fig" type="button" onClick="{{ openZoom }}" aria-label="點開放大地圖">
+      <img src="/_blob/bef2c340dcc90c382e7f9044f05449f3" alt="廟街地圖示意圖，東在上、北在左。沿新莊路由上往下依序是：6 廣福宮、1 慈祐宮與斜對面的集合點林協記文化館、3 戲館巷、4 米市巷、5 武聖廟。">
+      <span class="fig-cap"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"></path></svg>點開放大</span>
+    </button>
+    <h2 class="h2" style="font-size: 20px; line-height: 28px; margin-top: 4px;">圖例</h2>
+    <ul class="legend2">
+      <li class="lg-item"><span class="lg-mark lg-pin">1</span><span><b>慈祐宮</b><span class="lg-addr">（新莊路 218 號）</span></span></li>
+      <li class="lg-item"><span class="lg-mark lg-pin">3</span><span><b>戲館巷</b><span class="lg-addr">（新莊路 359 巷）</span></span></li>
+      <li class="lg-item"><span class="lg-mark lg-pin">4</span><span><b>米市巷</b><span class="lg-addr">（新莊路 387 巷）</span></span></li>
+      <li class="lg-item"><span class="lg-mark lg-pin">5</span><span><b>武聖廟</b><span class="lg-addr">（新莊路 340 號）</span></span></li>
+      <li class="lg-item"><span class="lg-mark lg-pin">6</span><span><b>廣福宮</b><span class="lg-addr">（新莊路 150 號）</span></span></li>
+      <li class="lg-item"><span class="lg-meet" aria-hidden="true"></span><span><b>集合點：林協記文化館</b><span class="lg-addr">（新莊路 317 號 2 樓，慈祐宮斜對面）</span></span></li>
+    </ul>
+    <p class="route-note"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5v.5"></path></svg>第二關「五間老店」的位置是謎題的一部分，地圖上不標示。</p>
+  </div>
+  <sc-if value="{{ zoomOn }}" hint-placeholder-val="{{ false }}">
+    <div class="zoom-scrim" style="height: {{ frameH }}px;" role="dialog" aria-modal="true" aria-label="廟街地圖（放大）">
+      <div class="zoom-head">
+        <p class="zoom-title">廟街地圖</p>
+        <button class="btn zoom-close" type="button" onClick="{{ closeZoom }}"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>關閉</button>
+      </div>
+      <div class="zoom-body">
+        <img class="zoom-img" src="/_blob/bef2c340dcc90c382e7f9044f05449f3" alt="廟街地圖示意圖（放大）">
+        <p class="zoom-note"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"></path></svg>可以用兩指放大、拖曳查看細節。</p>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"zoom":{"editor":"boolean","default":false,"section":"狀態"},"frameH":{"editor":"int","default":1160,"min":844,"max":2000,"section":"版面"},"$preview":{"width":390,"height":1160}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var self = this;
+    var p = this.props;
+    var key = String(p.zoom);
+    var initial = p.zoom === true || p.zoom === 'true';
+    var on = (this.state && this.state.key === key) ? !!this.state.on : initial;
+    var h = Number(p.frameH);
+    return {
+      frameH: (p.frameH === undefined || p.frameH === null || p.frameH === '' || isNaN(h)) ? 1160 : h,
+      zoomOn: on,
+      openZoom: function () { self.setState({ key: key, on: true }); },
+      closeZoom: function () { self.setState({ key: key, on: false }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

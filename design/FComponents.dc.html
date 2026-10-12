@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>親子場元件</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1650px; height: 1720px; box-sizing: border-box; padding: 40px; background: #ffffff; color: #603514; font-family: &quot;GenRyuMin TW&quot;, &quot;Noto Serif TC&quot;, serif; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 40px; align-items: start;">
+
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    <div style="border-bottom: 2px solid #603514; padding-bottom: 8px;">
+      <p class="caps" style="font-weight: 700; color: #a42006;">Task Card</p>
+      <h2 class="h2">任務卡・拍照</h2>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">拍照：說明＋「我拍好了」</p>
+      <div class="task">
+        <button class="task-head-btn" type="button" aria-expanded="true">
+          <span class="num is-on">1</span>
+          <span class="task-row-main"><span class="task-type">任務 1・拍照任務</span><span class="task-title">拍下慈祐宮</span></span>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+        </button>
+        <p class="task-body">找到慈祐宮，拍下廟名或正面。</p>
+        <div class="ph" style="height: 140px;">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 20h10l5-7h18l5 7h10v32H8z"></path><circle cx="32" cy="36" r="10"></circle></svg>
+          <span>拍照範例圖（選填）</span>
+        </div>
+        <p class="task-note">照片存在你們自己的手機裡，不需要上傳。</p>
+        <div class="task-actions">
+          <button class="btn btn-primary" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3.5l2-3h5l2 3H20v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>我拍好了</button>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">拍照＋文字：先拍照，再作答</p>
+      <div class="task">
+        <button class="task-head-btn" type="button" aria-expanded="true">
+          <span class="num is-on">1</span>
+          <span class="task-row-main"><span class="task-type">任務 1・拍照＋文字題</span><span class="task-title">第一家老店</span></span>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+        </button>
+        <p class="task-body">線索：金黃色、甜甜的，拉開時能牽出細絲。</p>
+        <div class="step">
+          <p class="step-title"><span class="num">1</span>在店外拍下店面或招牌</p>
+          <div class="ph" style="height: 120px;">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 20h10l5-7h18l5 7h10v32H8z"></path><circle cx="32" cy="36" r="10"></circle></svg>
+            <span>拍照範例圖（選填）</span>
+          </div>
+          <p class="task-note"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 17H2z"></path><path d="M12 10v4"></path><path d="M12 17.2v.3"></path></svg>在店外拍就好，不需要進店或購買，也不要向店家詢問答案。</p>
+          <p class="task-note">照片存在你們自己的手機裡，不需要上傳。</p>
+          <button class="btn btn-primary" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3.5l2-3h5l2 3H20v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>我拍好了</button>
+        </div>
+        <p class="step-next"><span class="num is-off">2</span>拍好照片後，再輸入店名</p>
+        <div class="task-actions">
+          <button class="btn btn-hint" type="button">
+            <span class="btn-left"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6"></path><path d="M9 4c-4 3-4 12 0 15h6c4-3 4-12 0-15"></path><path d="M12 1.5V4M12 19v3M7 11.5h10"></path></svg>查看提示</span>
+            <span class="meta">已用 0/2<span class="pips"><span class="pip"></span><span class="pip"></span></span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    <div style="border-bottom: 2px solid #603514; padding-bottom: 8px;">
+      <p class="caps" style="font-weight: 700; color: #a42006;">Task Card</p>
+      <h2 class="h2">任務卡・文字／數字</h2>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">文字（短答）</p>
+      <div class="task">
+        <button class="task-head-btn" type="button" aria-expanded="true">
+          <span class="num is-on">3</span>
+          <span class="task-row-main"><span class="task-type">任務 3・文字題</span><span class="task-title">木雕的色彩</span></span>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+        </button>
+        <p class="task-body">廣福宮木雕最大的色彩特色是什麼？</p>
+        <div class="field">
+          <label class="field-label" for="c-text">你的答案</label>
+          <input id="c-text" class="input" type="text" placeholder="輸入介紹欄上的說法">
+        </div>
+        <div class="task-actions">
+          <button class="btn btn-hint" type="button">
+            <span class="btn-left"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6"></path><path d="M9 4c-4 3-4 12 0 15h6c4-3 4-12 0-15"></path><path d="M12 1.5V4M12 19v3M7 11.5h10"></path></svg>查看提示</span>
+            <span class="meta">已用 0/2<span class="pips"><span class="pip"></span><span class="pip"></span></span></span>
+          </button>
+          <button class="btn btn-primary" type="button">送出答案</button>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">數字：數字鍵盤</p>
+      <div class="task">
+        <button class="task-head-btn" type="button" aria-expanded="true">
+          <span class="num is-on">2</span>
+          <span class="task-row-main"><span class="task-type">任務 2・數字題</span><span class="task-title">數一數船</span></span>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+        </button>
+        <p class="task-body">指定壁畫中共有幾艘船？</p>
+        <div class="numpad-display is-focus"><span class="numpad-ph">用下方的數字鍵輸入</span></div>
+        <div class="numpad">
+          <button class="key" type="button">1</button>
+          <button class="key" type="button">2</button>
+          <button class="key" type="button">3</button>
+          <button class="key" type="button">4</button>
+          <button class="key" type="button">5</button>
+          <button class="key" type="button">6</button>
+          <button class="key" type="button">7</button>
+          <button class="key" type="button">8</button>
+          <button class="key" type="button">9</button>
+          <button class="key key-fn" type="button" aria-label="清除全部">清除</button>
+          <button class="key" type="button">0</button>
+          <button class="key key-fn" type="button" aria-label="刪除一個數字">刪除</button>
+        </div>
+        <div class="task-actions">
+          <button class="btn btn-hint" type="button">
+            <span class="btn-left"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6"></path><path d="M9 4c-4 3-4 12 0 15h6c4-3 4-12 0-15"></path><path d="M12 1.5V4M12 19v3M7 11.5h10"></path></svg>查看提示</span>
+            <span class="meta">已用 1/2<span class="pips"><span class="pip is-used"></span><span class="pip"></span></span></span>
+          </button>
+          <button class="btn btn-primary" type="button">送出答案</button>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">本關進度列（固定在頂部）</p>
+      <div class="lvbar" style="border: 2px solid #7d7870; border-radius: 4px;">
+        <div class="lvbar-row">
+          <p class="lvbar-count">任務 3/4</p>
+          <span class="lvbar-hint">提示 已用 1/2<span class="pips" aria-hidden="true"><span class="pip is-used"></span><span class="pip"></span></span></span>
+        </div>
+        <div class="seg" role="img" aria-label="任務進度 3/4">
+          <span class="seg-i is-done"></span><span class="seg-i is-done"></span><span class="seg-i is-done"></span><span class="seg-i is-bonus is-now"></span>
+          <svg class="star is-empty" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    <div style="border-bottom: 2px solid #603514; padding-bottom: 8px;">
+      <p class="caps" style="font-weight: 700; color: #a42006;">Task Card</p>
+      <h2 class="h2">任務卡・選擇／多欄位</h2>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">選擇：2～3 個大選項卡（直排）</p>
+      <div class="task">
+        <button class="task-head-btn" type="button" aria-expanded="true">
+          <span class="num is-on">3</span>
+          <span class="task-row-main"><span class="task-type">任務 3・選擇題</span><span class="task-title">入廟走哪個門</span></span>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+        </button>
+        <p class="task-body">從廟的角度向外看，準備入內參拜時應走哪一個門？</p>
+        <div class="opts">
+          <button class="opt" type="button" aria-pressed="false"><span class="opt-key">A</span><span>左門－青龍</span></button>
+          <button class="opt is-on" type="button" aria-pressed="true"><span class="opt-key">B</span><span>中門</span></button>
+          <button class="opt" type="button" aria-pressed="false"><span class="opt-key">C</span><span>右門－白虎</span></button>
+        </div>
+        <div class="task-actions">
+          <button class="btn btn-hint" type="button">
+            <span class="btn-left"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6"></path><path d="M9 4c-4 3-4 12 0 15h6c4-3 4-12 0-15"></path><path d="M12 1.5V4M12 19v3M7 11.5h10"></path></svg>查看提示</span>
+            <span class="meta">已用 0/2<span class="pips"><span class="pip"></span><span class="pip"></span></span></span>
+          </button>
+          <button class="btn btn-primary" type="button">送出答案</button>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">選擇：4 個短選項（2×2）</p>
+      <div class="task">
+        <button class="task-head-btn" type="button" aria-expanded="true">
+          <span class="num is-on">4</span>
+          <span class="task-row-main"><span class="task-type">任務 4・選擇題</span><span class="task-title">龍嘴朝哪個方向</span></span>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+        </button>
+        <p class="task-body">觀察青龍一側的龍頭，龍嘴朝向哪個方向？</p>
+        <div class="opts opts-grid">
+          <button class="opt" type="button" aria-pressed="false"><span class="opt-key">A</span><span>斜上</span></button>
+          <button class="opt" type="button" aria-pressed="false"><span class="opt-key">B</span><span>斜下</span></button>
+          <button class="opt" type="button" aria-pressed="false"><span class="opt-key">C</span><span>向左</span></button>
+          <button class="opt" type="button" aria-pressed="false"><span class="opt-key">D</span><span>向右</span></button>
+        </div>
+        <div class="task-actions">
+          <button class="btn btn-primary" type="button">送出答案</button>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">多欄位：右門／左門兩格</p>
+      <div class="task">
+        <button class="task-head-btn" type="button" aria-expanded="true">
+          <span class="num is-on">4</span>
+          <span class="task-row-main"><span class="task-type">任務 4・填空題</span><span class="task-title">二樓門上的四字箴言</span></span>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+        </button>
+        <p class="task-body">觀察二樓面向巷弄的兩扇門，將門上的四字箴言完整填上。</p>
+        <div class="mfields">
+          <div class="field">
+            <label class="field-label" for="c-mf-1">右門</label>
+            <input id="c-mf-1" class="input" type="text" value="江水澄心" onChange="{{ noop }}" placeholder="四個字">
+          </div>
+          <div class="field">
+            <label class="field-label" for="c-mf-2">左門</label>
+            <input id="c-mf-2" class="input is-focus" type="text" placeholder="四個字">
+          </div>
+        </div>
+        <div class="task-actions">
+          <button class="btn btn-primary" type="button">送出答案</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    <div style="border-bottom: 2px solid #603514; padding-bottom: 8px;">
+      <p class="caps" style="font-weight: 700; color: #a42006;">States</p>
+      <h2 class="h2">任務列狀態・加分・揭曉</h2>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">未完成・收合（點開作答，順序不限）</p>
+      <button class="task-toggle" type="button" aria-expanded="false">
+        <span class="num">5</span>
+        <span class="task-row-main"><span class="task-row-title">地藏王的法器</span><span class="task-row-sub">填空題</span></span>
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+      </button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">已完成・自行解出</p>
+      <div class="task-row">
+        <span class="task-check"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span>
+        <span class="task-row-main"><span class="task-row-title">2．主要供奉的神明</span><span class="task-row-sub">天上聖母（媽祖）</span></span>
+        <span class="tag tag-res">自行解出</span>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">已完成・揭曉答案</p>
+      <div class="task-row">
+        <span class="task-check"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span>
+        <span class="task-row-main"><span class="task-row-title">4．大門的裝飾</span><span class="task-row-sub">門釘（108 顆）</span></span>
+        <span class="tag tag-res"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12c3-6 17-6 20 0-3 6-17 6-20 0z"></path><circle cx="12" cy="12" r="3"></circle></svg>已揭曉</span>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">加分題・收合（不影響過關）</p>
+      <button class="task-toggle" type="button" aria-expanded="false">
+        <span class="num">4</span>
+        <span class="task-row-main"><span class="task-row-title">斗笠與辮子</span><span class="task-row-sub">填空題</span></span>
+        <span class="tag tag-bonus"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>加分題</span>
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+      </button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">加分題・答對（顯示星星）</p>
+      <div class="task-row">
+        <span class="task-check"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span>
+        <span class="task-row-main"><span class="task-row-title">4．斗笠與辮子</span><span class="task-row-sub">戴斗笠 4 位、綁辮子 10 位</span></span>
+        <span class="tag tag-bonus"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>加分</span>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">兩次提示用完：未完成任務標示「可揭曉答案」，點開後出現按鈕</p>
+      <button class="task-toggle" type="button" aria-expanded="false">
+        <span class="num">6</span>
+        <span class="task-row-main"><span class="task-row-title">看台面向哪裡</span><span class="task-row-sub">文字題・可揭曉答案</span></span>
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+      </button>
+      <button class="btn btn-reveal" type="button">
+        <span class="btn-left"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12c3-6 17-6 20 0-3 6-17 6-20 0z"></path><circle cx="12" cy="12" r="3"></circle></svg>揭曉答案</span>
+        <span class="meta">提示已用完</span>
+      </button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">關卡卡片：未完成／進行中／已完成＋星星</p>
+      <button class="lv lv-sm" type="button" aria-label="第六關，廣福宮，看介紹欄找答案，未完成">
+        <span class="lv-img"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="8" width="48" height="32" rx="2"></rect><path d="M16 18h32M16 25h24M16 32h28"></path><path d="M18 40v18M46 40v18"></path></svg></span>
+        <span class="lv-main"><span class="lv-top"><span class="lv-no">第六關</span><span class="lv-flags"><span class="tag tag-todo">未完成</span></span></span><span class="lv-place">廣福宮</span><span class="lv-task">看介紹欄找答案</span></span>
+        <svg class="ico lv-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+      <button class="lv lv-sm is-doing" type="button" aria-label="第五關，武聖廟，不用門神的大門，進行中">
+        <span class="lv-img"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 58V8h40v50"></path><path d="M32 8v50"></path><path d="M6 58h52"></path><path style="stroke-width: 4.5;" d="M19 16h0M25 16h0M39 16h0M45 16h0M19 24h0M25 24h0M39 24h0M45 24h0M19 32h0M25 32h0M39 32h0M45 32h0M19 40h0M25 40h0M39 40h0M45 40h0"></path></svg></span>
+        <span class="lv-main"><span class="lv-top"><span class="lv-no">第五關</span><span class="lv-flags"><span class="tag tag-doing">進行中</span></span></span><span class="lv-place">武聖廟</span><span class="lv-task">不用門神的大門</span></span>
+        <svg class="ico lv-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+      <button class="lv lv-sm is-done" type="button" aria-label="第四關，米市巷，壁畫裡的港口，有加分題，已完成並得到星星">
+        <span class="lv-img"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M6 38h52l-9 12H15z"></path><path d="M30 38V8"></path><path d="M30 10l16 22H30"></path><path d="M6 58c5-3 9 3 14 0s9 3 14 0 9 3 14 0 9 3 12 0"></path></svg></span>
+        <span class="lv-main"><span class="lv-top"><span class="lv-no">第四關</span><span class="lv-flags"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg><span class="tag tag-done"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>已完成</span></span></span><span class="lv-place">米市巷</span><span class="lv-task">壁畫裡的港口</span></span>
+        <svg class="ico lv-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">地圖入口</p>
+      <button class="map-entry" type="button">
+        <span class="map-thumb"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M4 12l12-5 16 5 12-5v29l-12 5-16-5-12 5z"></path><path d="M16 7v29M32 12v29"></path></svg></span>
+        <span class="map-entry-main"><span class="map-entry-title">查看地圖</span><span class="map-entry-sub">七個關卡在廟街上的位置</span></span>
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <p class="label">通關碼</p>
+      <div class="passcode">
+        <p class="passcode-label">通關碼</p>
+        <p class="passcode-code">4827</p>
+        <p class="passcode-note">請把這個畫面拿給工作人員看</p>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1650,"height":1720}}'>
+class Component extends DCLogic {
+  renderVals() { return { noop: function () {} }; }
+}
+</script>
+</body>
+</html>

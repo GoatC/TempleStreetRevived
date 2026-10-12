@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>關卡頁：米市巷 加分題</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="stage" style="height: 1190px;">
+  <dc-import name="F07Level" level="{{ lv }}" done-at="0,1,2" open-at="{{ o }}" fill-a="4" frame-h="{{ h }}" hint-size="390px,1190px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1190}}'>
+class Component extends DCLogic {
+  renderVals() { return { lv: 4, o: 3, h: 1190 }; }
+}
+</script>
+</body>
+</html>

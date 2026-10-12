@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>T11 歷史補充（看更多展開）</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="stage" style="height: 1700px;">
+  <dc-import name="T11History" level="1" expanded="{{ yes }}" frame-h="{{ h }}" hint-size="390px,1700px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1700}}'>
+class Component extends DCLogic {
+  renderVals() { return { yes: true, h: 1700 }; }
+}
+</script>
+</body>
+</html>

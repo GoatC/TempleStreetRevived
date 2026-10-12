@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>T08 第四關：文字題答錯</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="stage" style="height: 1100px;">
+  <dc-import name="T08Level" level="4" done-at="0" hint-used="1" fill-a="米市興旺" show-error="{{ yes }}" frame-h="{{ h }}" hint-size="390px,1100px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+  renderVals() { return { yes: true, h: 1100 }; }
+}
+</script>
+</body>
+</html>

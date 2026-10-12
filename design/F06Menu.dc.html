@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>親子場 關卡選單</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="screen" style="height: {{ frameH }}px;">
+  <div class="topbar">
+    <button class="btn btn-back" type="button">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>首頁
+    </button>
+    <div class="topbar-right">
+      <button class="btn btn-text" type="button" style="padding-right: 4px;">遊戲說明</button>
+      <span class="ver-tag is-family">親子場</span>
+    </div>
+  </div>
+  <div class="content" style="gap: 12px;">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <p class="label">隊伍</p>
+        <h1 class="h2" style="font-size: 24px;">妙妙一家人</h1>
+      </div>
+      <p class="label"><span style="display: flex; align-items: center; gap: 4px;" aria-label="加分星星 {{ stars }} 顆"><svg class="star" style="width: 20px; height: 20px;" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>{{ stars }}</span></p>
+    </div>
+    <div class="prog2">
+      <div class="prog2-row">
+        <p class="prog2-label">關卡 <span class="prog2-n">{{ doneCount }}/7</span></p>
+        <div class="dots7" aria-hidden="true">
+          <sc-for list="{{ dots }}" as="d" hint-placeholder-count="7">
+            <span class="dot {{ d.cls }}"><sc-if value="{{ d.done }}" hint-placeholder-val="{{ false }}"><svg class="ico" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"></path></svg></sc-if></span>
+          </sc-for>
+        </div>
+      </div>
+      <div class="prog2-row">
+        <p class="prog2-label">NPC <span class="prog2-n">{{ npcCount }}/3</span></p>
+        <div class="dots3" aria-hidden="true">
+          <sc-for list="{{ npcDots }}" as="d" hint-placeholder-count="3">
+            <span class="dot {{ d.cls }}">{{ d.key }}</span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <sc-if value="{{ levelsOnly }}" hint-placeholder-val="{{ false }}">
+      <div class="pass-banner">
+        <div class="pass-head">
+          <span class="mini-seal"><span>七關</span></span>
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <p class="p" style="font-weight: 700;">七關都完成了！</p>
+            <p class="small">再完成 {{ npcLeft }} 個 NPC 任務就全破。</p>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ all }}" hint-placeholder-val="{{ false }}">
+      <div class="pass-banner">
+        <div class="pass-head">
+          <span class="mini-seal"><span>全破</span></span>
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <p class="p" style="font-weight: 700;">恭喜全破！</p>
+            <p class="small">七關和 NPC 任務都完成了。</p>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    <button class="map-entry" type="button">
+      <span class="map-thumb"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M4 12l12-5 16 5 12-5v29l-12 5-16-5-12 5z"></path><path d="M16 7v29M32 12v29"></path></svg></span>
+      <span class="map-entry-main">
+        <span class="map-entry-title">查看地圖</span>
+        <span class="map-entry-sub">七個關卡在廟街上的位置</span>
+      </span>
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+    </button>
+    <p class="small">共七關，每關有 2～7 個小任務，完成必答任務就能過關。</p>
+    <sc-for list="{{ levels }}" as="lv" hint-placeholder-count="7">
+      <button class="lv lv-sm {{ lv.cls }}" type="button" aria-label="{{ lv.aria }}">
+        <span class="lv-img">
+          <sc-if value="{{ lv.iGate }}" hint-placeholder-val="{{ true }}">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M4 30c8 0 14-6 16-12h24c2 6 8 12 16 12"></path><path d="M20 18c-1-5-5-8-10-8M44 18c1-5 5-8 10-8"></path><path d="M8 34h48M14 34v22M50 34v22M6 56h52M27 56V44h10v12"></path></svg>
+          </sc-if>
+          <sc-if value="{{ lv.iDrum }}" hint-placeholder-val="{{ false }}">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="22" rx="20" ry="7"></ellipse><path d="M12 22v20c0 4 9 7 20 7s20-3 20-7V22"></path><path d="M20 28v19M44 28v19"></path><path d="M42 10l12-8M22 10L10 2"></path></svg>
+          </sc-if>
+          <sc-if value="{{ lv.iMask }}" hint-placeholder-val="{{ false }}">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 12c8-4 28-4 36 0 2 16-3 32-18 40C17 44 12 28 14 12z"></path><path d="M21 25c3-3 7-3 9 0M34 25c2-3 6-3 9 0"></path><path d="M27 39c3 2 7 2 10 0"></path><path d="M32 14v7"></path></svg>
+          </sc-if>
+          <sc-if value="{{ lv.iBoat }}" hint-placeholder-val="{{ false }}">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M6 38h52l-9 12H15z"></path><path d="M30 38V8"></path><path d="M30 10l16 22H30"></path><path d="M6 58c5-3 9 3 14 0s9 3 14 0 9 3 14 0 9 3 12 0"></path></svg>
+          </sc-if>
+          <sc-if value="{{ lv.iDoor }}" hint-placeholder-val="{{ false }}">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 58V8h40v50"></path><path d="M32 8v50"></path><path d="M6 58h52"></path><path style="stroke-width: 4.5;" d="M19 16h0M25 16h0M39 16h0M45 16h0M19 24h0M25 24h0M39 24h0M45 24h0M19 32h0M25 32h0M39 32h0M45 32h0M19 40h0M25 40h0M39 40h0M45 40h0"></path></svg>
+          </sc-if>
+          <sc-if value="{{ lv.iBoard }}" hint-placeholder-val="{{ false }}">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="8" width="48" height="32" rx="2"></rect><path d="M16 18h32M16 25h24M16 32h28"></path><path d="M18 40v18M46 40v18"></path></svg>
+          </sc-if>
+          <sc-if value="{{ lv.iWindow }}" hint-placeholder-val="{{ false }}">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="12" y="8" width="40" height="48" rx="2"></rect><path d="M32 8v48M12 32h40"></path><path d="M17 14h10v12H17zM37 38h10v12H37z"></path></svg>
+          </sc-if>
+        </span>
+        <span class="lv-main">
+          <span class="lv-top">
+            <span class="lv-no">{{ lv.no }}</span>
+            <span class="lv-flags">
+              <sc-if value="{{ lv.hasBonus }}" hint-placeholder-val="{{ false }}"><svg class="star {{ lv.starCls }}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg></sc-if>
+              <sc-if value="{{ lv.isTodo }}" hint-placeholder-val="{{ true }}"><span class="tag tag-todo">未完成</span></sc-if>
+              <sc-if value="{{ lv.isDoing }}" hint-placeholder-val="{{ false }}"><span class="tag tag-doing">進行中</span></sc-if>
+              <sc-if value="{{ lv.isDone }}" hint-placeholder-val="{{ false }}"><span class="tag tag-done"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>已完成</span></sc-if>
+            </span>
+          </span>
+          <span class="lv-place">{{ lv.place }}</span>
+          <span class="lv-task">{{ lv.task }}</span>
+        </span>
+        <svg class="ico lv-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </sc-for>
+    <h2 class="h2" style="font-size: 20px; line-height: 28px; margin-top: 8px;">NPC 任務</h2>
+    <p class="small">題目由 NPC 在現場口頭說明，沒有提示。七關和三個 NPC 任務都完成，才算全破。</p>
+    <sc-for list="{{ npcs }}" as="n" hint-placeholder-count="3">
+      <button class="lv lv-sm {{ n.cls }}" type="button" aria-label="{{ n.aria }}">
+        <span class="lv-img npc-letter" aria-hidden="true">{{ n.key }}</span>
+        <span class="lv-main">
+          <span class="lv-top">
+            <span class="lv-no">NPC {{ n.key }}</span>
+            <span class="lv-flags">
+              <sc-if value="{{ n.isTodo }}" hint-placeholder-val="{{ true }}"><span class="tag tag-todo">未完成</span></sc-if>
+              <sc-if value="{{ n.isDoing }}" hint-placeholder-val="{{ false }}"><span class="tag tag-doing">進行中</span></sc-if>
+              <sc-if value="{{ n.isDone }}" hint-placeholder-val="{{ false }}"><span class="tag tag-done"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>已完成</span></sc-if>
+            </span>
+          </span>
+          <span class="lv-place">{{ n.name }}</span>
+          <span class="lv-task">{{ n.who }}</span>
+        </span>
+        <svg class="ico lv-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </sc-for>
+    <sc-if value="{{ notAll }}" hint-placeholder-val="{{ true }}">
+      <p class="small" style="display: flex; gap: 8px; align-items: flex-start; margin-top: 4px;">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="margin-top: 1px;"><path d="M12 3l10 17H2z"></path><path d="M12 10v4"></path><path d="M12 17.2v.3"></path></svg>
+        過馬路請牽好小朋友。在店家前拍照不用進店，也請不要打擾營業。
+      </p>
+    </sc-if>
+  </div>
+  <sc-if value="{{ all }}" hint-placeholder-val="{{ false }}">
+    <div class="actions">
+      <button class="btn btn-primary" type="button">查看完成摘要
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+      </button>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"done":{"editor":"int","default":0,"min":0,"max":7,"section":"狀態"},"npcDone":{"editor":"text","default":"","section":"狀態"},"npcDoing":{"editor":"text","default":"","section":"狀態"},"frameH":{"editor":"int","default":1880,"min":844,"max":2400,"section":"版面"},"$preview":{"width":390,"height":1880}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var p = this.props;
+    var num = function (v, d) {
+      if (v === undefined || v === null || v === '') return d;
+      var n = Number(v);
+      return isNaN(n) ? d : n;
+    };
+    var letters = function (v) {
+      if (v === undefined || v === null || v === '') return [];
+      return String(v).toUpperCase().split(',').map(function (s) { return s.trim(); }).filter(function (s) { return s !== ''; });
+    };
+    var done = Math.max(0, Math.min(7, num(p.done, 0)));
+    var base = [
+      { no: '第一關', place: '慈祐宮', task: '找到守護神', icon: 'gate', bonus: false },
+      { no: '第二關', place: '五間老店', task: '新莊廟街的味道與聲音', icon: 'drum', bonus: false },
+      { no: '第三關', place: '戲館巷', task: '找到戲曲角色', icon: 'mask', bonus: false },
+      { no: '第四關', place: '米市巷', task: '壁畫裡的港口', icon: 'boat', bonus: true },
+      { no: '第五關', place: '武聖廟', task: '不用門神的大門', icon: 'door', bonus: false },
+      { no: '第六關', place: '廣福宮', task: '看介紹欄找答案', icon: 'board', bonus: false },
+      { no: '第七關', place: '潮江寺', task: '一棟建築裡的兩種信仰', icon: 'window', bonus: false }
+    ];
+    var npcBase = [
+      { key: 'A', name: '安予', who: '搬運碼頭工人的女兒' },
+      { key: 'B', name: 'goat、luca', who: '外地來訪的迷路遊客' },
+      { key: 'C', name: '怡均', who: '回來跟媽祖娘娘報喜還願' }
+    ];
+    var label = { todo: '未完成', doing: '進行中', done: '已完成' };
+    var stars = 0;
+    var levels = base.map(function (lv, i) {
+      var s = i < done ? 'done' : ((i === done && done > 0) ? 'doing' : 'todo');
+      var starOn = lv.bonus && s === 'done';
+      if (starOn) stars += 1;
+      return {
+        no: lv.no,
+        place: lv.place,
+        task: lv.task,
+        cls: s === 'doing' ? 'is-doing' : (s === 'done' ? 'is-done' : ''),
+        isTodo: s === 'todo',
+        isDoing: s === 'doing',
+        isDone: s === 'done',
+        hasBonus: lv.bonus,
+        starCls: starOn ? '' : 'is-empty',
+        iGate: lv.icon === 'gate',
+        iDrum: lv.icon === 'drum',
+        iMask: lv.icon === 'mask',
+        iBoat: lv.icon === 'boat',
+        iDoor: lv.icon === 'door',
+        iBoard: lv.icon === 'board',
+        iWindow: lv.icon === 'window',
+        aria: lv.no + '，' + lv.place + '，' + lv.task + (lv.bonus ? '，有加分題' : '') + '，' + label[s]
+      };
+    });
+    var dots = base.map(function (lv, i) {
+      return { done: i < done, cls: i < done ? 'is-done' : '' };
+    });
+    var npcDone = letters(p.npcDone);
+    var npcDoing = letters(p.npcDoing);
+    var npcs = npcBase.map(function (n) {
+      var s = npcDone.indexOf(n.key) >= 0 ? 'done' : (npcDoing.indexOf(n.key) >= 0 ? 'doing' : 'todo');
+      return {
+        key: n.key,
+        name: n.name,
+        who: n.who,
+        cls: s === 'doing' ? 'is-doing' : (s === 'done' ? 'is-done' : ''),
+        isTodo: s === 'todo',
+        isDoing: s === 'doing',
+        isDone: s === 'done',
+        aria: 'NPC ' + n.key + '，' + n.name + '，' + n.who + '，' + label[s]
+      };
+    });
+    var npcCount = npcs.filter(function (n) { return n.isDone; }).length;
+    var levelsAll = done >= 7;
+    var all = levelsAll && npcCount >= npcBase.length;
+    return {
+      frameH: num(p.frameH, 1880),
+      levels: levels,
+      dots: dots,
+      doneCount: done,
+      stars: stars,
+      npcs: npcs,
+      npcDots: npcs.map(function (n) { return { key: n.key, cls: n.isDone ? 'is-done' : '' }; }),
+      npcCount: npcCount,
+      npcLeft: npcBase.length - npcCount,
+      levelsOnly: levelsAll && !all,
+      all: all,
+      notAll: !all
+    };
+  }
+}
+</script>
+</body>
+</html>

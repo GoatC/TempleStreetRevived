@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>親子場 完成摘要</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="screen" style="height: {{ frameH }}px;">
+  <div class="content" style="gap: 20px; padding-top: 32px;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+      <div class="seal" style="width: 128px; height: 128px;" role="img" aria-label="全破">
+        <div class="seal-ring" style="width: 106px; height: 106px; font-size: 34px; line-height: 40px;">全破</div>
+      </div>
+      <p class="label">妙妙一家人</p>
+      <h1 class="h1">新莊廟街任務完成！</h1>
+    </div>
+    <div class="passcode">
+      <p class="passcode-label">通關碼</p>
+      <p class="passcode-code">4827</p>
+      <p class="passcode-note">請把這個畫面拿給工作人員看</p>
+    </div>
+    <div class="panel" style="flex-direction: row; align-items: center; gap: 14px; padding: 14px 16px;">
+      <svg class="star star-lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>
+      <div style="display: flex; flex-direction: column;">
+        <p class="label">加分星星</p>
+        <p style="margin: 0; font-size: 26px; line-height: 34px; font-weight: 700;">{{ stars }} <span style="font-size: 18px;">／ {{ starMax }} 顆</span></p>
+      </div>
+      <p class="small" style="margin-left: auto; max-width: 150px;">答對加分題得到星星，不影響過關。</p>
+    </div>
+    <section style="display: flex; flex-direction: column; gap: 4px;">
+      <h2 class="h2">七關成果</h2>
+      <div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="7">
+          <div class="res-row">
+            <span class="num">{{ r.n }}</span>
+            <span class="res-place">{{ r.place }}</span>
+            <sc-if value="{{ r.isSelf }}" hint-placeholder-val="{{ true }}"><span class="tag tag-res"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>自行解出</span></sc-if>
+            <sc-if value="{{ r.isReveal }}" hint-placeholder-val="{{ false }}"><span class="tag tag-res"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12c3-6 17-6 20 0-3 6-17 6-20 0z"></path><circle cx="12" cy="12" r="3"></circle></svg>揭曉過關</span></sc-if>
+            <span class="res-star"><sc-if value="{{ r.bonus }}" hint-placeholder-val="{{ false }}"><svg class="star {{ r.starCls }}" viewBox="0 0 24 24" role="img" aria-label="{{ r.starAria }}"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg></sc-if></span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+    <section style="display: flex; flex-direction: column; gap: 4px;">
+      <h2 class="h2">NPC 任務</h2>
+      <div>
+        <sc-for list="{{ npcRows }}" as="r" hint-placeholder-count="3">
+          <div class="res-row">
+            <span class="num npc-mini">{{ r.key }}</span>
+            <span class="res-place">{{ r.name }}</span>
+            <span class="tag tag-res"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>已完成</span>
+            <span class="res-star"></span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+  <div class="actions">
+    <button class="btn btn-primary" type="button">填寫遊戲回饋</button>
+    <button class="btn btn-secondary" type="button">完成遊戲</button>
+    <button class="btn btn-text" type="button" style="align-self: center;">重新開始</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"frameH":{"editor":"int","default":1500,"min":844,"max":2400,"section":"版面"},"$preview":{"width":390,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var num = function (v, d) {
+      if (v === undefined || v === null || v === '') return d;
+      var n = Number(v);
+      return isNaN(n) ? d : n;
+    };
+    var data = [
+      { n: 1, place: '慈祐宮', res: 'self', bonus: false, star: false },
+      { n: 2, place: '五間老店', res: 'reveal', bonus: false, star: false },
+      { n: 3, place: '戲館巷', res: 'self', bonus: false, star: false },
+      { n: 4, place: '米市巷', res: 'self', bonus: true, star: true },
+      { n: 5, place: '武聖廟', res: 'self', bonus: false, star: false },
+      { n: 6, place: '廣福宮', res: 'reveal', bonus: false, star: false },
+      { n: 7, place: '潮江寺', res: 'self', bonus: false, star: false }
+    ];
+    var npcs = [
+      { key: 'A', name: '安予' },
+      { key: 'B', name: 'goat、luca' },
+      { key: 'C', name: '怡均' }
+    ];
+    var stars = data.filter(function (r) { return r.star; }).length;
+    var starMax = data.filter(function (r) { return r.bonus; }).length;
+    return {
+      frameH: num(this.props.frameH, 1500),
+      stars: stars,
+      starMax: starMax,
+      rows: data.map(function (r) {
+        return {
+          n: r.n,
+          place: r.place,
+          isSelf: r.res === 'self',
+          isReveal: r.res === 'reveal',
+          bonus: r.bonus,
+          starCls: r.star ? '' : 'is-empty',
+          starAria: r.star ? '加分題答對' : '加分題未完成'
+        };
+      }),
+      npcRows: npcs
+    };
+  }
+}
+</script>
+</body>
+</html>

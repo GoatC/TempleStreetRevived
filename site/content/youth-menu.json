@@ -1,0 +1,66 @@
+{
+  "_source": "design/T06Menu.dc.html → base / npcBase — 青年場關卡選單卡片",
+  "data": {
+    "levels": [
+      {
+        "n": 1,
+        "no": "第一關",
+        "place": "慈祐宮",
+        "task": "被封閉的門",
+        "icon": "staff"
+      },
+      {
+        "n": 2,
+        "no": "第二關",
+        "place": "五間老店",
+        "task": "五間老店的座標",
+        "icon": "drum"
+      },
+      {
+        "n": 3,
+        "no": "第三關",
+        "place": "戲館巷",
+        "task": "失序的戲班",
+        "icon": "mask"
+      },
+      {
+        "n": 4,
+        "no": "第四關",
+        "place": "米市巷",
+        "task": "牆上的舊帳本",
+        "icon": "boat"
+      },
+      {
+        "n": 5,
+        "no": "第五關",
+        "place": "武聖廟",
+        "task": "山中軍令",
+        "icon": "door"
+      },
+      {
+        "n": 6,
+        "no": "第六關",
+        "place": "廣福宮",
+        "task": "古蹟修復師",
+        "icon": "gate"
+      }
+    ],
+    "npcs": [
+      {
+        "key": "A",
+        "name": "安予",
+        "who": "搬運碼頭工人的女兒"
+      },
+      {
+        "key": "B",
+        "name": "goat、luca",
+        "who": "外地來訪的迷路遊客"
+      },
+      {
+        "key": "C",
+        "name": "怡均",
+        "who": "回來跟媽祖娘娘報喜還願"
+      }
+    ]
+  }
+}

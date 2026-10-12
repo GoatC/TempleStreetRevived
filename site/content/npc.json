@@ -1,0 +1,102 @@
+{
+  "_source": "design/FNpc.dc.html → npcs() — 兩場共用的 3 個 NPC 任務",
+  "data": [
+    {
+      "key": "A",
+      "name": "安予",
+      "role": "安予是搬運碼頭工人的女兒。她會出現在武聖廟、潮江寺，或米市街與米市巷附近。",
+      "tasks": [
+        {
+          "type": "text",
+          "title": "問答一",
+          "label": "答案",
+          "answer": [
+            "潮江寺",
+            "草厝間仔"
+          ]
+        },
+        {
+          "type": "text",
+          "title": "問答二",
+          "label": "答案",
+          "answer": [
+            "米市街"
+          ]
+        },
+        {
+          "type": "text",
+          "title": "問答三",
+          "label": "答案",
+          "answer": [
+            "因為面對米市街，他是商業神"
+          ]
+        },
+        {
+          "type": "multi",
+          "title": "問答四",
+          "fields": [
+            "樁頭",
+            "樁尾"
+          ],
+          "answer": [
+            [
+              "福德寺"
+            ],
+            [
+              "潮江寺"
+            ]
+          ]
+        },
+        {
+          "type": "photo",
+          "title": "合照",
+          "prompt": "完成問答後，跟安予拍一張合照。"
+        }
+      ]
+    },
+    {
+      "key": "B",
+      "name": "goat、luca",
+      "role": "goat、luca 是外地來訪的迷路遊客。玩家要帶他們去找老順香。",
+      "tasks": [
+        {
+          "type": "arrive",
+          "title": "帶路",
+          "prompt": "帶 goat、luca 前往老順香，抵達後按「我們到了」。",
+          "doneText": "已抵達老順香"
+        },
+        {
+          "type": "photo",
+          "title": "合照",
+          "prompt": "在老順香前面，跟 goat、luca 拍一張合照。"
+        },
+        {
+          "type": "text",
+          "title": "答案",
+          "answer": [
+            "金牌鳳梨酥在老順香"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "C",
+      "name": "怡均",
+      "role": "怡均小時候常跟阿嬤來拜開山媽祖，今天特別買了供品回來跟媽祖娘娘報喜還願；出沒在慈祐宮附近。",
+      "tasks": [
+        {
+          "type": "photo",
+          "title": "合照",
+          "prompt": "在慈祐宮前，跟怡均一起雙手合十拜拜並拍下打卡合照。"
+        },
+        {
+          "type": "text",
+          "title": "答案",
+          "answer": [
+            "新莊第一街的守護神是慈祐宮開山媽祖"
+          ]
+        }
+      ]
+    }
+  ]
+}

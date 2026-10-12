@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>親子場 廟街地圖</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="screen" style="height: 1360px;">
+  <div class="topbar">
+    <button class="btn btn-back" type="button">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>關卡選單
+    </button>
+    <div class="topbar-right">
+      <span class="topbar-tag">廟街地圖</span>
+      <span class="ver-tag is-family">親子場</span>
+    </div>
+  </div>
+  <div class="content" style="gap: 12px; overflow: visible;">
+    <p class="route-note"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path></svg>東在上、北在左；沿新莊路的距離依比例</p>
+    <div style="flex: none; width: 350px; height: 640px;">
+      <svg class="fmap" viewBox="0 0 700 1280" width="350" height="640" role="img" aria-label="廟街地圖，東在上、北在左。沿新莊路由上往下依序是：翁裕美商行、6 廣福宮、金合和糕餅、1 慈祐宮與斜對面的集合點林協記文化館、億德堂蔘藥行、3 戲館巷、4 米市巷與巷底的 7 潮江寺、5 武聖廟、日日用打鐵舖；响仁和在中正路上。">
+        <rect class="bg" x="0" y="0" width="700" height="1280"></rect>
+
+        <rect class="street" x="94" y="148" width="20" height="244"></rect>
+        <path class="street-edge" d="M92.5 148V392M115.5 148V392"></path>
+        <path class="street-dash" d="M104 104V144M104 396V436"></path>
+
+        <rect class="street" x="366" y="695" width="81" height="21"></rect>
+        <path class="lane-edge" d="M366 694H447M366 717H447"></path>
+        <rect class="street" x="366" y="801" width="232" height="21"></rect>
+        <path class="lane-edge" d="M366 800H596.5M366 823H596.5"></path>
+
+        <rect class="street" x="598" y="776" width="20" height="264"></rect>
+        <path class="street-edge" d="M596.5 776V800M596.5 823V1040M619.5 776V1040"></path>
+        <path class="street-dash" d="M608 732V772M608 1044V1084"></path>
+
+        <path class="road-dash" d="M316.5 28V68M362.5 28V68M316.5 1256V1280M362.5 1256V1280"></path>
+        <rect class="road" x="316" y="72" width="48" height="1180"></rect>
+
+        <rect class="knock" x="552" y="866" width="112" height="42"></rect>
+
+        <rect class="tagbox" x="16.5" y="16.5" width="127" height="47" rx="10"></rect>
+        <path class="shaft" d="M628 60H586"></path>
+        <path class="solid" d="M558 60L592 45L585 60L592 75Z"></path>
+        <path class="bar" d="M624 1096.5H648M636 1096.5V1227.5M624 1227.5H648"></path>
+
+        <circle class="pin" cx="280" cy="207" r="27.5"></circle>
+        <circle class="pin" cx="280" cy="566" r="27.5"></circle>
+        <circle class="pin" cx="472" cy="706" r="27.5"></circle>
+        <circle class="pin" cx="472" cy="812" r="27.5"></circle>
+        <circle class="pin" cx="608" cy="824" r="27.5"></circle>
+        <circle class="pin" cx="280" cy="943" r="27.5"></circle>
+        <rect class="pin" x="258.5" y="118.5" width="43" height="43" rx="10"></rect>
+        <rect class="pin" x="82.5" y="237.5" width="43" height="43" rx="10"></rect>
+        <rect class="pin" x="378.5" y="409.5" width="43" height="43" rx="10"></rect>
+        <rect class="pin" x="378.5" y="615.5" width="43" height="43" rx="10"></rect>
+        <rect class="pin" x="258.5" y="1170.5" width="43" height="43" rx="10"></rect>
+        <rect class="meet" x="372" y="555" width="128" height="51" rx="8"></rect>
+
+        <text class="mid" x="80" y="51">示意圖</text>
+        <text class="mid" x="660" y="73">北</text>
+
+        <text class="end" x="244" y="151">翁裕美</text>
+        <text class="end big" x="240" y="220">廣福宮</text>
+        <text x="141" y="271">响仁和</text>
+        <text x="438" y="442">金合和</text>
+        <text class="end big" x="240" y="579">慈祐宮</text>
+        <text class="mid light" x="436" y="592">集合點</text>
+        <text x="514" y="592">林協記</text>
+        <text x="438" y="648">億德堂</text>
+        <text class="big" x="514" y="718">戲館巷</text>
+        <text class="mid big" x="472" y="884">米市巷</text>
+        <text class="mid big" x="608" y="900">潮江寺</text>
+        <text class="end big" x="240" y="955">武聖廟</text>
+        <text class="end" x="244" y="1204">日日用</text>
+
+        <text class="mid" x="52" y="300">中</text>
+        <text class="mid" x="52" y="336">正</text>
+        <text class="mid" x="52" y="372">路</text>
+        <text class="mid" x="340" y="301">新</text>
+        <text class="mid" x="340" y="337">莊</text>
+        <text class="mid" x="340" y="373">路</text>
+        <text class="mid" x="340" y="1057">新</text>
+        <text class="mid" x="340" y="1093">莊</text>
+        <text class="mid" x="340" y="1129">路</text>
+        <text class="mid" x="664" y="951">碧</text>
+        <text class="mid" x="664" y="987">江</text>
+        <text class="mid" x="664" y="1023">街</text>
+
+        <text class="end reg" x="611" y="1156">沿街</text>
+        <text class="end reg" x="611" y="1192">100 公尺</text>
+
+        <text class="mid fig" x="280" y="218">6</text>
+        <text class="mid fig" x="280" y="577">1</text>
+        <text class="mid fig" x="472" y="717">3</text>
+        <text class="mid fig" x="472" y="823">4</text>
+        <text class="mid fig" x="608" y="835">7</text>
+        <text class="mid fig" x="280" y="954">5</text>
+        <text class="mid fig-sq" x="280" y="151">2</text>
+        <text class="mid fig-sq" x="104" y="270">2</text>
+        <text class="mid fig-sq" x="400" y="442">2</text>
+        <text class="mid fig-sq" x="400" y="648">2</text>
+        <text class="mid fig-sq" x="280" y="1203">2</text>
+      </svg>
+    </div>
+    <p class="route-note"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"></path></svg>可以用兩指放大地圖</p>
+    <h2 class="h2" style="font-size: 20px; line-height: 28px; margin-top: 4px;">圖例</h2>
+    <ul class="legend2">
+      <li class="lg-item"><span class="lg-mark lg-pin">1</span><span><b>慈祐宮</b><span class="lg-addr">（新莊路 218 號）</span></span></li>
+      <li class="lg-item"><span class="lg-mark lg-sq">2</span><span><b>五間老店</b><span class="lg-addr">（方形標記）</span>
+        <ul class="lg-sub">
+          <li>翁裕美商行（新莊路 128 號）</li>
+          <li>金合和糕餅（新莊路 269 號）</li>
+          <li>億德堂蔘藥行（新莊路 325 號）</li>
+          <li>日日用打鐵舖（新莊路 414 號）</li>
+          <li>响仁和（中正路 173 號）</li>
+        </ul>
+      </span></li>
+      <li class="lg-item"><span class="lg-mark lg-pin">3</span><span><b>戲館巷</b><span class="lg-addr">（新莊路 359 巷）</span></span></li>
+      <li class="lg-item"><span class="lg-mark lg-pin">4</span><span><b>米市巷</b><span class="lg-addr">（新莊路 387 巷）</span></span></li>
+      <li class="lg-item"><span class="lg-mark lg-pin">5</span><span><b>武聖廟</b><span class="lg-addr">（新莊路 340 號）</span></span></li>
+      <li class="lg-item"><span class="lg-mark lg-pin">6</span><span><b>廣福宮</b><span class="lg-addr">（新莊路 150 號）</span></span></li>
+      <li class="lg-item"><span class="lg-mark lg-pin">7</span><span><b>潮江寺</b><span class="lg-addr">（碧江街 47 號，米市巷底）</span></span></li>
+      <li class="lg-item"><span class="lg-meet" aria-hidden="true"></span><span><b>集合點：林協記文化館</b><span class="lg-addr">（新莊路 317 號 2 樓，慈祐宮斜對面）</span></span></li>
+    </ul>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1360}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

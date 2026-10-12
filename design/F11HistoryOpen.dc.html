@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>親子場 歷史介紹（展開）</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="stage" style="height: 1660px;">
+  <dc-import name="F11History" level="{{ lv }}" expanded="{{ yes }}" frame-h="{{ h }}" hint-size="390px,1660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1660}}'>
+class Component extends DCLogic {
+  renderVals() { return { lv: 5, yes: true, h: 1660 }; }
+}
+</script>
+</body>
+</html>

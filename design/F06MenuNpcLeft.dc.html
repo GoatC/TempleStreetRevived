@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>親子場 關卡選單（七關完成、NPC 2/3）</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="stage" style="height: 1980px;">
+  <dc-import name="F06Menu" done="{{ seven }}" npc-done="A,C" npc-doing="B" frame-h="{{ h }}" hint-size="390px,1980px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1980}}'>
+class Component extends DCLogic {
+  renderVals() { return { seven: 7, h: 1980 }; }
+}
+</script>
+</body>
+</html>

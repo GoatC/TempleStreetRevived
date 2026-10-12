@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>T08 第一關：生肖沖煞表附圖題</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="stage" style="height: 1340px;">
+  <dc-import name="T08Level" level="1" done-at="0,1" fill-a="羊" fill-b="未" frame-h="{{ h }}" hint-size="390px,1340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1340}}'>
+class Component extends DCLogic {
+  renderVals() { return { h: 1340 }; }
+}
+</script>
+</body>
+</html>

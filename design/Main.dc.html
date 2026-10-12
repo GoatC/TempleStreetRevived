@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>T02 開始頁</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#603514}a:hover{color:#a42006}
+</style>
+</helmet>
+<div class="screen">
+  <div class="content" style="padding: 40px 24px 24px; align-items: center; text-align: center; gap: 20px;">
+    <img src="/_blob/a9caf96e60f7e7300f4a7fd20a0e970f" alt="新莊妙妙廟 Temple Street Revived 標誌" style="width: 184px; height: auto; display: block;">
+    <p class="caps" style="font-weight: 700; color: #a42006;">新莊廟街・實境解謎</p>
+    <h1 class="h1" style="font-size: 34px; line-height: 44px;">妙妙貓的廟街委託</h1>
+    <p class="p" style="max-width: 320px;">{{ lead }}<br>用眼睛在老街裡找出答案。</p>
+    <p class="small" style="display: flex; align-items: center; gap: 8px;">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><circle cx="16" cy="8" r="3"></circle><path d="M3 20c0-3 2.5-5 5-5s5 2 5 5"></path><path d="M11 20c0-3 2.5-5 5-5s5 2 5 5"></path></svg>
+      建議 2～4 人一組，共用一支手機
+    </p>
+  </div>
+  <div class="actions">
+    <sc-if value="{{ progress }}" hint-placeholder-val="{{ false }}">
+      <div class="panel" style="flex-direction: row; align-items: center; gap: 12px; padding: 12px 16px;">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>
+        <p class="small" style="text-align: left;"><b>{{ team }}</b>　{{ progressText }}</p>
+      </div>
+      <button class="btn btn-primary" type="button">繼續遊戲
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+      </button>
+      <button class="btn btn-secondary" type="button">開始探索</button>
+    </sc-if>
+    <sc-if value="{{ fresh }}" hint-placeholder-val="{{ true }}">
+      <button class="btn btn-primary" type="button">開始探索
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+      </button>
+    </sc-if>
+    <button class="btn btn-text" type="button" style="align-self: center;">遊戲說明</button>
+    <a class="btn btn-text" href="T00Entry.dc.html" style="align-self: center; font-size: 16px; font-weight: 400;">不是這個場次？回到場次選擇</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"edition":{"editor":"enum","options":["youth","family"],"default":"youth","section":"場次"},"progress":{"editor":"boolean","default":false,"section":"狀態"},"levelsDone":{"editor":"int","default":1,"min":0,"max":7,"section":"狀態"},"npcDone":{"editor":"int","default":0,"min":0,"max":3,"section":"狀態"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var p = this.props;
+    var num = function (v, d) {
+      if (v === undefined || v === null || v === '') return d;
+      var n = Number(v);
+      return isNaN(n) ? d : n;
+    };
+    var family = p.edition === 'family';
+    var progress = p.progress === true || p.progress === 'true';
+    var total = family ? 7 : 6;
+    var levels = Math.max(0, Math.min(total, num(p.levelsDone, 1)));
+    var npc = Math.max(0, Math.min(3, num(p.npcDone, 0)));
+    return {
+      progress: progress,
+      fresh: !progress,
+      lead: family ? '七個關卡、三個 NPC 任務，' : '六個關卡、三個 NPC 任務，',
+      team: family ? '妙妙一家人' : '廟口探險隊',
+      progressText: '關卡 ' + levels + '/' + total + '、NPC ' + npc + '/3'
+    };
+  }
+}
+</script>
+</body>
+</html>

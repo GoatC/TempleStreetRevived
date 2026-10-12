@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>T10 本關完成</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="screen">
+  <div class="topbar" style="justify-content: center; padding: 0 20px; position: relative;">
+    <span class="topbar-tag">{{ tag }}</span>
+    <span class="ver-tag is-youth" style="position: absolute; right: 16px; top: 18px;">青年場</span>
+  </div>
+  <div class="content" style="align-items: center; justify-content: center; text-align: center; gap: 20px; padding: 24px 24px;">
+    <div class="seal" role="img" aria-label="{{ sealAria }}">
+      <div class="seal-ring">{{ sealText }}</div>
+    </div>
+    <h1 class="h1">{{ heading }}</h1>
+    <div class="panel" style="width: 100%; align-items: center; padding: 20px 16px; gap: 4px;">
+      <p class="label">本關答案</p>
+      <sc-if value="{{ keyBig }}" hint-placeholder-val="{{ true }}"><p style="margin: 0; font-size: 34px; line-height: 44px; font-weight: 700; color: #a42006;">{{ key }}</p></sc-if>
+      <sc-if value="{{ keySmall }}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 22px; line-height: 32px; font-weight: 700; color: #a42006;">{{ key }}</p></sc-if>
+    </div>
+    <p class="p" style="max-width: 320px;">{{ message }}</p>
+  </div>
+  <div class="actions">
+    <button class="btn btn-primary" type="button">查看歷史補充
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"level":{"editor":"enum","options":["1","2","3","4","5","6"],"default":"1","section":"關卡"},"revealed":{"editor":"boolean","default":false,"section":"狀態"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var data = [
+      { no: '第一關', place: '慈祐宮', title: '被封閉的門', key: '門' },
+      { no: '第二關', place: '五間老店', title: '五間老店的座標', key: '15・11・3・6・8' },
+      { no: '第三關', place: '戲館巷', title: '失序的戲班', key: '掌中戲登場' },
+      { no: '第四關', place: '米市巷', title: '牆上的舊帳本', key: '米市興盛' },
+      { no: '第五關', place: '武聖廟', title: '山中軍令', key: '魚・祠・人・獅' },
+      { no: '第六關', place: '廣福宮', title: '古蹟修復師', key: '硬山式三川脊・全未上彩・觀音山石・三進三院落' }
+    ];
+    var n = Number(this.props.level);
+    if (isNaN(n) || n < 1 || n > data.length) n = 1;
+    var lv = data[n - 1];
+    var revealed = this.props.revealed === true || this.props.revealed === 'true';
+    var big = lv.key.length <= 6;
+    return {
+      tag: lv.no + '・' + lv.place,
+      key: lv.key,
+      keyBig: big,
+      keySmall: !big,
+      sealText: revealed ? '本關\n完成' : '解謎\n成功',
+      sealAria: revealed ? '本關完成' : '解謎成功',
+      heading: revealed ? '本關完成' : '本關解開了！',
+      message: revealed ? '這一關有揭曉答案，一樣算過關。一起來認識它背後的故事吧！' : '你們自己解開了「' + lv.title + '」，觀察得真仔細！'
+    };
+  }
+}
+</script>
+</body>
+</html>

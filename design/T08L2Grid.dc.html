@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>T08 第二關：五格數字（提示用完）</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="stage" style="height: 1420px;">
+  <dc-import name="T08Level" level="2" done-at="0,1" hint-used="2" fill-a="15" fill-b="11" frame-h="{{ h }}" hint-size="390px,1420px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1420}}'>
+class Component extends DCLogic {
+  renderVals() { return { h: 1420 }; }
+}
+</script>
+</body>
+</html>

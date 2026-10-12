@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>T05 對話劇情</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="screen">
+  <div class="topbar" style="border-bottom: 0; padding-left: 20px;">
+    <span class="topbar-tag">序章　{{ step }}</span>
+    <div class="topbar-right">
+      <button class="btn btn-text" type="button" style="text-decoration: none; gap: 4px;">跳過劇情
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6l7 6-7 6"></path><path d="M13 6l7 6-7 6"></path></svg>
+      </button>
+      <span class="ver-tag is-youth">青年場</span>
+    </div>
+  </div>
+  <div class="ph" style="flex: 1 1 auto; min-height: 0; position: relative; justify-content: flex-end; padding-bottom: 72px;">
+    <svg viewBox="0 0 320 120" aria-hidden="true" style="position: absolute; left: 35px; top: 40px; width: 320px; height: 120px; stroke-width: 2.4;">
+      <path d="M10 70 C40 70 60 52 70 34 L250 34 C260 52 280 70 310 70"></path>
+      <path d="M18 70 H302"></path>
+      <path d="M70 34 C66 24 58 18 48 18"></path>
+      <path d="M250 34 C254 24 262 18 272 18"></path>
+      <path d="M40 70 V120 M280 70 V120"></path>
+      <path d="M130 34 V20 H190 V34"></path>
+    </svg>
+    <div style="width: 180px; height: 240px; border: 2px dashed #603514; border-radius: 4px; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px;">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 26 L16 12 L26 20"></path><path d="M44 26 L48 12 L38 20"></path><path d="M14 40 C14 28 22 20 32 20 C42 20 50 28 50 40 C50 50 42 56 32 56 C22 56 14 50 14 40 Z"></path><path d="M26 38v2 M38 38v2"></path><path d="M29 46 C31 48 33 48 35 46"></path></svg>
+      <span style="font-weight: 700;">角色插畫</span>
+      <span>妙妙貓（依段落換表情）</span>
+    </div>
+  </div>
+  <div style="flex: none; padding: 0 20px 28px; margin-top: -40px; display: flex; flex-direction: column; gap: 12px; position: relative;">
+    <sc-if value="{{ normal }}" hint-placeholder-val="{{ true }}">
+      <button class="dialog" type="button" aria-label="點擊繼續下一段">
+        <span class="speaker">妙妙貓</span>
+        <span class="dialog-text"><span class="mark">廟口探險隊</span>，歡迎來到新莊廟街！這條街上的廟，藏著很多大家沒注意過的小秘密。</span>
+        <span class="dialog-foot">
+          <span></span>
+          <span style="display: flex; align-items: center; gap: 4px;">點擊繼續
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+          </span>
+        </span>
+      </button>
+    </sc-if>
+    <sc-if value="{{ last }}" hint-placeholder-val="{{ false }}">
+      <div class="dialog" style="cursor: default;">
+        <span class="speaker">妙妙貓</span>
+        <p class="dialog-text">第一關請先到慈祐宮。解開之後，其他五關的順序由你們決定。找到答案，就回來告訴我吧！</p>
+      </div>
+      <button class="btn btn-primary" type="button">開始探索
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+      </button>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"last":{"editor":"boolean","default":false,"section":"狀態"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const last = this.props.last === true || this.props.last === 'true';
+    return { last: last, normal: !last, step: last ? '4 / 4' : '2 / 4' };
+  }
+}
+</script>
+</body>
+</html>

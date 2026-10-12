@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>關卡頁：五間老店 拍照＋文字題</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="stage" style="height: 1320px;">
+  <dc-import name="F07Level" level="{{ lv }}" done-at="0,1" open-at="{{ o }}" frame-h="{{ h }}" hint-size="390px,1320px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1320}}'>
+class Component extends DCLogic {
+  renderVals() { return { lv: 2, o: 2, h: 1320 }; }
+}
+</script>
+</body>
+</html>

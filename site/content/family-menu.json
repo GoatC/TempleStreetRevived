@@ -1,0 +1,73 @@
+{
+  "_source": "design/F06Menu.dc.html → base / npcBase — 親子場關卡選單卡片",
+  "data": {
+    "levels": [
+      {
+        "no": "第一關",
+        "place": "慈祐宮",
+        "task": "找到守護神",
+        "icon": "gate",
+        "bonus": false
+      },
+      {
+        "no": "第二關",
+        "place": "五間老店",
+        "task": "新莊廟街的味道與聲音",
+        "icon": "drum",
+        "bonus": false
+      },
+      {
+        "no": "第三關",
+        "place": "戲館巷",
+        "task": "找到戲曲角色",
+        "icon": "mask",
+        "bonus": false
+      },
+      {
+        "no": "第四關",
+        "place": "米市巷",
+        "task": "壁畫裡的港口",
+        "icon": "boat",
+        "bonus": true
+      },
+      {
+        "no": "第五關",
+        "place": "武聖廟",
+        "task": "不用門神的大門",
+        "icon": "door",
+        "bonus": false
+      },
+      {
+        "no": "第六關",
+        "place": "廣福宮",
+        "task": "看介紹欄找答案",
+        "icon": "board",
+        "bonus": false
+      },
+      {
+        "no": "第七關",
+        "place": "潮江寺",
+        "task": "一棟建築裡的兩種信仰",
+        "icon": "window",
+        "bonus": false
+      }
+    ],
+    "npcs": [
+      {
+        "key": "A",
+        "name": "安予",
+        "who": "搬運碼頭工人的女兒"
+      },
+      {
+        "key": "B",
+        "name": "goat、luca",
+        "who": "外地來訪的迷路遊客"
+      },
+      {
+        "key": "C",
+        "name": "怡均",
+        "who": "回來跟媽祖娘娘報喜還願"
+      }
+    ]
+  }
+}

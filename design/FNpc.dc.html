@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>親子場 NPC 任務頁</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="screen" style="height: {{ frameH }}px;">
+  <div class="topbar">
+    <button class="btn btn-back" type="button">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>關卡選單
+    </button>
+    <div class="topbar-right">
+      <span class="topbar-tag">NPC 任務</span>
+      <span class="ver-tag {{ verCls }}">{{ verLabel }}</span>
+    </div>
+  </div>
+  <div class="content" style="gap: 10px;">
+    <h1 class="h1 npc-head"><span class="npc-badge">{{ letter }}</span><span>{{ name }}</span></h1>
+    <div class="panel" style="gap: 4px;">
+      <p class="kicker">角色設定</p>
+      <p class="p">{{ role }}</p>
+    </div>
+    <div class="npc-list-head">
+      <h2 class="h2" style="font-size: 20px; line-height: 28px;">任務</h2>
+      <p class="label">已完成 {{ doneCount }}/{{ total }}</p>
+    </div>
+    <p class="route-note"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H10l-6 4z"></path><path d="M8 9.5h8M8 12.5h5"></path></svg>題目由 NPC 在現場口頭說明，順序不限。</p>
+
+    <sc-for list="{{ items }}" as="t" hint-placeholder-count="5">
+
+      <sc-if value="{{ t.isDone }}" hint-placeholder-val="{{ false }}">
+        <div class="task-row">
+          <span class="task-check"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span>
+          <span class="task-row-main">
+            <span class="task-row-title">{{ t.rowTitle }}</span>
+            <span class="task-row-sub">{{ t.summary }}</span>
+          </span>
+          <span class="tag tag-res">{{ t.resLabel }}</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ t.isClosed }}" hint-placeholder-val="{{ true }}">
+        <button class="task-toggle" type="button" onClick="{{ t.toggle }}" aria-expanded="false" aria-label="{{ t.toggleAria }}">
+          <span class="num">{{ t.n }}</span>
+          <span class="task-row-main">
+            <span class="task-row-title">{{ t.title }}</span>
+            <span class="task-row-sub">{{ t.typeLabel }}</span>
+          </span>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+      </sc-if>
+
+      <sc-if value="{{ t.isOpen }}" hint-placeholder-val="{{ false }}">
+        <div class="task">
+          <button class="task-head-btn" type="button" onClick="{{ t.toggle }}" aria-expanded="true" aria-label="收合任務 {{ t.n }}">
+            <span class="num is-on">{{ t.n }}</span>
+            <span class="task-row-main">
+              <span class="task-type">任務 {{ t.n }}・{{ t.typeLabel }}</span>
+              <span class="task-title">{{ t.title }}</span>
+            </span>
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+          </button>
+
+          <sc-if value="{{ t.hasPrompt }}" hint-placeholder-val="{{ false }}">
+            <p class="task-body">{{ t.prompt }}</p>
+          </sc-if>
+
+          <sc-if value="{{ t.isPhoto }}" hint-placeholder-val="{{ false }}">
+            <div class="ph" style="height: 140px;">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 20h10l5-7h18l5 7h10v32H8z"></path><circle cx="32" cy="36" r="10"></circle></svg>
+              <span>拍照範例圖（選填）</span>
+            </div>
+            <p class="task-note">照片存在你們自己的手機裡，不需要上傳。</p>
+          </sc-if>
+
+          <sc-if value="{{ t.isMulti }}" hint-placeholder-val="{{ false }}">
+            <div class="mfields">
+              <sc-for list="{{ t.fields }}" as="f" hint-placeholder-count="2">
+                <div class="field">
+                  <label class="field-label" for="{{ f.id }}">{{ f.label }}</label>
+                  <input id="{{ f.id }}" class="input {{ f.cls }}" type="text" value="{{ f.value }}" onChange="{{ f.change }}" placeholder="輸入答案">
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ t.isTextLabeled }}" hint-placeholder-val="{{ false }}">
+            <div class="field">
+              <label class="field-label" for="{{ t.textId }}">{{ t.label }}</label>
+              <input id="{{ t.textId }}" class="input {{ t.textCls }}" type="text" value="{{ t.textValue }}" onChange="{{ t.textChange }}" placeholder="輸入答案">
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ t.isTextBare }}" hint-placeholder-val="{{ false }}">
+            <input class="input {{ t.textCls }}" type="text" value="{{ t.textValue }}" onChange="{{ t.textChange }}" placeholder="輸入答案" aria-label="{{ t.title }}">
+          </sc-if>
+
+          <sc-if value="{{ t.hasError }}" hint-placeholder-val="{{ false }}">
+            <p class="err" role="alert"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 17H2z"></path><path d="M12 10v4"></path><path d="M12 17.2v.3"></path></svg>{{ t.errorText }}</p>
+          </sc-if>
+
+          <div class="task-actions">
+            <sc-if value="{{ t.isPhoto }}" hint-placeholder-val="{{ false }}">
+              <button class="btn btn-primary" type="button" onClick="{{ t.finish }}">
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3.5l2-3h5l2 3H20v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>我拍好了
+              </button>
+            </sc-if>
+            <sc-if value="{{ t.isArrive }}" hint-placeholder-val="{{ false }}">
+              <button class="btn btn-primary" type="button" onClick="{{ t.finish }}">
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-7-7-12a7 7 0 0 1 14 0c0 5-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>我們到了
+              </button>
+            </sc-if>
+            <sc-if value="{{ t.isAnswer }}" hint-placeholder-val="{{ false }}">
+              <button class="btn btn-primary" type="button" onClick="{{ t.submit }}">送出答案</button>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+    </sc-for>
+
+    <sc-if value="{{ allDone }}" hint-placeholder-val="{{ false }}">
+      <div class="pass-banner">
+        <div class="pass-head">
+          <span class="mini-seal"><span>完成</span></span>
+          <p class="p" style="font-weight: 700;">{{ doneLine }}</p>
+        </div>
+        <button class="btn btn-primary" type="button">回到關卡選單
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+        </button>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"npc":{"editor":"enum","options":["A","B","C"],"default":"A","section":"NPC"},"edition":{"editor":"enum","options":["family","youth"],"default":"family","section":"場次"},"openAt":{"editor":"int","default":-1,"min":-1,"max":4,"section":"狀態"},"doneAt":{"editor":"text","default":"","section":"狀態"},"showError":{"editor":"boolean","default":false,"section":"狀態"},"fillA":{"editor":null},"fillB":{"editor":null},"fillText":{"editor":null},"frameH":{"editor":"int","default":844,"min":844,"max":2000,"section":"版面"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  npcs() {
+    return [
+      {
+        key: 'A',
+        name: '安予',
+        role: '安予是搬運碼頭工人的女兒。她會出現在武聖廟、潮江寺，或米市街與米市巷附近。',
+        tasks: [
+          { type: 'text', title: '問答一', label: '答案', answer: ['潮江寺', '草厝間仔'] },
+          { type: 'text', title: '問答二', label: '答案', answer: ['米市街'] },
+          { type: 'text', title: '問答三', label: '答案', answer: ['因為面對米市街，他是商業神'] },
+          { type: 'multi', title: '問答四', fields: ['樁頭', '樁尾'], answer: [['福德寺'], ['潮江寺']] },
+          { type: 'photo', title: '合照', prompt: '完成問答後，跟安予拍一張合照。' }
+        ]
+      },
+      {
+        key: 'B',
+        name: 'goat、luca',
+        role: 'goat、luca 是外地來訪的迷路遊客。玩家要帶他們去找老順香。',
+        tasks: [
+          { type: 'arrive', title: '帶路', prompt: '帶 goat、luca 前往老順香，抵達後按「我們到了」。', doneText: '已抵達老順香' },
+          { type: 'photo', title: '合照', prompt: '在老順香前面，跟 goat、luca 拍一張合照。' },
+          { type: 'text', title: '答案', answer: ['金牌鳳梨酥在老順香'] }
+        ]
+      },
+      {
+        key: 'C',
+        name: '怡均',
+        role: '怡均小時候常跟阿嬤來拜開山媽祖，今天特別買了供品回來跟媽祖娘娘報喜還願；出沒在慈祐宮附近。',
+        tasks: [
+          { type: 'photo', title: '合照', prompt: '在慈祐宮前，跟怡均一起雙手合十拜拜並拍下打卡合照。' },
+          { type: 'text', title: '答案', answer: ['新莊第一街的守護神是慈祐宮開山媽祖'] }
+        ]
+      }
+    ];
+  }
+
+  num(v, d) {
+    if (v === undefined || v === null || v === '') return d;
+    var n = Number(v);
+    return isNaN(n) ? d : n;
+  }
+
+  flag(v) {
+    return v === true || v === 'true';
+  }
+
+  list(v) {
+    if (v === undefined || v === null || v === '') return [];
+    return String(v).split(',').map(function (s) { return Number(String(s).trim()); }).filter(function (n) { return !isNaN(n); });
+  }
+
+  blank() {
+    return { fields: ['', ''], text: '', error: '', bad: [false, false] };
+  }
+
+  pick(p) {
+    var all = this.npcs();
+    var k = String(p.npc === undefined || p.npc === null || p.npc === '' ? 'A' : p.npc).trim().toUpperCase();
+    var hit = all.filter(function (n) { return n.key === k; })[0];
+    return hit || all[0];
+  }
+
+  // 判定：一字不差，只忽略空白和標點符號
+  strip(x) {
+    return String(x === undefined || x === null ? '' : x).replace(/[\s​-‏!-\/:-@\[-\x60{-~¡§«¶·»¿‐-⁞、-〃〈-】〔-〟〰〽・︐-︙︰-﹫！-／：-＠［-｀｛-･]/g, '');
+  }
+
+  match(value, answers) {
+    var v = this.strip(value);
+    var list = answers || [];
+    if (!v) return null;
+    for (var i = 0; i < list.length; i++) {
+      if (this.strip(list[i]) === v) return list[i];
+    }
+    return null;
+  }
+
+  shown(t) {
+    if (t.type === 'photo') return '已拍合照';
+    if (t.type === 'arrive') return t.doneText || '已抵達';
+    if (t.type === 'multi') {
+      return (t.fields || []).map(function (f, k) { return f + ' ' + ((t.answer && t.answer[k] && t.answer[k][0]) || ''); }).join('・');
+    }
+    return (t.answer && t.answer[0]) || '';
+  }
+
+  propKey(p) {
+    return [p.npc, p.openAt, p.doneAt, p.fillA, p.fillB, p.fillText, p.showError].join('|');
+  }
+
+  initialState(p, key) {
+    var self = this;
+    var tasks = this.pick(p).tasks;
+    var done = this.list(p.doneAt);
+    var results = tasks.map(function (t, i) { return done.indexOf(i) >= 0 ? 'self' : null; });
+    var got = tasks.map(function (t, i) { return results[i] ? self.shown(t) : ''; });
+    var drafts = tasks.map(function () { return self.blank(); });
+    var open = this.num(p.openAt, -1);
+    if (open < 0 || open >= tasks.length || results[open] !== null) open = -1;
+    if (open >= 0) {
+      var t = tasks[open];
+      var a = p.fillA ? String(p.fillA) : '';
+      var b = p.fillB ? String(p.fillB) : '';
+      var wrong = this.flag(p.showError);
+      drafts[open] = {
+        fields: [a, b],
+        text: p.fillText ? String(p.fillText) : '',
+        error: wrong ? 'wrong' : '',
+        bad: wrong && t.type === 'multi' ? [this.match(a, t.answer[0]) === null, this.match(b, t.answer[1]) === null] : [false, false]
+      };
+    }
+    return { key: key, open: open, results: results, got: got, drafts: drafts };
+  }
+
+  cur() {
+    var key = this.propKey(this.props);
+    if (this.state && this.state.key === key) return this.state;
+    return this.initialState(this.props, key);
+  }
+
+  renderVals() {
+    var self = this;
+    var npc = this.pick(this.props);
+    var tasks = npc.tasks;
+    var st = this.cur();
+    var total = tasks.length;
+
+    var isSet = function (r) {
+      return r !== null && r !== undefined;
+    };
+    var setDraft = function (i, patch) {
+      var s = self.cur();
+      var drafts = s.drafts.slice();
+      drafts[i] = Object.assign({}, drafts[i] || self.blank(), patch);
+      self.setState(Object.assign({}, s, { drafts: drafts }));
+    };
+    var complete = function (i, text) {
+      var s = self.cur();
+      var results = s.results.slice();
+      var got = s.got.slice();
+      var drafts = s.drafts.slice();
+      results[i] = 'self';
+      got[i] = text;
+      drafts[i] = self.blank();
+      self.setState(Object.assign({}, s, { results: results, got: got, drafts: drafts, open: -1 }));
+    };
+    var toggle = function (i) {
+      var s = self.cur();
+      self.setState(Object.assign({}, s, { open: s.open === i ? -1 : i }));
+    };
+    var submit = function (i) {
+      var s = self.cur();
+      var t = tasks[i];
+      var d = s.drafts[i] || self.blank();
+      var a = '';
+      var b = '';
+      var hit = null;
+      var okA = false;
+      var okB = false;
+      if (!t) return;
+      if (t.type === 'text') {
+        if (!self.strip(d.text)) {
+          setDraft(i, { error: 'empty' });
+          return;
+        }
+        hit = self.match(d.text, t.answer);
+        if (hit !== null) {
+          complete(i, hit);
+        } else {
+          setDraft(i, { error: 'wrong' });
+        }
+        return;
+      }
+      if (t.type === 'multi') {
+        a = (d.fields && d.fields[0]) || '';
+        b = (d.fields && d.fields[1]) || '';
+        if (!self.strip(a) || !self.strip(b)) {
+          setDraft(i, { error: 'empty', bad: [false, false] });
+          return;
+        }
+        okA = self.match(a, t.answer[0]) !== null;
+        okB = self.match(b, t.answer[1]) !== null;
+        if (okA && okB) {
+          complete(i, self.shown(t));
+        } else {
+          setDraft(i, { error: 'wrong', bad: [!okA, !okB] });
+        }
+      }
+    };
+    var finish = function (i) {
+      var t = tasks[i];
+      if (t) complete(i, self.shown(t));
+    };
+    var typeName = function (t) {
+      if (t.type === 'photo') return '拍照任務';
+      if (t.type === 'arrive') return '抵達任務';
+      if (t.type === 'multi') return '填空題';
+      return '文字題';
+    };
+
+    var items = tasks.map(function (t, i) {
+      var r = st.results[i];
+      var isDone = isSet(r);
+      var isOpen = !isDone && st.open === i;
+      var vm = {
+        n: i + 1,
+        title: t.title,
+        typeLabel: typeName(t),
+        isDone: isDone,
+        isOpen: isOpen,
+        isClosed: !isDone && !isOpen,
+        rowTitle: (i + 1) + '．' + t.title,
+        toggleAria: '任務 ' + (i + 1) + '，' + t.title + '，' + typeName(t) + '，點開作答',
+        toggle: function () { toggle(i); }
+      };
+      if (isDone) {
+        vm.summary = st.got[i] || self.shown(t);
+        vm.resLabel = (t.type === 'photo' || t.type === 'arrive') ? '已完成' : '答對';
+      }
+      if (isOpen) {
+        var d = st.drafts[i] || self.blank();
+        var wrong = d.error === 'wrong';
+        vm.hasPrompt = !!t.prompt;
+        vm.prompt = t.prompt || '';
+        vm.isPhoto = t.type === 'photo';
+        vm.isArrive = t.type === 'arrive';
+        vm.isMulti = t.type === 'multi';
+        vm.isTextLabeled = t.type === 'text' && !!t.label;
+        vm.isTextBare = t.type === 'text' && !t.label;
+        vm.isAnswer = t.type === 'text' || t.type === 'multi';
+        vm.label = t.label || '';
+        vm.hasError = !!d.error;
+        vm.errorText = d.error === 'empty' ? '請先作答，再按「送出答案」。' : '和 NPC 說的不太一樣，注意同音字，再確認一次吧。';
+        vm.fields = (t.fields || []).map(function (label, k) {
+          return {
+            id: 'npc-' + npc.key + '-task' + i + '-field' + k,
+            label: label,
+            value: (d.fields && d.fields[k]) || '',
+            cls: wrong && d.bad && d.bad[k] ? 'is-error' : '',
+            change: function (e) {
+              var dd = self.cur().drafts[i] || self.blank();
+              var nf = (dd.fields || ['', '']).slice();
+              nf[k] = e.target.value;
+              setDraft(i, { fields: nf, error: '', bad: [false, false] });
+            }
+          };
+        });
+        vm.textId = 'npc-' + npc.key + '-task' + i + '-answer';
+        vm.textValue = d.text;
+        vm.textCls = wrong ? 'is-error' : '';
+        vm.textChange = function (e) { setDraft(i, { text: e.target.value, error: '' }); };
+        vm.submit = function () { submit(i); };
+        vm.finish = function () { finish(i); };
+      }
+      return vm;
+    });
+
+    var doneCount = st.results.filter(isSet).length;
+    var sep = /[A-Za-z0-9]$/.test(npc.name) ? ' ' : '';
+
+    return {
+      frameH: this.num(this.props.frameH, 844),
+      verLabel: this.props.edition === 'youth' ? '青年場' : '親子場',
+      verCls: this.props.edition === 'youth' ? 'is-youth' : 'is-family',
+      letter: npc.key,
+      name: npc.name,
+      role: npc.role,
+      total: total,
+      doneCount: doneCount,
+      items: items,
+      allDone: doneCount === total,
+      doneLine: npc.name + sep + '的任務全部完成！'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>T03 隊伍名稱</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="screen">
+  <div class="topbar">
+    <button class="btn btn-back" type="button">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>返回
+    </button>
+    <span class="ver-tag is-youth">青年場</span>
+  </div>
+  <div class="content" style="padding-top: 32px; gap: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <h1 class="h1">幫你的隊伍取個名字</h1>
+      <p class="p">妙妙貓會在故事裡叫你們這個名字。</p>
+    </div>
+    <div class="field">
+      <label class="field-label" for="team-name">隊伍名稱</label>
+      <input id="team-name" class="input {{ inputCls }}" type="text" placeholder="例如：廟口探險隊" value="{{ value }}" onChange="{{ noop }}" aria-invalid="{{ invalid }}" aria-describedby="team-name-help">
+      <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+        <p class="err" id="team-name-help">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 17H2z"></path><path d="M12 10v4"></path><path d="M12 17.2v.3"></path></svg>
+          名稱請勿超過 12 個字
+        </p>
+        <p class="help"><span>2～12 個字，可用中英文與數字</span><span style="font-weight: 700; color: #a42006;">13/12</span></p>
+      </sc-if>
+      <sc-if value="{{ ok }}" hint-placeholder-val="{{ true }}">
+        <p class="help" id="team-name-help"><span>2～12 個字，可用中英文與數字</span><span>0/12</span></p>
+      </sc-if>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-primary" type="button">確認名稱</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"error":{"editor":"boolean","default":false,"section":"狀態"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const error = this.props.error === true || this.props.error === 'true';
+    return {
+      error: error,
+      ok: !error,
+      invalid: error ? 'true' : 'false',
+      inputCls: error ? 'is-error' : '',
+      value: error ? '廟口最強探險隊妙妙貓粉絲團' : '',
+      noop: function () {}
+    };
+  }
+}
+</script>
+</body>
+</html>

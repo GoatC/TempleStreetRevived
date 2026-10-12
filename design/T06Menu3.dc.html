@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<title>T06 關卡選單（全破＋前往結局）</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="miao.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="stage">
+  <dc-import name="T06Menu" done="1,2,3,4,5,6" npc-done="A,B,C" frame-h="{{ h }}" hint-size="390px,844px"></dc-import>
+  <div class="scrim">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="all-done-title">
+      <div style="display: flex; justify-content: center;">
+        <div class="seal" style="width: 96px; height: 96px;">
+          <div class="seal-ring" style="width: 80px; height: 80px; font-size: 22px; line-height: 26px;">全破</div>
+        </div>
+      </div>
+      <h2 class="h2" id="all-done-title" style="text-align: center;">全部解開了！</h2>
+      <p class="p" style="text-align: center;">六個關卡和三個 NPC 任務都完成了。<br>廟口探險隊，最後的故事要揭曉了。</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" type="button">前往結局</button>
+        <button class="btn btn-secondary" type="button">稍後查看</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { h: 844 }; }
+}
+</script>
+</body>
+</html>
