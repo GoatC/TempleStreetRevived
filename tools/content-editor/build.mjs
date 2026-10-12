@@ -21,6 +21,13 @@ const keyOf = (file, path) => file + '~' + path.join('.');
 const T = (file, path, original, label, role = 'p', extra = {}) => ({ kind: 'text', key: keyOf(file, path), file, path, original, label, role, ...extra });
 const L = (file, path, original, label, extra = {}) => ({ kind: 'list', key: keyOf(file, path), file, path, original, label, ...extra });
 const IMG = (key, file, original, label, extra = {}) => ({ kind: 'image', key, file, original, label, ...extra });
+// 歷史頁現場照片：JSON 有 photo 就顯示目前那張，沒有就是「新增」空位。
+const histImg = (ed, li, h) => {
+  const f = h.photo ? h.photo.split('/').pop() : null;
+  return f
+    ? IMG(`img~history-${ed}-${li + 1}`, 'site/assets/img/' + f, 'img/' + f, '現場照片')
+    : IMG(`img~history-${ed}-${li + 1}`, 'site/assets/img/', null, '現場照片（目前沒有，整塊不顯示）', { slot: 'new' });
+};
 
 // 程式裡的畫面文字：一定要能在檔案裡找到原文，之後才套用得回去
 function UI(file, slug, original, label, role = 'p', extra = {}) {
@@ -127,7 +134,7 @@ yl.forEach((lv, li) => {
   sections.push({ heading: '本關完成畫面', items: [T(YK, [li, 'key'], k.key, '本關答案（大字）', 'key')] });
   const h = yh[li];
   sections.push({ heading: '歷史補充頁', items: [
-    IMG('img~history-youth-' + (li + 1), 'site/assets/img/', null, '現場照片（目前沒有，整塊不顯示）', { slot: 'new' }),
+    histImg('youth', li, h),
     T(YH, [li, 'title'], h.title, '標題', 'h2'),
     T(YH, [li, 'keyline'], h.keyline, '一句話重點', 'keypoint'),
     ...h.answers.flatMap((a, ai) => [T(YH, [li, 'answers', ai, 0], a[0], `本關答案 ${ai + 1}・題目`, 'label'), T(YH, [li, 'answers', ai, 1], a[1], `本關答案 ${ai + 1}・答案`, 'small')]),
@@ -204,7 +211,7 @@ fl.forEach((lv, li) => {
   });
   const h = fh[li];
   sections.push({ heading: '歷史介紹頁', items: [
-    IMG('img~history-family-' + (li + 1), 'site/assets/img/', null, '現場照片（目前沒有，整塊不顯示）', { slot: 'new' }),
+    histImg('family', li, h),
     T(FH, [li, 'title'], h.title, '標題', 'h2'),
     T(FH, [li, 'keyline'], h.keyline, '一句話重點', 'keypoint'),
     ...h.answers.flatMap((a, ai) => [T(FH, [li, 'answers', ai, 0], a[0], `本關答案 ${ai + 1}・題目`, 'label'), T(FH, [li, 'answers', ai, 1], a[1], `本關答案 ${ai + 1}・答案`, 'small')]),
