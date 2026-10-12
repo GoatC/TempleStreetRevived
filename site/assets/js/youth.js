@@ -114,8 +114,8 @@ function talkScreen(app, kind) {
       <path d="M40 70 V120 M280 70 V120"></path>
       <path d="M130 34 V20 H190 V34"></path>
     </svg>
-    <!-- 暫定：妙妙貓角色插畫還沒有，先放 logo（HANDOFF §10、§12 問題 8） -->
-    <img src="../assets/img/logo.webp" width="184" height="188" alt="" style="position: relative; width: 184px; height: auto; display: block;">
+    <!-- 妙妙貓角色插畫（Hugo 2026-10-12 提供；原圖 assets-src/img/story-miaomiao.png） -->
+    <img src="../assets/img/story-miaomiao.webp" width="468" height="480" alt="" style="position: relative; width: 184px; height: auto; display: block;">
   </div>
   <div style="flex: none; padding: 0 20px max(28px, env(safe-area-inset-bottom)); margin-top: -40px; display: flex; flex-direction: column; gap: 12px; position: relative;">
     ${box}

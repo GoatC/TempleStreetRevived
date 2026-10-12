@@ -125,7 +125,7 @@ export function validateTeam(raw) {
 
 function nameScreen(params, app) {
   const family = app.edition === 'family';
-  const placeholder = family ? '例如：妙妙一家人' : '例如：廟口探險隊';
+  const placeholder = family ? '例如：新莊一家人' : '例如：廟口探險隊';
   const value = app.state.team || '';
   const count = Array.from(value.trim()).length;
   return {
@@ -245,7 +245,7 @@ function historyScreen(params, app) {
     </div>
     ${photo}
     <div style="display: flex; flex-direction: column; gap: 8px;">
-      <p class="label" style="color: #a42006;">一句話重點</p>
+      <p class="label" style="color: #a42006;">歷史介紹</p>
       <p class="keypoint">${esc(h.keyline)}</p>
     </div>
     ${more}

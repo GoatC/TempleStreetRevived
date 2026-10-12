@@ -4,6 +4,7 @@
     {
       "no": "第一關",
       "place": "慈祐宮",
+      "photo": "../assets/img/history-ciyou.webp",
       "title": "被封閉的門",
       "keyline": "慈祐宮主祀媽祖。早年慈祐宮面向新莊港渡口，媽祖守護著往來的船商與渡海移民。",
       "answers": [
@@ -33,7 +34,7 @@
     {
       "no": "第二關",
       "place": "五間老店",
-      "title": "五間老店的座標",
+      "title": "新莊廟街的味道與聲音",
       "keyline": "糕餅、麥芽糖、中藥、打鐵、製鼓：廟街的老店，留住了新莊的氣味、聲音與手藝。",
       "answers": [
         [
@@ -59,6 +60,7 @@
     {
       "no": "第三關",
       "place": "戲館巷",
+      "photo": "../assets/img/history-xiguan.webp",
       "title": "失序的戲班",
       "keyline": "日治時期，許多布袋戲團與戲班在這一帶活動，這條巷子因此被稱為「戲館巷」。",
       "answers": [
@@ -80,11 +82,12 @@
     {
       "no": "第四關",
       "place": "米市巷",
+      "photo": "../assets/img/history-mishi.webp",
       "title": "牆上的舊帳本",
       "keyline": "早年船隻在新莊卸貨、買米，這條巷子就是搬運米糧的通道，「米市巷」因此得名。",
       "answers": [
         [
-          "壁畫裡數一數",
+          "壁畫中計數",
           "船夫 3、船 7、戴斗笠 4、綁辮子 10"
         ],
         [
@@ -101,6 +104,7 @@
     {
       "no": "第五關",
       "place": "武聖廟",
+      "photo": "../assets/img/history-wusheng.webp",
       "title": "山中軍令",
       "keyline": "武聖廟的大門不畫門神，因為關聖帝君本身就武藝高強；大門改用 108 顆門釘裝飾。",
       "answers": [
@@ -126,6 +130,7 @@
     {
       "no": "第六關",
       "place": "廣福宮",
+      "photo": "../assets/img/history-guangfu.webp",
       "title": "古蹟修復師",
       "keyline": "廣福宮是新莊唯一的國定古蹟：木雕全未上彩，石雕用的是觀音山石。",
       "answers": [

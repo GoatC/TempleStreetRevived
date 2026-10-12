@@ -4,6 +4,7 @@
     {
       "no": "第一關",
       "place": "慈祐宮",
+      "photo": "../assets/img/history-ciyou.webp",
       "title": "找到守護神",
       "keyline": "慈祐宮主祀媽祖。早年慈祐宮面向新莊港渡口，媽祖守護著往來的船商與渡海移民。",
       "answers": [
@@ -67,6 +68,7 @@
     {
       "no": "第三關",
       "place": "戲館巷",
+      "photo": "../assets/img/history-xiguan.webp",
       "title": "找到戲曲角色",
       "keyline": "日治時期，許多布袋戲團與戲班在這一帶活動，這條巷子因此被稱為「戲館巷」。",
       "answers": [
@@ -88,6 +90,7 @@
     {
       "no": "第四關",
       "place": "米市巷",
+      "photo": "../assets/img/history-mishi.webp",
       "title": "壁畫裡的港口",
       "keyline": "早年船隻在新莊卸貨、買米，這條巷子就是搬運米糧的通道，「米市巷」因此得名。",
       "answers": [
@@ -113,6 +116,7 @@
     {
       "no": "第五關",
       "place": "武聖廟",
+      "photo": "../assets/img/history-wusheng.webp",
       "title": "不用門神的大門",
       "keyline": "武聖廟的大門不畫門神，因為關聖帝君本身就武藝高強；大門改用 108 顆門釘裝飾。",
       "answers": [
@@ -138,6 +142,7 @@
     {
       "no": "第六關",
       "place": "廣福宮",
+      "photo": "../assets/img/history-guangfu.webp",
       "title": "看介紹欄找答案",
       "keyline": "廣福宮是新莊唯一的國定古蹟：木雕全未上彩，石雕用的是觀音山石。",
       "answers": [
@@ -164,6 +169,7 @@
     {
       "no": "第七關",
       "place": "潮江寺",
+      "photo": "../assets/img/history-chaojiang.webp",
       "title": "一棟建築裡的兩種信仰",
       "keyline": "一樓是福德祠、二樓是潮江寺：一棟建築裡，住著兩種信仰。",
       "answers": [
