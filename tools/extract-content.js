@@ -36,7 +36,34 @@ function literal(file, name) {
   }
   return (new Function('return ' + code.slice(i, j + 1)))();
 }
+// 設計稿之後才另外加進 site/content 的可接受寫法（例如 NPC A 問答三的「祂」、問答四的「福德祠」），
+// 重新抽出時保留下來：同一題的 answer／contains 取聯集（設計稿的寫法在前），不會被設計稿悄悄洗掉。
+const isStrList = a => Array.isArray(a) && a.every(x => typeof x === 'string');
+function unionList(fresh, old) {
+  const out = fresh.slice();
+  old.forEach(x => { if (!out.includes(x)) out.push(x); });
+  return out;
+}
+function keepExtras(fresh, old) {
+  if (Array.isArray(fresh) && Array.isArray(old)) {
+    return fresh.map((x, i) => (i < old.length ? keepExtras(x, old[i]) : x));
+  }
+  if (!fresh || !old || typeof fresh !== 'object' || typeof old !== 'object') return fresh;
+  const out = {};
+  for (const k of Object.keys(fresh)) {
+    const f = fresh[k], o = old[k];
+    if ((k === 'answer' || k === 'contains') && isStrList(f) && isStrList(o)) out[k] = unionList(f, o);
+    else if (k === 'answer' && Array.isArray(f) && Array.isArray(o) && f.every(isStrList) && o.every(isStrList)) {
+      out[k] = f.map((x, i) => (o[i] ? unionList(x, o[i]) : x));
+    } else out[k] = keepExtras(f, o);
+  }
+  return out;
+}
 function save(name, data, note) {
+  const prev = path.join(out, name);
+  if (fs.existsSync(prev)) {
+    try { data = keepExtras(data, JSON.parse(fs.readFileSync(prev, 'utf8')).data); } catch (e) { /* 舊檔壞掉就整個重寫 */ }
+  }
   const body = { _source: note, data };
   fs.writeFileSync(path.join(out, name), JSON.stringify(body, null, 2) + '\n');
   console.log('wrote', name, Array.isArray(data) ? data.length + ' items' : '');

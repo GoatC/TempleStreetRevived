@@ -85,7 +85,14 @@ test('npc: every accepted answer passes; homophones fail', () => {
       assert.ok(!checkNpc(t, { text: '錯誤答案' }).ok);
       assert.ok(checkNpc(t, { text: '' }).empty);
     } else if (t.type === 'multi') {
-      assert.ok(checkNpc(t, { fields: [t.answer[0][0], t.answer[1][0]] }).ok, name);
+      // 每一格的每一種寫法都要能過（另一格用第一種寫法），多打空白、標點也一樣
+      t.answer.forEach((alts, k) => alts.forEach(a => {
+        const fields = t.answer.map(x => x[0]);
+        fields[k] = a;
+        assert.ok(checkNpc(t, { fields }).ok, `${name} 第${k + 1}格 ${a}`);
+        fields[k] = ` ${a}。`;
+        assert.ok(checkNpc(t, { fields }).ok, `${name} 第${k + 1}格 spaced ${a}`);
+      }));
       assert.ok(checkNpc(t, { fields: ['', t.answer[1][0]] }).empty);
     }
   });
@@ -93,6 +100,11 @@ test('npc: every accepted answer passes; homophones fail', () => {
   const r = checkNpc(npcs[0].tasks[3], { fields: ['福德寺', '朝江寺'] });
   assert.ok(!r.ok);
   assert.deepEqual(r.bad, [false, true]);
+  // 問答四也收「福德祠」（Hugo 2026-10-12 同意診斷報告 N2 的建議）
+  assert.ok(checkNpc(npcs[0].tasks[3], { fields: ['福德祠', '潮江寺'] }).ok);
+  assert.ok(checkNpc(npcs[0].tasks[3], { fields: ['福德寺', '福德祠'] }).ok);
+  assert.ok(checkNpc(npcs[0].tasks[3], { fields: ['福德寺', '潮江寺福德祠'] }).ok);
+  assert.deepEqual(checkNpc(npcs[0].tasks[3], { fields: ['福德宮', '潮江寺'] }).bad, [true, false]);
   // 「他」「祂」都算對（Hugo 2026-10-12）
   assert.ok(checkNpc(npcs[0].tasks[2], { text: '因為面對米市街，祂是商業神' }).ok);
   assert.ok(checkNpc(npcs[0].tasks[2], { text: '因為面對米市街他是商業神' }).ok);
@@ -119,9 +131,15 @@ test('family: every accepted answer passes', () => {
     } else if (t.type === 'choice') {
       assert.ok(checkFamily(t, { choice: t.answer }).ok, name);
       for (const [code] of t.options) if (code !== t.answer) assert.ok(!checkFamily(t, { choice: code }).ok);
+      assert.ok(checkFamily(t, {}).empty, `${name} 沒選就送出`);
     } else if (t.type === 'multi') {
       const a = t.answer[0][0], b = t.answer[1][0];
       assert.ok(checkFamily(t, { fields: [a, b] }).ok, name);
+      t.answer.forEach((alts, k) => alts.forEach(x => {
+        const fields = [a, b];
+        fields[k] = ` ${x}。`;
+        assert.ok(checkFamily(t, { fields }).ok, `${name} 第${k + 1}格 ${x}`);
+      }));
       assert.equal(checkFamily(t, { fields: [b, a] }).ok, !!t.anyOrder, `${name} swapped`);
       assert.ok(checkFamily(t, { fields: [a, ''] }).empty);
     } else {

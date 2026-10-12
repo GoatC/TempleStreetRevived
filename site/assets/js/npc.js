@@ -224,7 +224,9 @@ function npcScreen(params, app) {
       submit: el => {
         const i = Number(el.dataset.i);
         const t = tasks[i];
-        const d = (app.store.state.npc[key].drafts[i]) || {};
+        // 這位 NPC 還沒有存檔（第一次互動就按送出）時當作空白答案
+        const M = app.store.state.npc[key];
+        const d = (M && M.drafts && M.drafts[i]) || {};
         const r = checkNpc(t, d.got !== undefined ? {} : d);
         if (r.ok) {
           complete(i, t.type === 'text' ? hitText(t, d.text) : shown(t));

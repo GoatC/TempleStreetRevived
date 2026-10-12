@@ -592,15 +592,6 @@ function levelScreen(params, app) {
     return null;
   }
 
-  // 讓元素出現在畫面內（扣掉固定的頂部列與進度列）
-  function reveal(el) {
-    if (!el) return;
-    const bar = app.root.querySelector('.lvbar');
-    const top = bar ? bar.getBoundingClientRect().bottom : 0;
-    const r = el.getBoundingClientRect();
-    if (r.top < top + 8) window.scrollBy(0, r.top - top - 8);
-    else if (r.top > window.innerHeight - 80) window.scrollBy(0, r.top - top - 8);
-  }
 
   // 原型的「一改輸入就清掉錯誤」：不重畫，直接改 DOM
   function clearErrorInPlace(i) {
@@ -633,7 +624,7 @@ function levelScreen(params, app) {
     const allDone = tasks.every((t, k) => isSet(M.results[k]));
     const passedNow = !before && levelDone('family', lvDef, M);
     const el = refreshTo(allDone ? '#lv-all' : (passedNow ? '#lv-pass' : '#' + id(i, 'row')));
-    reveal(el);
+    app.reveal(el, { block: 'nearest' });
   }
 
   return {
@@ -679,7 +670,9 @@ function levelScreen(params, app) {
         const i = Number(el.dataset.i);
         U.open = U.open === i ? -1 : i;
         const head = refreshTo('#' + id(i, 'head'));
-        reveal(U.open === i ? app.root.querySelector('#' + id(i, 'panel')) : head);
+        // 展開：整個任務（題目到送出鈕）捲進畫面；太高就從題目開頭開始
+        if (U.open === i) app.reveal(app.root.querySelector('#' + id(i, 'panel')));
+        else app.reveal(head, { block: 'nearest' });
       },
 
       pick: el => {
@@ -767,7 +760,9 @@ function levelScreen(params, app) {
           buttons: [{ label: '我知道了', value: true, kind: 'primary' }],
         });
         if (!here()) return;
-        refreshTo('#' + id(i, 'hint'), '#' + id(i, 'reveal'), '#' + id(i, 'submit'), '#' + id(i, 'head'));
+        // 看過的提示會加在頁面上方，下面的內容往下移：把按鈕捲回畫面內
+        const btn = refreshTo('#' + id(i, 'hint'), '#' + id(i, 'reveal'), '#' + id(i, 'submit'), '#' + id(i, 'head'));
+        app.reveal(btn, { block: 'nearest' });
       },
 
       reveal: async el => {

@@ -411,4 +411,34 @@ a.btn-secondary:hover, a.btn-hint:hover, a.btn-reveal:hover, a.btn-back:hover, a
 }
 
 /* ---------- site additions: 序章在矮螢幕（320×568）時 logo 不壓到屋頂線稿 ---------- */
-.story-ph { min-height: 396px; }
+.story-ph { min-height: 396px; padding-bottom: 72px; }
+/* 矮螢幕（iPhone SE 開著網址列約 550 px 高）：縮小 logo 與留白，讓對話框和「開始探索」留在畫面內 */
+@media (max-height: 700px) {
+  .story-ph { min-height: 268px; padding-bottom: 40px; }
+  .story-ph img { width: 100px !important; }
+}
+
+/* ---------- site additions: 修正（2026-10-12 診斷） ---------- */
+/* 底部按鈕列：完成摘要的按鈕跟著內容排，不蓋住通關碼；開始頁在矮螢幕也一樣 */
+.actions.is-flow { position: static; }
+@media (max-height: 700px) { .actions.is-flow-short { position: static; } }
+/* 換頁時程式把焦點放在標題（讀屏用），不要畫出焦點外框 */
+[tabindex="-1"]:focus { outline: none; }
+/* 輸入框聚焦狀態（Components 設計稿的 is-focus），多格題才看得出正在打哪一格 */
+.input:focus { border: 3px solid var(--ink-brown); outline: 3px solid var(--dragon-gold); outline-offset: 0; }
+.input.is-error:focus { border-color: var(--temple-red); }
+/* 快速連點按鈕時不要觸發 iPhone 的「點兩下放大」（兩指放大照常可以用） */
+.btn, .key, .opt, .chip, .task-toggle, .task-head-btn, .lv, .dialog, .map-entry, .fig, .map-fig { touch-action: manipulation; }
+/* 很長、沒有空白的英文隊名自動換行，不撐破版面 */
+.screen, .modal { overflow-wrap: break-word; }
+/* 看圖畫面：橫放手機時「關閉」不被瀏海擋住 */
+.zoom-head { padding-top: max(8px, env(safe-area-inset-top)); padding-right: max(12px, env(safe-area-inset-right)); padding-left: max(20px, env(safe-area-inset-left)); }
+/* 瀏覽器「網頁放大」125% 以上（版面寬度不到 320 px） */
+@media (max-width: 319px) {
+  .btn-hint .pips, .btn-reveal .pips { display: none; }
+  .topbar { gap: 4px; padding-right: 10px; }
+  .topbar-tag { font-size: 15px; letter-spacing: 0; }
+  .topbar .btn-text { font-size: 15px; padding-left: 4px; padding-right: 4px; }
+  .topbar .btn-back { padding-right: 6px; font-size: 16px; }
+  .ver-tag { padding-left: 6px; padding-right: 6px; }
+}

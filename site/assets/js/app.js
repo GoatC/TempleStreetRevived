@@ -26,6 +26,9 @@
 //   app.refresh({ focus }) 重畫目前畫面（同一個 handler、同一組 params），不捲回頂端。
 //                        focus：CSS selector，重畫後把焦點放到那裡；省略時嘗試放回原本有焦點的元素（依 id）。
 //   app.path / app.params  目前路徑與參數
+//   app.reveal(el, { block })  把元素捲進畫面，扣掉固定在上方的頂部列（和親子場的進度列）。
+//                        block: 'start'（預設）→ 元素沒有整個露出來時，把它的開頭捲到頂部列下方；
+//                               'nearest' → 只捲最少的距離讓它露出來。
 //
 // 畫面（handler）規則
 //   handler(params, app) → view | null
@@ -38,6 +41,9 @@
 //   - 頁面要有一個 <h1 class="h1">；換頁後焦點會移到它（自動加 tabindex="-1"），並捲到頂端。
 //   - [data-go="/menu"] 的元素點了就換頁（topbar 的返回鍵就是這樣）。
 //   - <input data-enter="submit"> 在輸入框按 Enter 會呼叫 actions.submit(input, event)。
+//     同一個 .task 裡有好幾格時，前面的格子按 Enter 先跳到下一個空格（鍵盤顯示「下一項」），
+//     全部填好或在最後一格才送出。
+//   - 剛重畫完的一小段時間內，在同一個位置連點的第二下不算（避免點到剛出現在手指下的新按鈕）。
 //   - 輸入框在 'input' 事件裡用 app.store.update() 存草稿，「不要」重畫（打字、焦點才不會跑掉）。
 //     按按鈕送出等動作之後再 app.refresh()。
 //   - 找不到的路徑 → 導回 '#/'。
@@ -97,6 +103,7 @@ async function loadContent(files) {
 
 // 暫定：載入失敗畫面的文案（P1），Hugo 尚未確認
 function renderLoadError(root) {
+  window.__miaoReady = true;
   root.innerHTML = `<div class="screen"><main class="content" style="padding: 40px 24px 24px; gap: 20px; align-items: center; text-align: center;">
     <h1 class="h1" tabindex="-1">載入失敗，請檢查網路後重新載入。</h1>
   </main><div class="actions"><button class="btn btn-primary" type="button" data-reload>重新載入</button></div></div>`;
@@ -136,6 +143,27 @@ export async function createApp({ edition, register = [], root: rootSel = '#app'
     },
     go,
     redirect(path) { go(path, { replace: true }); return null; },
+    reveal(el, { block = 'start' } = {}) {
+      if (!el || !el.getBoundingClientRect) return;
+      const run = () => {
+        if (!document.contains(el)) return;
+        let top = 0;
+        root.querySelectorAll('.topbar, .lvbar').forEach(b => {
+          if (getComputedStyle(b).position === 'sticky') top = Math.max(top, b.getBoundingClientRect().bottom);
+        });
+        const r = el.getBoundingClientRect();
+        const room = window.innerHeight;
+        if (r.top >= top + 8 && r.bottom <= room) return; // 已經整個看得到
+        if (block === 'nearest' && r.top >= top + 8 && r.height <= room - top - 8) {
+          window.scrollBy(0, r.bottom - room + 16);
+          return;
+        }
+        window.scrollBy(0, r.top - top - 8);
+      };
+      run();
+      // 剛關掉彈窗時，瀏覽器可能還沒更新可捲動的高度：下一個畫格再確認一次
+      requestAnimationFrame(run);
+    },
     refresh({ focus } = {}) {
       if (!current) return;
       const active = document.activeElement;
@@ -148,7 +176,9 @@ export async function createApp({ edition, register = [], root: rootSel = '#app'
     },
   };
 
+  let paintedAt = 0;
   function paint(handler, params, path, isNav) {
+    paintedAt = Date.now();
     current = { handler, params, path, view: null };
     const view = handler(params, app);
     if (!view || current.path !== path) return; // 已導向別頁
@@ -156,6 +186,11 @@ export async function createApp({ edition, register = [], root: rootSel = '#app'
     root.innerHTML = view.html;
     document.title = (view.title ? view.title + '｜' : '') + ed.label + '｜' + SITE_TITLE;
     if (view.bind) view.bind(root, app);
+    // 多格題：前面的格子按 Enter 是「下一項」
+    root.querySelectorAll('.task').forEach(task => {
+      const inputs = Array.from(task.querySelectorAll('input[data-enter]'));
+      inputs.slice(0, -1).forEach(x => x.setAttribute('enterkeyhint', 'next'));
+    });
     const h1 = root.querySelector('h1');
     if (h1 && !h1.hasAttribute('tabindex')) h1.setAttribute('tabindex', '-1');
     if (isNav) {
@@ -165,7 +200,17 @@ export async function createApp({ edition, register = [], root: rootSel = '#app'
   }
 
   // 事件委派：data-go、data-action、data-enter
+  // 連點保護：重畫後 400ms 內，在上一下的位置附近點到「另一個」按鈕，當作連點的第二下，不處理
+  let lastTap = null; // { x, y, sig }
+  const sigOf = el => el.id || [el.dataset.go, el.dataset.action, el.dataset.i, el.dataset.k].join('|');
   root.addEventListener('click', e => {
+    const hit = e.target.closest('[data-go], [data-action]');
+    if (hit && root.contains(hit) && e.detail > 0) {
+      const sig = sigOf(hit);
+      const near = lastTap && Math.abs(e.clientX - lastTap.x) < 40 && Math.abs(e.clientY - lastTap.y) < 40;
+      if (near && sig !== lastTap.sig && Date.now() - paintedAt < 400) { e.preventDefault(); return; }
+      lastTap = { x: e.clientX, y: e.clientY, sig };
+    }
     const goEl = e.target.closest('[data-go]');
     if (goEl && root.contains(goEl)) {
       if (goEl.getAttribute('aria-disabled') === 'true') return;
@@ -184,17 +229,28 @@ export async function createApp({ edition, register = [], root: rootSel = '#app'
     if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229) return; // 注音選字中的 Enter 不算
     const el = e.target.closest('[data-enter]');
     if (!el || !current || !current.view || !current.view.actions) return;
+    const task = el.closest('.task');
+    if (task && el.tagName === 'INPUT') {
+      const inputs = Array.from(task.querySelectorAll('input[data-enter]'));
+      const at = inputs.indexOf(el);
+      const next = inputs.slice(at + 1).concat(inputs.slice(0, at)).find(x => !x.value.trim());
+      if (inputs.length > 1 && next && el.value.trim()) { e.preventDefault(); next.focus(); return; }
+    }
     const fn = current.view.actions[el.dataset.enter];
     if (fn) { e.preventDefault(); fn(el, e); }
   });
 
   register.forEach(fn => fn(app));
 
+  // 同一支手機的另一個分頁改了進度：用新的進度重畫目前畫面
+  store.onExternalChange(() => app.refresh());
+
   dropStaleLayerEntry(); // 開著彈窗時重新整理留下的紀錄（網址相同，不影響路由）
   startRouter(
     routes.map(([pattern, handler]) => [pattern, (params, path) => { closeLayers(); paint(handler, params, path, true); }]),
     path => { if (path !== '/') go('/', { replace: true }); },
   );
+  window.__miaoReady = true;
   return app;
 }
 

@@ -105,7 +105,7 @@ function talkScreen(app, kind) {
       ${verTag(app.edition)}
     </div>
   </div>
-  <div class="ph story-ph" style="flex: 1 1 auto; position: relative; justify-content: flex-end; padding-bottom: 72px;">
+  <div class="ph story-ph" style="flex: 1 1 auto; position: relative; justify-content: flex-end;">
     <svg viewBox="0 0 320 120" aria-hidden="true" style="position: absolute; left: 50%; top: 40px; transform: translateX(-50%); width: min(320px, calc(100% - 32px)); height: auto; stroke-width: 2.4;">
       <path d="M10 70 C40 70 60 52 70 34 L250 34 C260 52 280 70 310 70"></path>
       <path d="M18 70 H302"></path>
@@ -356,7 +356,7 @@ function mapScreen(params, app) {
   </div>
   <main class="content" style="gap: 12px;">
     <p class="route-note">${ICONS.compass}東在上、北在左；沿新莊路的距離依比例</p>
-    <button class="map-fig" id="map-fig" type="button" data-action="zoom" aria-label="點開放大地圖">
+    <button class="map-fig" id="map-fig" type="button" data-action="zoom">
       <img src="${src}" width="875" height="1600" alt="廟街地圖示意圖，東在上、北在左。沿新莊路由上往下依序是：6 廣福宮、1 慈祐宮與斜對面的集合點林協記文化館、3 戲館巷、4 米市巷、5 武聖廟。">
       <span class="fig-cap">${ICONS.zoom}點開放大</span>
     </button>
@@ -434,6 +434,8 @@ function levelScreen(params, app) {
   const n = Number(params.n);
   const lv = app.content.levels[n - 1];
   if (!Number.isInteger(n) || !lv) return app.redirect('/menu');
+  // #/level/01 這類寫法 → 換成標準網址（提示、揭曉要用 app.path 比對）
+  if (String(n) !== params.n) return app.redirect('/level/' + n);
   // 第一關完成前打開第 2～6 關的網址 → 回關卡選單
   if (levelStatus('youth', app.content.levels, app.state, n) === 'locked') return app.redirect('/menu');
 
@@ -688,8 +690,15 @@ function levelScreen(params, app) {
     const next = app.state.levels[String(n)].results.findIndex(r => !isSet(r));
     const sel = next < 0 ? '#lv-done' : '#' + id(next, 'open');
     app.refresh({ focus: sel });
+    // 讓剛完成的那一列（「自行解出／已揭曉」）和下一個任務的開頭一起出現在頂部列下方
+    const row = app.root.querySelector('#' + id(i, 'row'));
     const el = app.root.querySelector(sel);
-    if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+    const bar = app.root.querySelector('.topbar');
+    if (row && el && bar) {
+      const top = bar.getBoundingClientRect().bottom + 8;
+      const r = row.getBoundingClientRect(), e = el.getBoundingClientRect();
+      if (r.top < top || e.top > window.innerHeight - 160) window.scrollBy(0, r.top - top);
+    }
   };
 
   const showHint = async () => {
@@ -719,6 +728,8 @@ function levelScreen(params, app) {
       body: lv.hints[Math.max(0, h - 1)] || '',
       buttons: [{ label: '我知道了', value: true, kind: 'primary' }],
     });
+    // 看過的提示加在頁面上方、下面的內容往下移：把提示／揭曉按鈕捲回畫面內
+    if (app.path === '/level/' + n) app.reveal(app.root.querySelector('#lv-help'), { block: 'nearest' });
   };
 
   const showReveal = async () => {
@@ -868,7 +879,7 @@ function resultScreen(params, app) {
   return {
     title: lv.no + ' 完成',
     html: `<div class="screen">
-  <div class="topbar" style="justify-content: center; padding: env(safe-area-inset-top) 20px 0; position: relative;">
+  <div class="topbar" style="justify-content: center; padding: env(safe-area-inset-top) 20px 0;">
     <span class="topbar-tag">${esc((k.no || lv.no) + '・' + (k.place || lv.place))}</span>
     <span class="ver-tag is-youth" style="position: absolute; right: 16px; top: calc(18px + env(safe-area-inset-top));">青年場</span>
   </div>
