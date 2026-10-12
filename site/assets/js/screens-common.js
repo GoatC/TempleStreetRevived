@@ -125,7 +125,7 @@ export function validateTeam(raw) {
 
 function nameScreen(params, app) {
   const family = app.edition === 'family';
-  const placeholder = family ? '例如：妙妙一家人' : '例如：廟口探險隊';
+  const placeholder = family ? '例如：新莊一家人' : '例如：廟口探險隊';
   const value = app.state.team || '';
   const count = Array.from(value.trim()).length;
   return {

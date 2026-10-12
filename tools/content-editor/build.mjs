@@ -1,7 +1,7 @@
 // 從 repo 產生編輯台的資料（每個畫面一張 artboard，每段文字／答案／圖片一個可編輯項目），
 // 再把資料嵌進 template.html，輸出 妙妙廟內容編輯台.html。
 // 用法：node tools/content-editor/build.mjs [repoDir] [輸出檔]（預設輸出 tools/content-editor/editor.html，不進 git）
-// 發佈：Artifact 發佈 editor.html，files 附上 site/assets/img/*.webp（路徑 img/…），capabilities {db, user, assets}。
+// 發佈：Artifact 發佈 editor.html，files 附上 site/assets/img/*.webp（路徑 img/…，不含 favicon），capabilities {db, user, assets}。
 // 編輯台網址：https://claude.ai/artifact/5w3jCxC5k1zDc6ZRLYmzur（修改存在它的資料庫 edits、requests 兩個集合）
 import { readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
@@ -41,7 +41,7 @@ const Y = 'site/content/youth-levels.json', YH = 'site/content/youth-history.jso
 screens.push({
   id: 'youth-story', tab: 'youth', title: '序章與結局', where: '#/story',
   sections: [
-    { items: [IMG('img~story-illustration', 'site/assets/img/', null, '妙妙貓角色插畫（目前先用 logo）', { slot: 'new', hint: '透明背景 PNG，寬至少 480 px' })] },
+    { items: [IMG('img~story-illustration', 'site/assets/img/story-miaomiao.webp', 'img/story-miaomiao.webp', '妙妙貓角色插畫', { hint: '透明背景 PNG，寬至少 480 px' })] },
     { heading: '序章台詞', items: [L(YS, ['prologue'], ys.prologue.map(x => x.text), '序章（每一行是一段對話，{team} 會換成隊名）', { lines: true })] },
     { heading: '結局台詞（目前是空的：沒有台詞時全破後直接到完成摘要）', items: [L(YS, ['ending'], (ys.ending || []).map(x => x.text), '結局（每一行是一段對話）', { lines: true })] },
   ],
@@ -251,8 +251,8 @@ screens.push({
     UI('site/index.html', 'kicker', '新莊廟街・實境解謎', '小標', 'kicker'),
     UI('site/index.html', 'title', '妙妙貓的廟街委託', '大標題', 'h1'),
     UI('site/index.html', 'lead', '請選擇你們今天參加的場次。', '說明', 'p'),
-    UI('site/index.html', 'youth-desc', '六個關卡、三個 NPC 任務，以推理解謎為主', '青年場按鈕說明', 'small', { probe: '以推理解謎為主' }),
-    UI('site/index.html', 'family-desc', '七個關卡、三個 NPC 任務，以觀察和拍照為主', '親子場按鈕說明', 'small', { probe: '以觀察和拍照為主' }),
+    UI('site/index.html', 'youth-desc', '以進階推理解謎為主，適合愛挑戰的青年與學生們！', '青年場按鈕說明', 'small', { probe: '適合愛挑戰的青年與學生們！' }),
+    UI('site/index.html', 'family-desc', '七道簡易關卡，適合觀察與認識文化的親子組合', '親子場按鈕說明', 'small', { probe: '適合觀察與認識文化的親子組合' }),
     UI('site/index.html', 'foot', '請依工作人員告知的場次選擇', '按鈕下方小字', 'small'),
   ] }],
 });
@@ -269,7 +269,7 @@ screens.push({
       UI(SC, 'name-title', '幫你的隊伍取個名字', '標題', 'h1'),
       UI(SC, 'name-lead', '妙妙貓會在故事裡叫你們這個名字。', '說明（兩場共用；親子場沒有故事）', 'p'),
       UI(SC, 'name-ph-youth', '例如：廟口探險隊', '青年場輸入框灰字', 'placeholder'),
-      UI(SC, 'name-ph-family', '例如：妙妙一家人', '親子場輸入框灰字', 'placeholder'),
+      UI(SC, 'name-ph-family', '例如：新莊一家人', '親子場輸入框灰字', 'placeholder'),
       UI(SC, 'name-help', '2～12 個字，可用中英文與數字', '輸入框下方說明', 'small'),
       UI(SC, 'name-err-empty', '請輸入隊伍名稱', '錯誤：空白', 'err'),
       UI(SC, 'name-err-long', '名稱請勿超過 12 個字', '錯誤：太長', 'err'),
