@@ -231,7 +231,9 @@ function openLayer(el, firstFocus) {
   document.body.appendChild(el);
   history.pushState({ miaoLayer: true }, '', location.href);
   const f = firstFocus || focusables(el)[0];
-  if (f) f.focus();
+  // 焦點放在最下面的按鈕時不要順勢捲到底：內容比畫面長時，標題和第一段要先看得到
+  if (f) f.focus({ preventScroll: true });
+  el.querySelectorAll('.modal').forEach(m => { m.scrollTop = 0; });
   return { promise, layer };
 }
 
@@ -255,6 +257,12 @@ export function openDialog({ title = '', body = '', bodyHtml = '', icon: iconNam
   const btns = buttons.map((b, i) =>
     `<button class="btn ${BTN_KIND[b.kind] || 'btn-secondary'}" type="button" data-dlg="${i}">${b.icon ? ICONS[b.icon] || '' : ''}${esc(b.label)}</button>`).join('');
   scrim.innerHTML = `<div class="modal${danger ? ' modal-danger' : ''}" role="${danger ? 'alertdialog' : 'dialog'}" aria-modal="true" aria-labelledby="${esc(labelledBy)}">${topHtml}${head}${content}<div class="modal-actions">${btns}</div></div>`;
+  // 讀屏：打開時除了標題，也念出內文（提示內容、說明）
+  const desc = scrim.querySelector('.modal > p, .modal > ul');
+  if (desc) {
+    if (!desc.id) desc.id = 'dlg-desc';
+    scrim.firstElementChild.setAttribute('aria-describedby', desc.id);
+  }
   const { promise, layer } = openLayer(scrim);
   scrim.addEventListener('click', e => {
     const b = e.target.closest('[data-dlg]');

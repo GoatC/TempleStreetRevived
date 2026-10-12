@@ -96,7 +96,7 @@ function startScreen(params, app) {
     </p>
     ${noSave}
   </main>
-  <div class="actions">
+  <div class="actions is-flow-short">
     ${buttons}
     ${rulesButton()}
     <a class="btn btn-text" href="../" style="align-self: center; font-size: 16px; font-weight: 400;">不是這個場次？回到場次選擇</a>
@@ -336,7 +336,7 @@ function summaryScreen(params, app) {
       <div>${npcRows}</div>
     </section>
   </main>
-  <div class="actions">
+  <div class="actions is-flow">
     ${feedback}
     <a class="btn btn-secondary" href="../">完成遊戲</a>
     <button class="btn btn-text" type="button" data-action="restart" style="align-self: center;">重新開始</button>

@@ -4,13 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>親子場｜妙妙貓的廟街委託</title>
-<link rel="preload" href="../assets/fonts/GenRyuMinTW-Bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" type="image/png" href="../assets/img/favicon.png">
 <link rel="stylesheet" href="../assets/css/miao.css">
 <style>
 a{color:#603514}a:hover{color:#a42006}
 </style>
-<script type="module">
+<script>
+// 訊號差時程式檔可能沒載到：改顯示「重新載入」（同 app.js 的載入失敗畫面），不要停在空白或「載入中」
+window.__miaoFail = function () {
+  if (window.__miaoReady) return;
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', window.__miaoFail); return; }
+  window.__miaoReady = true;
+  document.getElementById('app').innerHTML = '<div class="screen"><main class="content" style="padding: 40px 24px 24px; gap: 20px; align-items: center; text-align: center;">'
+    + '<h1 class="h1" tabindex="-1">載入失敗，請檢查網路後重新載入。</h1></main>'
+    + '<div class="actions"><button class="btn btn-primary" type="button" onclick="location.reload()">重新載入</button></div></div>';
+};
+window.addEventListener('error', function (e) {
+  var t = e.target;
+  if (t && t.tagName === 'SCRIPT') window.__miaoFail();
+}, true);
+setTimeout(window.__miaoFail, 20000);
+</script>
+<script type="module" onerror="window.__miaoFail && window.__miaoFail()">
 import { createApp } from '../assets/js/app.js';
 import { registerCommon } from '../assets/js/screens-common.js';
 import { registerNpc } from '../assets/js/npc.js';
@@ -19,7 +34,7 @@ createApp({ edition: 'family', register: [registerCommon, registerNpc, registerF
 </script>
 </head>
 <body>
-<div id="app"></div>
+<div id="app"><div class="screen"><main class="content" style="padding: 40px 24px 24px; align-items: center; text-align: center;"><p class="p">載入中，請稍候…</p></main></div></div>
 <!-- 暫定：noscript 文案 -->
 <noscript><p style="padding: 24px; font-size: 18px;">請開啟 JavaScript 才能進行遊戲。</p></noscript>
 </body>

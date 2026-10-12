@@ -2,7 +2,7 @@
 // routes: [[pattern, handler]]，pattern 例如 '/level/:n/result'。
 
 export function parse(hash) {
-  const path = (hash || '').replace(/^#/, '') || '/';
+  const path = (hash || '').replace(/^#/, '').replace(/\/+$/, '') || '/';
   return path.startsWith('/') ? path : '/' + path;
 }
 
@@ -12,8 +12,9 @@ export function match(pattern, path) {
   if (ps.length !== xs.length) return null;
   const params = {};
   for (let i = 0; i < ps.length; i++) {
-    if (ps[i].startsWith(':')) params[ps[i].slice(1)] = decodeURIComponent(xs[i]);
-    else if (ps[i] !== xs[i]) return null;
+    if (ps[i].startsWith(':')) {
+      try { params[ps[i].slice(1)] = decodeURIComponent(xs[i]); } catch { return null; } // 網址被截斷（壞掉的 % 編碼）
+    } else if (ps[i] !== xs[i]) return null;
   }
   return params;
 }
