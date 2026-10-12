@@ -2,3 +2,6 @@
 node_modules/
 tools/.venv/
 __pycache__/
+
+# 內容編輯台的產出檔（由 tools/content-editor/build.mjs 產生）
+tools/content-editor/editor.html

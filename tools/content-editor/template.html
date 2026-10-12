@@ -1,0 +1,659 @@
+<title>妙妙廟內容編輯台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap">
+<style>
+/* 版面：設計畫布。左側畫面清單、中間點狀網格畫布上一張張手機畫板（網站畫面，可直接點字修改）、右側抽屜是修改清單。
+   畫板永遠是網站本身的品牌色（白底、深棕字、廟紅），外框工具列跟著深淺色模式。 */
+:root {
+  --canvas: #ece6df;
+  --dot: #d6cbc0;
+  --panel: #fbf8f4;
+  --panel-2: #f3eee8;
+  --ink: #2d1b0d;
+  --muted: #76675a;
+  --line: #d9cec3;
+  --accent: #a42006;
+  --accent-ink: #ffffff;
+  --mark: #e8a65d;
+  --ok: #2f6b3f;
+  --ok-bg: #e3efe4;
+  --shadow: 0 1px 2px rgba(60, 35, 15, .08), 0 8px 28px rgba(60, 35, 15, .10);
+  --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+  /* 網站本身的品牌色（畫板內固定不變） */
+  --b-ink: #603514;
+  --b-red: #a42006;
+  --b-gold: #e8a65d;
+  --b-grey: #e3dad3;
+  --b-collar: #7d7870;
+  --b-quiet: #6b655d;
+  --b-white: #ffffff;
+  --b-mark: rgba(232, 166, 93, .38);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --canvas: #17120e; --dot: #2c241d; --panel: #221b15; --panel-2: #2a221b; --ink: #f2e9e0; --muted: #b5a596;
+    --line: #3e342b; --accent: #e4664a; --accent-ink: #1b0f08; --mark: #e8a65d; --ok: #8fd19e; --ok-bg: #1f3325;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px rgba(0, 0, 0, .45); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --canvas: #17120e; --dot: #2c241d; --panel: #221b15; --panel-2: #2a221b; --ink: #f2e9e0; --muted: #b5a596;
+  --line: #3e342b; --accent: #e4664a; --accent-ink: #1b0f08; --mark: #e8a65d; --ok: #8fd19e; --ok-bg: #1f3325;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px rgba(0, 0, 0, .45); color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--canvas); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.5; }
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--mark); outline-offset: 2px; }
+
+/* ---------- 頂部工具列 ---------- */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--panel); border-bottom: 1px solid var(--line); }
+.bar-row { display: flex; align-items: center; gap: 12px; padding: 10px 16px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; margin-right: auto; }
+.seal { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--b-gold); border: 2px solid var(--b-ink); color: var(--b-ink); display: grid; place-items: center; font-family: var(--serif); font-weight: 700; font-size: 17px; }
+.brand h1 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: .02em; text-wrap: balance; }
+.brand p { margin: 0; font-size: 12.5px; color: var(--muted); }
+.status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; background: var(--panel-2); color: var(--muted); border: 1px solid var(--line); white-space: nowrap; }
+.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.status.is-live::before { background: var(--ok); }
+.status.is-off::before { background: var(--accent); }
+.btn { appearance: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 8px; min-height: 38px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; white-space: nowrap; }
+.btn:hover { border-color: var(--muted); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { filter: brightness(1.05); border-color: var(--accent); }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.count { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--mark); color: #3a2208; font-size: 12.5px; font-weight: 700; display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; }
+
+.tools { display: flex; align-items: center; gap: 8px; padding: 0 16px 10px; flex-wrap: wrap; }
+.tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+.tab { appearance: none; border: 0; background: transparent; padding: 7px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); font-weight: 500; white-space: nowrap; display: inline-flex; gap: 6px; align-items: center; }
+.tab[aria-selected="true"] { background: var(--panel-2); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.tab .count { min-width: 18px; height: 18px; font-size: 11px; }
+.search { flex: 1 1 200px; min-width: 0; max-width: 320px; height: 36px; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; background: var(--panel); }
+.check { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: 13.5px; cursor: pointer; white-space: nowrap; }
+.notice { margin: 0 16px 10px; padding: 10px 12px; border-radius: 8px; background: var(--panel-2); border: 1px solid var(--line); font-size: 13.5px; display: flex; gap: 10px; align-items: flex-start; }
+.notice b { font-weight: 700; }
+.notice .x { margin-left: auto; flex: none; border: 0; background: transparent; cursor: pointer; color: var(--muted); padding: 2px 6px; }
+.steps { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.steps li { display: flex; gap: 6px; }
+.steps li span { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: var(--panel); font-size: 12px; display: grid; place-items: center; font-weight: 700; }
+
+/* ---------- 版面 ---------- */
+.layout { display: grid; grid-template-columns: 236px minmax(0, 1fr); }
+.rail { position: sticky; top: var(--bar-h, 120px); align-self: start; max-height: calc(100vh - var(--bar-h, 120px)); overflow: auto; padding: 16px 8px 40px 16px; }
+.rail h2 { margin: 6px 8px 8px; font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 700; }
+.rail a { display: flex; justify-content: space-between; gap: 8px; padding: 6px 8px; border-radius: 6px; color: var(--ink); text-decoration: none; font-size: 13.5px; }
+.rail a:hover { background: var(--panel-2); }
+.rail a .count { min-width: 18px; height: 18px; font-size: 11px; }
+.canvas {
+  min-width: 0; padding-block: 24px 120px; padding-inline: 16px;
+  background-image: radial-gradient(var(--dot) 1.2px, transparent 1.3px); background-size: 22px 22px;
+}
+.boards { display: flex; flex-wrap: wrap; gap: 40px 32px; align-items: flex-start; }
+@media (max-width: 1099px) { .layout { grid-template-columns: minmax(0, 1fr); } .rail { display: none; } }
+.empty { color: var(--muted); padding: 40px 0; text-align: center; width: 100%; }
+
+/* ---------- 畫板（網站畫面） ---------- */
+.artboard { width: min(360px, 100%); display: flex; flex-direction: column; gap: 8px; scroll-margin-top: calc(var(--bar-h, 120px) + 16px); }
+.ab-label { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 0 4px; font-size: 13px; color: var(--muted); }
+.ab-label b { color: var(--ink); font-weight: 700; font-size: 14px; }
+.ab-label code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+.board { background: var(--b-white); color: var(--b-ink); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; font-family: var(--serif); }
+.board-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 14px 18px; border-bottom: 1px solid var(--b-collar); font-family: var(--serif); font-weight: 700; font-size: 15px; }
+.ver { flex: none; border: 2px solid var(--b-ink); border-radius: 4px; padding: 2px 8px; font-size: 13px; }
+.ver.is-youth { background: var(--b-ink); color: var(--b-white); }
+.sec { padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 10px; }
+.sec + .sec { border-top: 1px dashed var(--b-grey); }
+.sec.is-task { margin: 12px 14px; border: 3px solid var(--b-ink); border-radius: 4px; }
+.sec.is-task + .sec.is-task { border-top: 3px solid var(--b-ink); }
+.sec-h { font-family: var(--sans); font-size: 11.5px; letter-spacing: .08em; color: var(--b-collar); font-weight: 700; }
+.sec.is-task .sec-h { color: var(--b-red); font-size: 12.5px; }
+.item { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.item[hidden] { display: none; }
+.item.is-dim { opacity: .28; }
+.lbl { font-family: var(--sans); font-size: 11.5px; color: var(--b-collar); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.chip { font-family: var(--sans); font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: var(--b-gold); color: #3a2208; }
+.chip.is-ok { background: #d8eadb; color: #22502f; }
+.note-txt { font-family: var(--sans); font-size: 12.5px; color: var(--b-quiet); background: var(--b-grey); border-radius: 4px; padding: 6px 8px; }
+
+.ed { appearance: none; display: block; width: 100%; margin: 0; text-align: left; background: transparent; border: 1px dashed transparent; border-radius: 4px; padding: 2px 4px; margin-inline: -5px; cursor: text; color: var(--b-ink); font-family: var(--serif); white-space: pre-wrap; overflow-wrap: anywhere; }
+.ed:hover { border-color: var(--b-gold); background: rgba(232, 166, 93, .08); }
+.ed:focus-visible { outline: 3px solid var(--b-gold); outline-offset: 1px; }
+.board.is-ro .ed { cursor: default; }
+.board.is-ro .ed:hover { border-color: transparent; background: transparent; }
+.ed.is-edited .t { background: linear-gradient(transparent 12%, var(--b-mark) 12%, var(--b-mark) 92%, transparent 92%); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.ed .ph-empty { color: var(--b-quiet); font-family: var(--sans); font-size: 14px; }
+
+.r-kicker { font-size: 15px; font-weight: 700; color: var(--b-red); }
+.r-h1 { font-size: 24px; line-height: 1.4; font-weight: 700; }
+.r-h2 { font-size: 20px; line-height: 1.45; font-weight: 700; }
+.r-p { font-size: 17px; line-height: 1.75; }
+.r-small { font-size: 15px; line-height: 1.65; }
+.r-label { font-size: 16px; font-weight: 700; }
+.r-task-title { font-size: 20px; font-weight: 700; line-height: 1.45; }
+.r-panel, .r-hint { font-size: 16px; line-height: 1.7; background: var(--b-grey); padding: 10px 12px; margin-inline: 0; }
+.r-panel:hover, .r-hint:hover { background: #ead9c8; }
+.r-placeholder { font-size: 16px; color: var(--b-quiet); border: 2px solid var(--b-collar); border-radius: 4px; padding: 10px 12px; margin-inline: 0; min-height: 48px; }
+.r-show { font-size: 17px; font-weight: 700; color: var(--b-red); }
+.r-key { font-size: 26px; font-weight: 700; color: var(--b-red); text-align: center; }
+.r-keypoint { font-size: 19px; font-weight: 700; line-height: 1.6; }
+.r-card-place { font-size: 18px; font-weight: 700; }
+.r-card-task { font-size: 15px; }
+.r-option { font-size: 16px; border: 2px solid var(--b-collar); border-radius: 4px; padding: 10px 12px; margin-inline: 0; }
+.r-err { font-size: 16px; font-weight: 700; color: var(--b-red); }
+.r-btn { font-size: 17px; font-weight: 700; background: var(--b-red); color: var(--b-white); text-align: center; border-radius: 4px; padding: 12px; margin-inline: 0; }
+.r-btn:hover { background: var(--b-red); filter: brightness(1.08); }
+.r-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 18px; font-weight: 700; letter-spacing: .06em; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.r-lines { font-size: 16px; line-height: 1.7; }
+.r-lines .t { display: block; }
+.lines { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.lines li { padding-left: 14px; position: relative; }
+.lines li::before { content: ""; position: absolute; left: 0; top: .75em; width: 6px; height: 6px; background: var(--b-ink); border-radius: 50%; }
+.lines.is-talk li { background: var(--b-grey); border-radius: 4px; padding: 8px 10px; }
+.lines.is-talk li::before { display: none; }
+.answers { border: 2px dashed var(--b-collar); border-radius: 4px; padding: 8px; margin-inline: 0; }
+.answers .t { display: flex; flex-wrap: wrap; gap: 6px; background: none !important; }
+.ans { font-size: 15px; background: var(--b-grey); border-radius: 4px; padding: 2px 8px; }
+.ed.is-edited .ans { background: var(--b-mark); }
+.tiny { font-family: var(--sans); font-size: 11px; color: var(--b-quiet); }
+
+.fig { display: flex; flex-direction: column; gap: 8px; }
+.fig-box { border: 1px solid var(--b-grey); border-radius: 4px; overflow: hidden; background: var(--b-grey); }
+.fig-box img { display: block; width: 100%; height: auto; max-height: 420px; object-fit: contain; background: var(--b-white); }
+.fig-empty { white-space: pre-line; aspect-ratio: 16 / 9; max-width: 100%; display: grid; place-items: center; border: 2px dashed var(--b-collar); border-radius: 4px; color: var(--b-quiet); font-family: var(--sans); font-size: 13.5px; text-align: center; padding: 12px; }
+.fig-act { display: flex; gap: 8px; flex-wrap: wrap; font-family: var(--sans); }
+.bbtn { appearance: none; border: 2px solid var(--b-ink); background: var(--b-white); color: var(--b-ink); border-radius: 4px; min-height: 38px; padding: 0 12px; font-weight: 700; font-size: 14px; cursor: pointer; font-family: var(--sans); }
+.bbtn.is-primary { background: var(--b-red); border-color: var(--b-red); color: var(--b-white); }
+.bbtn.is-text { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; padding: 0 6px; }
+.bbtn[disabled] { opacity: .5; cursor: wait; }
+
+/* 行內編輯框 */
+.editor { border: 2px solid var(--b-gold); background: #fffaf3; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 8px; font-family: var(--sans); color: var(--b-ink); }
+.editor label { font-size: 12.5px; font-weight: 700; color: var(--b-ink); }
+.editor textarea, .editor input { width: 100%; border: 2px solid var(--b-collar); border-radius: 4px; background: var(--b-white); color: var(--b-ink); padding: 8px 10px; }
+.editor textarea { font-family: var(--serif); font-size: 17px; line-height: 1.6; resize: vertical; min-height: 48px; }
+.editor textarea:focus, .editor input:focus { outline: 3px solid var(--b-gold); outline-offset: 0; border-color: var(--b-ink); }
+.editor .orig { font-size: 12.5px; color: var(--b-quiet); white-space: pre-wrap; }
+.editor .orig b { color: var(--b-ink); }
+.editor .help { font-size: 12px; color: var(--b-quiet); }
+.editor .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.editor .row .spacer { margin-left: auto; }
+.editor .warn { font-size: 12.5px; color: var(--b-red); font-weight: 700; }
+
+/* 手機：工具列跟著捲走，修改清單改用畫面下方的按鈕 */
+.fab { display: none; }
+@media (max-width: 700px) {
+  .bar { position: static; }
+  .bar-row > .btn-primary { display: none; }
+  .fab { display: inline-flex; position: fixed; z-index: 30; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); box-shadow: var(--shadow); min-height: 46px; border-radius: 999px; padding: 0 18px; }
+  .canvas { padding-bottom: 96px; }
+}
+
+/* ---------- 修改清單抽屜 ---------- */
+.drawer { position: fixed; z-index: 40; top: 0; right: 0; bottom: 0; width: min(460px, 100%); background: var(--panel); border-left: 1px solid var(--line); box-shadow: var(--shadow); display: flex; flex-direction: column; transform: translateX(102%); transition: transform .2s ease; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.drawer.is-open { transform: none; }
+@media (prefers-reduced-motion: reduce) { .drawer { transition: none; } }
+.drawer-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.drawer-head h2 { margin: 0; font-size: 17px; }
+.drawer-head .btn { margin-left: auto; }
+.drawer-body { overflow: auto; padding: 12px 16px 24px; display: flex; flex-direction: column; gap: 16px; }
+.how { font-size: 13.5px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.how code { font-family: inherit; font-weight: 700; color: var(--accent); }
+.grp h3 { margin: 0 0 6px; font-size: 13px; color: var(--muted); letter-spacing: .04em; }
+.ch { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; background: var(--panel); }
+.ch + .ch { margin-top: 8px; }
+.ch-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; }
+.ch-top b { font-weight: 700; }
+.pill { font-size: 11.5px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--mark); color: #3a2208; }
+.pill.is-ok { background: var(--ok-bg); color: var(--ok); }
+.ch .old { font-size: 13.5px; color: var(--muted); text-decoration: line-through; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ch .new { font-size: 14.5px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ch .nt { font-size: 13px; color: var(--muted); }
+.ch .acts { display: flex; gap: 6px; flex-wrap: wrap; }
+.ch .acts .btn { min-height: 32px; padding: 0 10px; font-size: 13px; }
+.ch img { max-width: 120px; border-radius: 4px; border: 1px solid var(--line); }
+.req textarea { width: 100%; min-height: 84px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--panel); resize: vertical; }
+.req .row { display: flex; justify-content: flex-end; margin-top: 6px; }
+.scrim { position: fixed; inset: 0; z-index: 35; background: rgba(20, 10, 4, .35); }
+
+.toast { position: fixed; z-index: 60; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--panel); padding: 10px 16px; border-radius: 8px; font-size: 14px; box-shadow: var(--shadow); max-width: calc(100% - 32px); }
+.flash { animation: flash 1.2s ease 1; }
+@keyframes flash { 0%, 40% { box-shadow: 0 0 0 4px var(--mark), var(--shadow); } 100% { box-shadow: var(--shadow); } }
+@media (prefers-reduced-motion: reduce) { .flash { animation: none; } }
+</style>
+
+<header class="bar" id="bar">
+  <div class="bar-row">
+    <div class="brand">
+      <span class="seal" aria-hidden="true">妙</span>
+      <div>
+        <h1>妙妙廟內容編輯台</h1>
+        <p id="sub">點網站上的字直接修改；改完回到對話跟 Claude 說「套用網站修改」</p>
+      </div>
+    </div>
+    <span class="status" id="status">連線中…</span>
+    <button class="btn btn-primary" id="open-list" type="button">修改清單 <span class="count" id="total">0</span></button>
+  </div>
+  <div class="tools">
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <input class="search" id="q" type="search" placeholder="搜尋文字，例如：福德祠" aria-label="搜尋網站文字">
+    <label class="check"><input type="checkbox" id="only"> 只看改過的</label>
+  </div>
+  <div class="notice" id="intro">
+    <ol class="steps">
+      <li><span>1</span>點任何一段字，直接改；答案一行一種寫法</li>
+      <li><span>2</span>圖片按「換一張圖」上傳</li>
+      <li><span>3</span>改完回到對話跟 Claude 說「套用網站修改」</li>
+    </ol>
+    <button class="x" id="intro-x" type="button" aria-label="收起說明">收起</button>
+  </div>
+  <div class="notice" id="ro" hidden></div>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="畫面清單"></nav>
+  <main class="canvas"><div class="boards" id="boards"></div></main>
+</div>
+
+<button class="btn btn-primary fab" id="fab" type="button">修改清單 <span class="count" id="total3">0</span></button>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" aria-label="修改清單" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>修改清單</h2>
+    <span class="count" id="total2">0</span>
+    <button class="btn" id="close-list" type="button">關閉</button>
+  </div>
+  <div class="drawer-body">
+    <p class="how">這裡的修改會存起來，所有編輯者都看得到。改完後回到對話跟 Claude 說 <code>套用網站修改</code>，Claude 會改進網站、跑測試，再告訴你哪些已經上線。</p>
+    <div id="changes"></div>
+    <section class="req">
+      <h3 class="grp" style="margin:0 0 6px;font-size:13px;color:var(--muted)">其他想改的地方</h3>
+      <label for="req-text" class="tiny" style="color:var(--muted);font-size:12.5px">畫面上找不到、或不知道怎麼改的，用一句話寫下來</label>
+      <textarea id="req-text" placeholder="例如：親子場地圖加上老順香的位置"></textarea>
+      <div class="row"><button class="btn btn-primary" id="req-send" type="button">送出</button></div>
+      <div id="reqs"></div>
+    </section>
+  </div>
+</aside>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script type="application/json" id="data">__DATA__</script>
+<script>
+(function () {
+  const DATA = JSON.parse(document.getElementById('data').textContent);
+  const TABS = [['youth', '青年場'], ['family', '親子場'], ['npc', 'NPC'], ['shared', '共用文字'], ['images', '所有圖片']];
+  const VER = { youth: ['青年場', 'is-youth'], family: ['親子場', ''], npc: ['NPC・兩場共用', ''], shared: ['兩場共用', ''] };
+
+  // ---------- 狀態 ----------
+  const items = new Map();       // key → item（含 screen）
+  const screensOf = {};          // tab → screens
+  DATA.screens.forEach(s => {
+    (screensOf[s.tab] = screensOf[s.tab] || []).push(s);
+    s.sections.forEach(sec => sec.items.forEach(it => { if (it.key) items.set(it.key, Object.assign(it, { screen: s })); }));
+  });
+  let edits = new Map();         // key → doc data
+  let reqs = [];
+  let tab = 'youth';
+  try { tab = localStorage.getItem('mm-tab') || 'youth'; } catch (e) {}
+  if (!TABS.some(t => t[0] === tab)) tab = 'youth';
+  let db = null, assets = null, me = null, canWrite = false;
+  const openEditors = new Set();
+  const writing = new Map();     // key → promise（同一筆一次寫一個）
+
+  const $ = s => document.querySelector(s);
+  function h(tag, attrs, ...kids) {
+    const el = document.createElement(tag);
+    for (const k in attrs || {}) {
+      const v = attrs[k];
+      if (v === false || v == null) continue;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    }
+    kids.flat().forEach(c => { if (c != null && c !== false) el.append(c.nodeType ? c : String(c)); });
+    return el;
+  }
+  function toast(msg) {
+    const t = $('#toast'); t.textContent = msg; t.hidden = false;
+    clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 2600);
+  }
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const valueOf = it => { const e = edits.get(it.key); return e && 'value' in e ? e.value : it.original; };
+  const isEdited = it => edits.has(it.key);
+  const docId = key => key.replace(/[^A-Za-z0-9_\-.~:@+]/g, '_');
+
+  // ---------- 畫板 ----------
+  function viewNode(it) {
+    const v = valueOf(it);
+    if (it.kind === 'list') {
+      if (it.role === 'answers') return h('span', { class: 't' }, (v || []).map(a => h('span', { class: 'ans', text: a })));
+      const ul = h('ul', { class: 'lines t' + (it.lines ? ' is-talk' : '') }, (v || []).map(x => h('li', { text: x })));
+      if (!(v || []).length) return h('span', { class: 'ph-empty', text: '（目前沒有，點這裡新增）' });
+      return ul;
+    }
+    if (it.kind === 'add' && !v) return h('span', { class: 'ph-empty', text: '＋ 新增' });
+    return h('span', { class: 't', text: v });
+  }
+
+  function itemNode(it) {
+    if (it.kind === 'note') return h('p', { class: 'note-txt', text: it.text });
+    const wrap = h('div', { class: 'item', 'data-item': it.key });
+    paintItem(wrap, it);
+    return wrap;
+  }
+
+  function labelRow(it) {
+    const e = edits.get(it.key);
+    return h('div', { class: 'lbl' }, it.label,
+      e ? h('span', { class: 'chip' + (e.status === 'applied' ? ' is-ok' : ''), text: e.status === 'applied' ? '已套用' : '已改' }) : null,
+      it.role === 'answers' ? h('span', { class: 'tiny', text: '玩家看不到' }) : null);
+  }
+
+  function paintItem(wrap, it) {
+    if (openEditors.has(it.key)) return;
+    wrap.replaceChildren();
+    if (it.kind === 'image') return paintImage(wrap, it);
+    const e = edits.get(it.key);
+    const role = it.kind === 'list' ? (it.role === 'answers' ? 'answers' : 'r-lines') : 'r-' + (it.role || 'p');
+    const btn = h('button', { class: 'ed ' + role + (e ? ' is-edited' : ''), type: 'button', 'aria-label': it.label + '（點一下修改）', onclick: () => openEditor(wrap, it) }, viewNode(it));
+    wrap.append(labelRow(it), btn);
+    if (e && e.note) wrap.append(h('p', { class: 'note-txt', text: '備註：' + e.note }));
+  }
+
+  function paintImage(wrap, it) {
+    const e = edits.get(it.key);
+    const src = e && e.assetId ? '/_blob/' + e.assetId : it.original;
+    const box = src
+      ? h('div', { class: 'fig-box' }, h('img', { src, alt: it.label, loading: 'lazy' }))
+      : h('div', { class: 'fig-empty', text: '還沒有圖片' + (it.hint ? '\n' + it.hint : '') });
+    const file = h('input', { type: 'file', accept: 'image/png,image/jpeg,image/webp,image/gif', hidden: true, id: 'f-' + docId(it.key) });
+    file.addEventListener('change', () => file.files[0] && uploadImage(it, file.files[0], wrap));
+    const acts = h('div', { class: 'fig-act' });
+    if (assets && canWrite) {
+      acts.append(h('button', { class: 'bbtn is-primary', type: 'button', onclick: () => file.click() }, src ? '換一張圖' : '上傳圖片'), file);
+      if (e) acts.append(h('button', { class: 'bbtn is-text', type: 'button', onclick: () => revert(it) }, it.original ? '還原原圖' : '移除'));
+    } else if (db && canWrite) acts.append(h('span', { class: 'tiny', text: '換圖需要「編輯者」權限' }));
+    wrap.append(labelRow(it), h('div', { class: 'fig' }, box, acts));
+    if (it.hint && src) wrap.append(h('p', { class: 'tiny', text: it.hint }));
+    if (e && e.fileName) wrap.append(h('p', { class: 'tiny', text: '新圖：' + e.fileName }));
+  }
+
+  function renderBoards() {
+    const host = $('#boards');
+    host.replaceChildren();
+    const list = tab === 'images'
+      ? [{ id: 'all-images', tab: 'images', title: '所有圖片', where: '網站裡的圖片與可以加圖的位置', sections: [{ items: [...items.values()].filter(i => i.kind === 'image').map(i => i) }] }]
+      : (screensOf[tab] || []);
+    list.forEach(s => {
+      const ver = VER[s.tab === 'images' ? 'shared' : s.tab];
+      const board = h('div', { class: 'board' + (canWrite ? '' : ' is-ro') },
+        h('div', { class: 'board-top' }, h('span', { text: s.title }), h('span', { class: 'ver ' + ver[1], text: ver[0] })),
+        s.sections.map(sec => h('section', { class: 'sec' + (sec.task ? ' is-task' : '') },
+          sec.heading ? h('div', { class: 'sec-h', text: sec.heading }) : null,
+          sec.items.map(it => {
+            if (tab === 'images' && it.screen) return h('div', {}, h('div', { class: 'sec-h', text: it.screen.title }), itemNode(it));
+            return itemNode(it);
+          }))));
+      host.append(h('article', { class: 'artboard', id: 'ab-' + s.id, 'data-screen': s.id },
+        h('div', { class: 'ab-label' }, h('b', { text: s.title }), h('code', { text: s.where || '' })), board));
+    });
+    applyFilter();
+  }
+
+  function renderTabs() {
+    const host = $('#tabs'); host.replaceChildren();
+    TABS.forEach(([id, name]) => {
+      const n = [...edits.keys()].filter(k => { const it = items.get(k); return it && (id === 'images' ? it.kind === 'image' : it.screen.tab === id); }).length;
+      host.append(h('button', { class: 'tab', role: 'tab', type: 'button', 'aria-selected': String(tab === id), id: 'tab-' + id,
+        onclick: () => { tab = id; try { localStorage.setItem('mm-tab', id); } catch (e) {} renderTabs(); renderRail(); renderBoards(); window.scrollTo(0, 0); } },
+        name, n ? h('span', { class: 'count', text: n }) : null));
+    });
+  }
+
+  function renderRail() {
+    const rail = $('#rail'); rail.replaceChildren(h('h2', { text: '畫面' }));
+    const list = tab === 'images' ? [] : (screensOf[tab] || []);
+    list.forEach(s => {
+      const n = [...edits.keys()].filter(k => items.get(k) && items.get(k).screen === s).length;
+      rail.append(h('a', { href: '#ab-' + s.id, onclick: ev => { ev.preventDefault(); jump(s.id); } }, h('span', { text: s.title }), n ? h('span', { class: 'count', text: n }) : null));
+    });
+  }
+
+  function jump(screenId, key) {
+    const ab = document.getElementById('ab-' + screenId);
+    if (!ab) return;
+    const target = key ? ab.querySelector('[data-item="' + CSS.escape(key) + '"]') : ab;
+    (target || ab).scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: key ? 'center' : 'start' });
+    const board = ab.querySelector('.board');
+    board.classList.remove('flash'); void board.offsetWidth; board.classList.add('flash');
+  }
+
+  function applyFilter() {
+    const q = $('#q').value.trim().toLowerCase();
+    const only = $('#only').checked;
+    let shown = 0;
+    document.querySelectorAll('.artboard').forEach(ab => {
+      let hits = 0;
+      ab.querySelectorAll('[data-item]').forEach(el => {
+        const it = items.get(el.dataset.item);
+        const text = JSON.stringify([it.label, it.original, valueOf(it)]).toLowerCase();
+        const okQ = !q || text.includes(q);
+        const okE = !only || isEdited(it);
+        el.classList.toggle('is-dim', !!q && !okQ);
+        el.hidden = only && !okE;
+        if (okQ && okE) hits++;
+      });
+      ab.hidden = (q || only) && hits === 0;
+      if (!ab.hidden) shown++;
+    });
+    let empty = $('#boards .empty');
+    if (!shown) {
+      if (!empty) $('#boards').append(empty = h('p', { class: 'empty' }));
+      empty.textContent = only ? '這一頁還沒有修改。點任何一段字就能開始改。' : '找不到符合的文字，換個關鍵字試試。';
+    } else if (empty) empty.remove();
+  }
+
+  // ---------- 編輯 ----------
+  function openEditor(wrap, it) {
+    if (!db) { toast('要登入 claude.ai 才能儲存修改'); return; }
+    if (!canWrite) { toast('你目前只有檢視權限'); return; }
+    openEditors.add(it.key);
+    const e = edits.get(it.key);
+    const isList = it.kind === 'list';
+    const cur = valueOf(it);
+    const ta = h('textarea', { id: 'ed-' + docId(it.key), rows: 2 });
+    ta.value = isList ? (cur || []).join('\n') : (cur || '');
+    const fit = () => { ta.style.height = 'auto'; ta.style.height = Math.min(420, ta.scrollHeight + 4) + 'px'; };
+    ta.addEventListener('input', fit);
+    const note = h('input', { id: 'nt-' + docId(it.key), type: 'text', placeholder: '給 Claude 的備註（選填），例如：還不確定，現場確認後再改' });
+    note.value = (e && e.note) || '';
+    const warn = h('p', { class: 'warn', hidden: true });
+    const origText = isList ? (it.original || []).join('、') || '（空）' : (it.original || '（空）');
+    const close = () => { openEditors.delete(it.key); paintItem(wrap, it); applyFilter(); };
+    const save = async () => {
+      let value = isList ? ta.value.split('\n').map(s => s.trim()).filter(Boolean) : ta.value.replace(/\s+$/, '');
+      if (it.numeric && !/^\d{1,4}$/.test(value)) { warn.textContent = '請輸入 1～4 位數字'; warn.hidden = false; return; }
+      if (!isList && it.role !== 'code' && it.kind !== 'add' && !value.trim() && it.original) { warn.textContent = '不能是空白；想刪掉這段，請寫在備註'; warn.hidden = false; return; }
+      if (it.role === 'answers' && !value.length) { warn.textContent = '至少要留一種可接受的答案'; warn.hidden = false; return; }
+      const n = note.value.trim();
+      saveBtn.disabled = true;
+      const ok = await writeEdit(it, same(value, it.original) && !n ? null : { value, note: n });
+      saveBtn.disabled = false;
+      if (ok) close();
+    };
+    const saveBtn = h('button', { class: 'bbtn is-primary', type: 'button', onclick: save }, '儲存');
+    ta.addEventListener('keydown', ev => { if (ev.key === 'Escape') close(); if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) save(); });
+    const box = h('div', { class: 'editor' },
+      h('label', { for: ta.id, text: it.label }),
+      ta,
+      isList ? h('p', { class: 'help', text: it.role === 'answers' ? '每一行一種寫法。玩家打出其中任何一種就算對。' : '每一行一條。' }) : null,
+      it.role === 'code' && /通關碼/.test(it.label) ? h('p', { class: 'help', text: '通關碼建議 4 位數字，工作人員核對用。' }) : null,
+      h('p', { class: 'orig' }, h('b', { text: '原文　' }), origText),
+      h('label', { for: note.id, text: '備註（選填）' }), note,
+      warn,
+      h('div', { class: 'row' }, saveBtn,
+        h('button', { class: 'bbtn', type: 'button', onclick: close }, '取消'),
+        e ? h('button', { class: 'bbtn is-text spacer', type: 'button', onclick: async () => { if (await revert(it)) close(); } }, '還原原文') : null));
+    wrap.replaceChildren(labelRow(it), box);
+    fit(); ta.focus();
+  }
+
+  async function writeEdit(it, change) {
+    const ref = db.doc('edits/' + docId(it.key));
+    const prev = writing.get(it.key) || Promise.resolve();
+    const run = prev.then(async () => {
+      if (!change) { if (edits.has(it.key)) await ref.delete(); return true; }
+      const body = {
+        key: it.key, file: it.file, path: it.path, kind: it.kind, label: it.label,
+        screen: it.screen.title, where: it.screen.where || '',
+        original: it.original == null ? null : it.original,
+        status: 'pending', updatedAt: new Date().toISOString(), by: me || null, baseCommit: DATA.commit,
+      };
+      Object.assign(body, change);
+      await ref.set(body);
+      return true;
+    }).then(ok => { toast(change ? '已儲存' : '已還原'); return ok; }, err => { toast(errText(err)); return false; });
+    writing.set(it.key, run.catch(() => {}));
+    return run;
+  }
+
+  async function revert(it) {
+    const e = edits.get(it.key);
+    const ok = await writeEdit(it, null);
+    // 移除這次上傳、別處也沒用到的圖片
+    if (ok && e && e.assetId && assets) { try { await assets.delete(e.assetId); } catch (err) {} }
+    return ok;
+  }
+
+  async function uploadImage(it, file, wrap) {
+    if (file.size > 20 * 1024 * 1024) { toast('圖片太大（上限 20 MB），請先縮小再上傳'); return; }
+    const btns = wrap.querySelectorAll('.bbtn'); btns.forEach(b => { b.disabled = true; });
+    toast('上傳中…');
+    try {
+      const old = edits.get(it.key);
+      const r = await assets.upload(file);
+      const ok = await writeEdit(it, { assetId: r.id, fileName: file.name, contentType: r.contentType, sizeBytes: r.sizeBytes, note: (old && old.note) || '' });
+      if (ok && old && old.assetId && old.assetId !== r.id) { try { await assets.delete(old.assetId); } catch (err) {} }
+    } catch (err) {
+      toast(errText(err));
+    } finally { btns.forEach(b => { b.disabled = false; }); }
+  }
+
+  function errText(err) {
+    const c = err && err.code;
+    if (c === 'too_large') return '圖片太大，請先縮小再上傳';
+    if (c === 'unsupported_type') return '只能上傳 PNG、JPG、WebP 或 GIF 圖片';
+    if (c === 'quota_exceeded' || c === 'quota_or_state') return '儲存空間滿了，請先還原幾張用不到的新圖';
+    if (c === 'invalid_argument' || c === 'not_granted') { setReadOnly('你目前只有檢視權限，無法儲存修改。'); return '你目前只有檢視權限，無法儲存'; }
+    if (c === 'rate_limited' || c === 'resource_exhausted') return '動作太快了，請稍等幾秒再試';
+    return '儲存失敗，請檢查網路後再試一次';
+  }
+
+  // ---------- 修改清單 ----------
+  function fmt(v) { return Array.isArray(v) ? v.join('\n') : (v == null ? '' : String(v)); }
+  function renderChanges() {
+    const host = $('#changes'); host.replaceChildren();
+    const n = edits.size;
+    $('#total').textContent = n; $('#total2').textContent = n; $('#total3').textContent = n;
+    if (!n) { host.append(h('p', { class: 'tiny', style: 'color:var(--muted);font-size:13.5px', text: '還沒有修改。關掉這個清單，點畫板上任何一段字就能開始改。' })); return; }
+    const groups = new Map();
+    [...edits.values()].sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt))).forEach(e => {
+      const it = items.get(e.key); if (!it) return;
+      const g = (it.screen.tab === 'youth' ? '青年場・' : it.screen.tab === 'family' ? '親子場・' : it.screen.tab === 'npc' ? '' : '共用・') + it.screen.title;
+      if (!groups.has(g)) groups.set(g, []);
+      groups.get(g).push([e, it]);
+    });
+    groups.forEach((rows, g) => {
+      host.append(h('div', { class: 'grp' }, h('h3', { text: g }), rows.map(([e, it]) => h('div', { class: 'ch' },
+        h('div', { class: 'ch-top' }, h('b', { text: it.label }), h('span', { class: 'pill' + (e.status === 'applied' ? ' is-ok' : ''), text: e.status === 'applied' ? '已套用' + (e.appliedCommit ? '・' + e.appliedCommit : '') : '待套用' })),
+        it.kind === 'image'
+          ? h('div', {}, h('img', { src: '/_blob/' + e.assetId, alt: '新圖' }), h('div', { class: 'nt', text: e.fileName || '' }))
+          : [h('div', { class: 'old', text: fmt(it.original) || '（原本沒有）' }), h('div', { class: 'new', text: fmt(e.value) })],
+        e.note ? h('div', { class: 'nt', text: '備註：' + e.note }) : null,
+        h('div', { class: 'acts' },
+          h('button', { class: 'btn', type: 'button', onclick: () => { closeDrawer(); goTo(it); } }, '看位置'),
+          canWrite && e.status !== 'applied' ? h('button', { class: 'btn', type: 'button', onclick: () => revert(it) }, '還原') : null)))));
+    });
+  }
+  function goTo(it) {
+    const t = it.kind === 'image' && tab === 'images' ? 'images' : it.screen.tab;
+    if (t !== tab) { tab = t; renderTabs(); renderRail(); renderBoards(); }
+    if ($('#only').checked || $('#q').value) { $('#only').checked = false; $('#q').value = ''; applyFilter(); }
+    requestAnimationFrame(() => jump(tab === 'images' ? 'all-images' : it.screen.id, it.key));
+  }
+  function renderReqs() {
+    const host = $('#reqs'); host.replaceChildren();
+    reqs.forEach(r => host.append(h('div', { class: 'ch', style: 'margin-top:8px' },
+      h('div', { class: 'ch-top' }, h('span', { class: 'pill' + (r.data.status === 'done' ? ' is-ok' : ''), text: r.data.status === 'done' ? '已處理' : '待處理' })),
+      h('div', { class: 'new', text: r.data.text }),
+      r.data.reply ? h('div', { class: 'nt', text: 'Claude：' + r.data.reply }) : null,
+      canWrite && r.data.status !== 'done' ? h('div', { class: 'acts' }, h('button', { class: 'btn', type: 'button', onclick: async () => { try { await db.doc('requests/' + r.id).delete(); } catch (err) { toast(errText(err)); } } }, '刪除')) : null)));
+  }
+  function openDrawer() { $('#drawer').classList.add('is-open'); $('#drawer').setAttribute('aria-hidden', 'false'); $('#scrim').hidden = false; $('#close-list').focus(); }
+  function closeDrawer() { $('#drawer').classList.remove('is-open'); $('#drawer').setAttribute('aria-hidden', 'true'); $('#scrim').hidden = true; }
+
+  function setReadOnly(msg) {
+    canWrite = false;
+    const ro = $('#ro'); ro.textContent = msg; ro.hidden = false;
+    $('#req-send').disabled = true; $('#req-text').disabled = true;
+    document.querySelectorAll('.board').forEach(b => b.classList.add('is-ro'));
+  }
+
+  // ---------- 啟動 ----------
+  $('#open-list').addEventListener('click', openDrawer);
+  $('#fab').addEventListener('click', openDrawer);
+  $('#close-list').addEventListener('click', closeDrawer);
+  $('#scrim').addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && $('#drawer').classList.contains('is-open')) closeDrawer(); });
+  $('#q').addEventListener('input', applyFilter);
+  $('#only').addEventListener('change', applyFilter);
+  try { if (localStorage.getItem('mm-intro') === 'off') $('#intro').hidden = true; } catch (e) {}
+  $('#intro-x').addEventListener('click', () => { $('#intro').hidden = true; try { localStorage.setItem('mm-intro', 'off'); } catch (e) {} measure(); });
+  $('#req-send').addEventListener('click', async () => {
+    const text = $('#req-text').value.trim();
+    if (!text) { toast('先寫下想改的地方'); return; }
+    if (!db) { toast('要登入 claude.ai 才能送出'); return; }
+    $('#req-send').disabled = true;
+    try { await db.collection('requests').add({ text, status: 'open', createdAt: new Date().toISOString(), by: me || null }); $('#req-text').value = ''; toast('已送出'); }
+    catch (err) { toast(errText(err)); }
+    $('#req-send').disabled = false;
+  });
+  function measure() { document.documentElement.style.setProperty('--bar-h', $('#bar').offsetHeight + 'px'); }
+  addEventListener('resize', measure);
+
+  renderTabs(); renderRail(); renderBoards(); renderChanges(); measure();
+
+  (async () => {
+    const st = $('#status');
+    db = window.claude ? await window.claude.use('db') : null;
+    const user = window.claude ? await window.claude.use('user') : null;
+    if (!db) { st.textContent = '唯讀'; st.classList.add('is-off'); setReadOnly('要登入 claude.ai 打開這個頁面，才能儲存修改。現在只能瀏覽。'); return; }
+    me = user ? await user.id() : null;
+    const w = user ? await user.can('data.write') : null;
+    canWrite = w !== false;
+    if (!canWrite) setReadOnly('你目前只有檢視權限。請 Hugo 在「分享」把你設為「參與者」以上，就能一起修改。');
+    assets = canWrite && window.claude ? await window.claude.use('assets') : null;
+    st.textContent = canWrite ? '已連線・會自動儲存' : '已連線・唯讀'; st.classList.add(canWrite ? 'is-live' : 'is-off');
+    document.querySelectorAll('.board').forEach(b => b.classList.toggle('is-ro', !canWrite));
+    // 圖片按鈕要等 assets 確定後再畫
+    document.querySelectorAll('[data-item]').forEach(el => { const it = items.get(el.dataset.item); if (it.kind === 'image') paintItem(el, it); });
+
+    db.collection('edits').onSnapshot(snap => {
+      const next = new Map();
+      snap.docs.forEach(d => { const v = d.data(); if (v && v.key && items.has(v.key)) next.set(v.key, v); });
+      const changed = new Set([...next.keys(), ...edits.keys()].filter(k => !same(next.get(k), edits.get(k))));
+      edits = next;
+      changed.forEach(k => document.querySelectorAll('[data-item="' + CSS.escape(k) + '"]').forEach(el => paintItem(el, items.get(k))));
+      renderTabs(); renderRail(); renderChanges(); applyFilter();
+    }, err => { st.textContent = '連線中斷'; st.classList.remove('is-live'); st.classList.add('is-off'); toast('和伺服器的連線中斷了，請重新整理頁面'); });
+    db.collection('requests').orderBy('createdAt', 'desc').onSnapshot(snap => {
+      reqs = snap.docs.map(d => ({ id: d.id, data: d.data() || {} }));
+      renderReqs();
+    }, () => {});
+  })();
+})();
+</script>
