@@ -35,6 +35,6 @@ A mobile puzzle-trail site for Xinzhuang Temple Street: entry `/`, youth `/youth
 ## 指令 / Commands
 
 - 本機預覽：`npx serve site`（或 `python3 -m http.server 8080 --directory site`）
-- 單元測試：`node --test tests/`
+- 單元測試：`node --test 'tests/*.test.mjs'`
 - 從設計稿重新抽出內容：`node tools/extract-content.js`
 - 字型子集化（建好後）：`python3 tools/subset-fonts.py`

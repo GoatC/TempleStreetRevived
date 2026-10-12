@@ -4,19 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>青年場｜妙妙貓的廟街委託</title>
+<link rel="preload" href="../assets/fonts/GenRyuMinTW-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" type="image/png" href="../assets/img/favicon.png">
 <link rel="stylesheet" href="../assets/css/miao.css">
+<style>
+a{color:#603514}a:hover{color:#a42006}
+</style>
+<script type="module">
+import { createApp } from '../assets/js/app.js';
+import { registerCommon } from '../assets/js/screens-common.js';
+import { registerNpc } from '../assets/js/npc.js';
+import { registerYouth } from '../assets/js/youth.js';
+createApp({ edition: 'youth', register: [registerCommon, registerNpc, registerYouth] });
+</script>
 </head>
 <body>
-<!-- 暫時頁面：，之後會換成正式的遊戲。 -->
-<div class="screen">
-  <main class="content" style="padding: 40px 24px 24px; align-items: center; text-align: center; gap: 20px;">
-    <img src="../assets/img/logo.webp" width="184" height="188" alt="新莊妙妙廟 Temple Street Revived 標誌" style="width: 184px; height: auto; display: block;">
-    <h1 class="h1">青年場</h1>
-    <p class="p">施工中，請稍後再來。</p>
-  </main>
-  <div class="actions">
-    <a class="btn btn-text" href="../" style="align-self: center;">不是這個場次？回到場次選擇</a>
-  </div>
-</div>
+<div id="app"></div>
+<!-- 暫定：noscript 文案 -->
+<noscript><p style="padding: 24px; font-size: 18px;">請開啟 JavaScript 才能進行遊戲。</p></noscript>
 </body>
 </html>

@@ -369,3 +369,46 @@ body { margin: 0; }
 
 /* ---------- site additions ---------- */
 [hidden] { display: none !important; }
+
+/* ---------- site additions: 彈窗在大螢幕不要撐滿、內容太長可以捲動 ---------- */
+.scrim .modal { max-width: 440px; max-height: 100%; overflow-y: auto; }
+
+/* family */
+/* 親子場地圖：設計稿固定 350×640，窄螢幕（320 px）會超出；改成隨寬度縮放、保持比例 */
+.fmap { width: 100%; height: auto; aspect-ratio: 700 / 1280; }
+
+/* youth */
+/* 青年場地圖：設計稿是固定 350×640 的畫框，改成跟著內容寬度縮放（320 px 寬不能橫向捲動） */
+.map-fig { width: 100%; height: auto; }
+.map-fig img { width: 100%; height: auto; }
+
+/* ---------- site additions: 用 <a> 做的按鈕（填寫遊戲回饋、完成遊戲）不吃頁面的 a:hover 顏色 ---------- */
+a.btn-primary, a.btn-primary:hover { color: var(--cat-white); }
+a.btn-destructive:hover { color: var(--temple-red); }
+a.btn-secondary:hover, a.btn-hint:hover, a.btn-reveal:hover, a.btn-back:hover, a.btn-text:hover { color: var(--ink-brown); }
+
+/* ---------- site additions: 320 px 窄螢幕（§5、§14）關卡選單不擠爆 ---------- */
+.lv-top { flex-wrap: wrap; }
+@media (max-width: 359px) {
+  .lv-sm .lv-img { width: 60px; min-height: 60px; }
+  .lv-no { white-space: nowrap; }
+  .dots7 { gap: 3px; }
+  .dots7 .dot { width: 20px; height: 20px; }
+  .prog2-label { white-space: nowrap; }
+}
+
+/* ---------- site additions: 320 px 窄螢幕（§5、§14）頂部列、提示鈕、排序標題維持一行 ---------- */
+@media (max-width: 359px) {
+  .topbar-tag, .topbar .btn-text { white-space: nowrap; }
+  .topbar .btn-text { padding-left: 6px; padding-right: 6px; }
+  .topbar-right { gap: 4px; }
+  .btn-hint, .btn-reveal { padding: 0 12px; gap: 6px; }
+  .btn-hint .btn-left, .btn-reveal .btn-left { gap: 6px; white-space: nowrap; }
+  .btn-hint .meta, .btn-reveal .meta { gap: 6px; white-space: nowrap; }
+  .order-head { flex-wrap: wrap; }
+  .order-head > * { white-space: nowrap; }
+  .order-head > .btn-text { margin-left: auto; }
+}
+
+/* ---------- site additions: 序章在矮螢幕（320×568）時 logo 不壓到屋頂線稿 ---------- */
+.story-ph { min-height: 396px; }

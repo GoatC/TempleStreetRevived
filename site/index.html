@@ -5,10 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>妙妙貓的廟街委託｜新莊廟街・實境解謎</title>
 <link rel="preload" href="assets/fonts/GenRyuMinTW-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="stylesheet" href="assets/css/miao.css">
 <style>
 a{color:#603514}a:hover{color:#a42006}
 </style>
+<script type="module">
+// 某一場有進度時，在按鈕下多一行「進行中：關卡 x/6、NPC y/3」（HANDOFF §6.1）
+import { peek } from './assets/js/store.js';
+import { summary, progressText } from './assets/js/progress.js';
+const LEVELS = { youth: 'youth-levels.json', family: 'family-levels.json' };
+async function load(f) {
+  const r = await fetch('./content/' + f);
+  if (!r.ok) throw new Error(f);
+  return (await r.json()).data;
+}
+for (const ed of ['youth', 'family']) {
+  const state = peek(ed);
+  if (!state) continue;
+  try {
+    const [levels, npcs] = await Promise.all([load(LEVELS[ed]), load('npc.json')]);
+    const s = summary(ed, levels, npcs, state);
+    if (!s.hasProgress) continue;
+    const el = document.getElementById(ed + '-prog');
+    el.textContent = '進行中：' + progressText(s);
+    el.hidden = false;
+  } catch (e) { /* 讀不到就不顯示進度 */ }
+}
+</script>
 </head>
 <body>
 <div class="screen">

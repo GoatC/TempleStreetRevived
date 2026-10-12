@@ -24,9 +24,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Unit tests
-        run: if [ -d tests ]; then node --test tests/; fi
+        run: node --test 'tests/*.test.mjs'
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
