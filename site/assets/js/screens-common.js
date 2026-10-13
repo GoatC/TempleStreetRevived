@@ -10,11 +10,11 @@
 //   rulesButton(style?) → string        「遊戲說明」文字按鈕（data-action="rules"；
 //                                       畫面 actions 裡要有 rules: () => openRules(app.edition)）
 //   validateTeam(raw) → { ok, name, count, error }   §7.6 隊名驗證（可單元測試）
-//   resultOf(app, n) → 'self' | 'revealed' | null    第 n 關結果（未過關 null）
+//   resultOf(app, n) → 'self' | 'skipped' | null     第 n 關結果（未過關 null；有跳過的任務就是 'skipped'）
 
 import { CONFIG } from '../../config.js';
 import { esc, ICONS, topbar, openDialog, confirmRestart, starSvg, onUiReset, resetUi } from './ui.js';
-import { progressText, levelDone, levelRevealed, stars as countStars } from './progress.js';
+import { progressText, levelDone, skippedCount, answerTasks, stars as countStars } from './progress.js';
 
 /* ---------- 遊戲說明（§6.5） ---------- */
 // 暫定：§6.5 草稿文案，Hugo 決定先用草稿
@@ -22,7 +22,7 @@ const RULES = {
   youth: [
     '每隊 2～4 人，共用一支手機。',
     '第一關請先到慈祐宮；解開後，其他五關的順序由你們決定。',
-    '每關可以看兩次提示；提示用完後可以揭曉答案，一樣算過關。',
+    '每關可以看兩次提示；提示用完後，想不出來的任務可以跳過，一樣算過關，但不會顯示答案。',
     'NPC 任務由現場的 NPC 口頭出題，沒有提示。',
     '六關和三個 NPC 任務都完成，就能看到結局。',
     '過馬路請注意安全；只需要用眼睛觀察，不必攀爬或觸摸廟裡的文物。',
@@ -30,7 +30,7 @@ const RULES = {
   family: [
     '一家人共用一支手機，請大人陪著小朋友。',
     '七個關卡順序自由；每關完成必答任務就過關，答對加分題可以得到星星。',
-    '每關可以看兩次提示；提示用完後可以揭曉答案。',
+    '每關可以看兩次提示；提示用完後，想不出來的任務可以跳過，但不會顯示答案。',
     '拍照任務在店家外面拍就好，不用進店，也不要打擾營業。',
     'NPC 任務由現場的 NPC 口頭出題，沒有提示。',
     '七關和三個 NPC 任務都完成後，把完成畫面拿給工作人員看。',
@@ -202,7 +202,7 @@ export function resultOf(app, n) {
   const level = app.content.levels[n - 1];
   const L = app.state.levels[String(n)];
   if (!level || !levelDone(app.edition, level, L)) return null;
-  return levelRevealed(L) ? 'revealed' : 'self';
+  return skippedCount(L) > 0 ? 'skipped' : 'self';
 }
 
 const historyOpen = {}; // 「看更多」展開狀態（只在這次瀏覽有效）
@@ -216,7 +216,11 @@ function historyScreen(params, app) {
   // 暫定：還沒過關就打開歷史頁 → 回關卡選單
   if (!res) return app.redirect('/menu');
   const family = app.edition === 'family';
-  const tag = family ? `${h.no}・已完成` : `${h.no}・${res === 'revealed' ? '揭曉過關' : '自行解出'}`;
+  const L = app.state.levels[String(n)];
+  const tag = family ? `${h.no}・已完成` : `${h.no}・${res === 'skipped' ? `跳過 ${skippedCount(L)} 題` : '自行解出'}`;
+  // 跳過的任務不顯示答案（不然跳過後在這裡看答案、再重新開始就能作弊）
+  const ansTask = answerTasks(app.content.levels[n - 1]);
+  const skippedAns = j => L.results[ansTask[j]] === 'skipped';
   const key = app.edition + n;
   const open = !!historyOpen[key];
   // 暫定（待問 Hugo）：設計稿的「現場照片：{place}」是佔位框；沒有照片時整塊不顯示。§10 只核准拿掉親子場拍照範例圖，這裡要不要顯示佔位框還沒確認。
@@ -227,7 +231,7 @@ function historyScreen(params, app) {
   const more = open ? `
     <section id="history-more" style="display: flex; flex-direction: column; gap: 4px;">
       <h2 class="h2">本關答案</h2>
-      ${h.answers.map(a => `<div class="ans-row"><span class="ans-q">${esc(a[0])}</span><span class="ans-a">${esc(a[1])}</span></div>`).join('')}
+      ${h.answers.map((a, j) => `<div class="ans-row"><span class="ans-q">${esc(a[0])}</span><span class="ans-a">${skippedAns(j) ? '已跳過，不顯示答案' : esc(a[1])}</span></div>`).join('')}
     </section>
     <section style="display: flex; flex-direction: column; gap: 12px;">
       <h2 class="h2">歷史補充</h2>
@@ -274,7 +278,7 @@ function summaryScreen(params, app) {
   const st = countStars(levels, app.state);
   const rows = levels.map((lv, i) => {
     const n = i + 1;
-    const revealed = resultOf(app, n) === 'revealed';
+    const skipped = skippedCount(app.state.levels[String(n)]);
     const bonusIdx = lv.tasks.map((t, k) => (t.bonus ? k : -1)).filter(k => k >= 0);
     let star = '';
     if (family && bonusIdx.length) {
@@ -282,8 +286,8 @@ function summaryScreen(params, app) {
       const got = !!L && bonusIdx.every(k => L.results[k] !== null && L.results[k] !== undefined);
       star = starSvg({ cls: got ? '' : 'is-empty', aria: got ? '加分題答對' : '加分題未完成' });
     }
-    const tag = revealed
-      ? `<span class="tag tag-res">${ICONS.eye}揭曉過關</span>`
+    const tag = skipped > 0
+      ? `<span class="tag tag-res">${ICONS.skip}跳過 ${skipped} 題</span>`
       : `<span class="tag tag-res">${ICONS.check}自行解出</span>`;
     return `<div class="res-row">
             <span class="num">${n}</span>

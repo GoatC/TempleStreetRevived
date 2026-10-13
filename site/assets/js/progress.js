@@ -13,9 +13,14 @@ export function levelDone(edition, level, L) {
   return level.tasks.every((t, i) => (edition === 'family' && t.bonus) || isSet(L.results[i]));
 }
 
-// 有任何揭曉？（「自行解出」／「揭曉過關」）
-export function levelRevealed(L) {
-  return !!L && L.results.some(r => r === 'revealed');
+// 跳過（放棄作答）的任務數；0 就是「自行解出」
+export function skippedCount(L) {
+  return L ? L.results.filter(r => r === 'skipped').length : 0;
+}
+
+// 歷史頁「本關答案」第 j 列對應的任務：拍照任務沒有答案，依序對應其餘任務
+export function answerTasks(level) {
+  return level.tasks.map((t, i) => (t.type === 'photo' ? -1 : i)).filter(i => i >= 0);
 }
 
 // 卡片狀態：'locked' | 'todo' | 'doing' | 'done'

@@ -5,9 +5,9 @@
 // 畫面規則、app API 見 app.js 檔頭；UI 小工具見 ui.js 檔頭。
 //
 // 關卡頁進度（store：state.levels[n]，HANDOFF §8）
-//   results[i]  null | 'self' | 'revealed'
+//   results[i]  null | 'self' | 'skipped'（提示用完後「跳過此題」：放棄作答，不顯示答案）
 //   hints       已用提示數（0～2，整關共用）
-//   drafts[i]   作答中：{ text, vals: [], order: [], choice }；完成後改成 { got: 列上顯示的答案 }
+//   drafts[i]   作答中：{ text, vals: [], order: [], choice }；答對後改成 { got: 列上顯示的答案 }，跳過後改成 {}
 //   startedAt / completedAt / attempts
 // 錯誤訊息（還沒改輸入前的紅字）只存在記憶體，不存檔（同原型 draft.error / draft.bad）。
 
@@ -434,7 +434,7 @@ function levelScreen(params, app) {
   const n = Number(params.n);
   const lv = app.content.levels[n - 1];
   if (!Number.isInteger(n) || !lv) return app.redirect('/menu');
-  // #/level/01 這類寫法 → 換成標準網址（提示、揭曉要用 app.path 比對）
+  // #/level/01 這類寫法 → 換成標準網址（提示、跳過要用 app.path 比對）
   if (String(n) !== params.n) return app.redirect('/level/' + n);
   // 第一關完成前打開第 2～6 關的網址 → 回關卡選單
   if (levelStatus('youth', app.content.levels, app.state, n) === 'locked') return app.redirect('/menu');
@@ -468,14 +468,15 @@ function levelScreen(params, app) {
     const rowTitle = num + '．' + t.title;
     if (isSet(r)) {
       const d = L.drafts[i] || {};
+      const skipped = r === 'skipped';
       return `<div class="task-row" id="${id(i, 'row')}" tabindex="-1">
           <span class="task-check">${ICONS.check}</span>
           <span class="task-row-main">
             <span class="task-row-title">${esc(rowTitle)}</span>
-            <span class="task-row-sub">${esc(d.got || t.show)}</span>
+            <span class="task-row-sub">${skipped ? '放棄作答' : esc(d.got || t.show)}</span>
           </span>
-          ${r === 'revealed'
-            ? `<span class="tag tag-res">${ICONS.eye}已揭曉</span>`
+          ${skipped
+            ? `<span class="tag tag-res">${ICONS.skip}已跳過</span>`
             : '<span class="tag tag-res">自行解出</span>'}
         </div>`;
     }
@@ -614,10 +615,10 @@ function levelScreen(params, app) {
 
     if (U.error) body += `<p class="err" id="${errId}" role="alert">${ICONS.warn}${esc(errorFor(t, U.error))}</p>`;
 
-    // 「查看提示」與「揭曉答案」共用同一個 id，換成揭曉後焦點仍能回到這裡
+    // 「查看提示」與「跳過此題」共用同一個 id，換成跳過按鈕後焦點仍能回到這裡
     const help = hintsOut
-      ? `<button class="btn btn-reveal" id="lv-help" type="button" data-action="reveal">
-              <span class="btn-left">${ICONS.eye}揭曉答案</span>
+      ? `<button class="btn btn-skip" id="lv-help" type="button" data-action="skip">
+              <span class="btn-left">${ICONS.skip}跳過此題</span>
               <span class="meta">提示已用完</span>
             </button>`
       : `<button class="btn btn-hint" id="lv-help" type="button" data-action="hint">
@@ -644,7 +645,7 @@ function levelScreen(params, app) {
   }).join('');
 
   const doneCount = results.filter(isSet).length;
-  const revealedCount = results.filter(r => r === 'revealed').length;
+  const skippedCount = results.filter(r => r === 'skipped').length;
   const allDone = current < 0;
   const segs = tasks.map((t, i) => `<span class="seg-i${isSet(results[i]) ? ' is-done' : (i === current ? ' is-now' : '')}"></span>`).join('');
   const seen = hints > 0 ? `
@@ -657,7 +658,7 @@ function levelScreen(params, app) {
         <span class="mini-seal"><span>過關</span></span>
         <div style="display: flex; flex-direction: column; gap: 2px;">
           <p class="p" style="font-weight: 700;">本關任務全部完成！</p>
-          ${revealedCount > 0 ? `<p class="small">有 ${revealedCount} 個任務揭曉答案，一樣算過關。</p>` : ''}
+          ${skippedCount > 0 ? `<p class="small">有 ${skippedCount} 個任務跳過，一樣算過關。</p>` : ''}
         </div>
       </div>
       <button class="btn btn-primary" type="button" data-go="/level/${n}/result">查看本關結果
@@ -677,7 +678,7 @@ function levelScreen(params, app) {
   };
   const clearErr = () => { U.error = ''; U.bad = []; };
 
-  // 完成目前任務（答對或揭曉），焦點移到下一個任務或過關橫幅
+  // 完成目前任務（答對或跳過），焦點移到下一個任務或過關橫幅
   const complete = (i, result, got) => {
     app.store.update(s => {
       const X = levelState(s, n, tasks.length);
@@ -690,7 +691,7 @@ function levelScreen(params, app) {
     const next = app.state.levels[String(n)].results.findIndex(r => !isSet(r));
     const sel = next < 0 ? '#lv-done' : '#' + id(next, 'open');
     app.refresh({ focus: sel });
-    // 讓剛完成的那一列（「自行解出／已揭曉」）和下一個任務的開頭一起出現在頂部列下方
+    // 讓剛完成的那一列（「自行解出／已跳過」）和下一個任務的開頭一起出現在頂部列下方
     const row = app.root.querySelector('#' + id(i, 'row'));
     const el = app.root.querySelector(sel);
     const bar = app.root.querySelector('.topbar');
@@ -706,7 +707,7 @@ function levelScreen(params, app) {
     const first = used === 0;
     const ok = await openDialog({
       title: first ? '要查看提示一嗎？' : '這是本關最後一次提示',
-      body: first ? '本關共有兩次提示機會，看完還剩 1 次。' : '確定要查看嗎？看完之後，如果還是想不出來，可以揭曉這個任務的答案。',
+      body: first ? '本關共有兩次提示機會，看完還剩 1 次。' : '確定要查看嗎？看完之後，如果還是想不出來，可以跳過這個任務。',
       icon: 'hint',
       buttons: [
         { label: first ? '確認查看' : '查看最後提示', value: true, kind: 'primary' },
@@ -728,24 +729,25 @@ function levelScreen(params, app) {
       body: lv.hints[Math.max(0, h - 1)] || '',
       buttons: [{ label: '我知道了', value: true, kind: 'primary' }],
     });
-    // 看過的提示加在頁面上方、下面的內容往下移：把提示／揭曉按鈕捲回畫面內
+    // 看過的提示加在頁面上方、下面的內容往下移：把提示／跳過按鈕捲回畫面內
     if (app.path === '/level/' + n) app.reveal(app.root.querySelector('#lv-help'), { block: 'nearest' });
   };
 
-  const showReveal = async () => {
+  // 跳過：不顯示答案，記成「已跳過」（以前的「揭曉答案」會被拿來先看答案、再重新開始作弊）
+  const showSkip = async () => {
     const i = app.state.levels[String(n)].results.findIndex(r => !isSet(r));
     if (i < 0) return;
     const ok = await openDialog({
-      title: '要揭曉這個任務的答案嗎？',
-      body: `揭曉後會直接顯示「${tasks[i].title}」的答案，這個任務一樣算完成，接著就能繼續下一個任務。`,
-      icon: 'eye',
+      title: '要跳過這個任務嗎？',
+      body: `跳過後不會顯示「${tasks[i].title}」的答案，這個任務會記錄為「已跳過」，接著就能繼續下一個任務。`,
+      icon: 'skip',
       buttons: [
-        { label: '揭曉答案', value: true, kind: 'primary' },
+        { label: '跳過此題', value: true, kind: 'primary' },
         { label: '再想一下', value: false, kind: 'secondary' },
       ],
     });
     if (ok !== true || app.path !== '/level/' + n) return;
-    complete(i, 'revealed', tasks[i].show);
+    complete(i, 'skipped');
   };
 
   return {
@@ -849,13 +851,13 @@ function levelScreen(params, app) {
         app.refresh({ focus: '#' + el.id });
       },
       hint: () => showHint(),
-      reveal: () => showReveal(),
+      skip: () => showSkip(),
     },
   };
 }
 
 /* ======================================================================
-   本關完成（T10Correct / T10Revealed）
+   本關完成（T10Correct / T10Revealed；有跳過的任務就不顯示「本關答案」）
    ====================================================================== */
 
 function resultScreen(params, app) {
@@ -865,16 +867,16 @@ function resultScreen(params, app) {
   const L = app.state.levels[String(n)];
   // 還沒過關就打開結果網址 → 回關卡頁（關卡頁會再處理未開放的情況）
   if (!levelDone('youth', lv, L)) return app.redirect('/level/' + n);
-  const revealed = L.results.some(r => r === 'revealed');
+  const skipped = L.results.some(r => r === 'skipped');
   const k = (app.content.levelKeys || [])[n - 1] || {};
   const key = k.key || '';
   const big = Array.from(key).length <= 6;
   const title = k.title || lv.title;
-  const sealText = revealed ? '本關\n完成' : '解謎\n成功';
-  const sealAria = revealed ? '本關完成' : '解謎成功';
-  const heading = revealed ? '本關完成' : '本關解開了！';
-  const message = revealed
-    ? '這一關有揭曉答案，一樣算過關。一起來認識它背後的故事吧！'
+  const sealText = skipped ? '本關\n完成' : '解謎\n成功';
+  const sealAria = skipped ? '本關完成' : '解謎成功';
+  const heading = skipped ? '本關完成' : '本關解開了！';
+  const message = skipped
+    ? '這一關有跳過的任務，一樣算過關。一起來認識它背後的故事吧！'
     : '你們自己解開了「' + title + '」，觀察得真仔細！';
   return {
     title: lv.no + ' 完成',
@@ -888,12 +890,12 @@ function resultScreen(params, app) {
       <div class="seal-ring">${esc(sealText)}</div>
     </div>
     <h1 class="h1">${heading}</h1>
-    <div class="panel" style="width: 100%; align-items: center; padding: 20px 16px; gap: 4px;">
+    ${skipped ? '' : `<div class="panel" style="width: 100%; align-items: center; padding: 20px 16px; gap: 4px;">
       <p class="label">本關答案</p>
       ${big
         ? `<p style="margin: 0; font-size: 34px; line-height: 44px; font-weight: 700; color: #a42006;">${esc(key)}</p>`
         : `<p style="margin: 0; font-size: 22px; line-height: 32px; font-weight: 700; color: #a42006;">${esc(key)}</p>`}
-    </div>
+    </div>`}
     <p class="p" style="max-width: 320px;">${esc(message)}</p>
   </main>
   <div class="actions">

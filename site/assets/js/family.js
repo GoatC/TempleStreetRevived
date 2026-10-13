@@ -4,16 +4,17 @@
 //   '/menu'       關卡選單  F06Menu / F06MenuMid / F06MenuNpcLeft / F06MenuClear
 //   '/map'        廟街地圖  F06Map（內嵌 SVG，逐字複製）
 //   '/level/:n'   關卡頁    F07Level ＋ F07Ciyou / F07Shop / F07MishiNumber / F07MishiBonus /
-//                           F07ChaoReveal / F07WushengDone、FComponents
+//                           F07ChaoReveal / F07WushengDone、FComponents（設計稿的「揭曉答案」已改成「跳過此題」）
 // 共用畫面（'/', '/name', '/npc/:key', '/level/:n/history', '/summary'）沿用 screens-common.js / npc.js。
 //
 // 關卡頁規則（原型 F07Level renderVals() 逐項移植）
 // - 7 關全部開放；關內任務全部開放、預設收合、一次只展開一個（展開狀態不存檔）。
 // - 判定一律用 answers.js 的 checkFamily()。
-// - 進度存在 state.levels[n]：results（null | 'self' | 'revealed'）、hints（整關共用，最多 2）、
+// - 進度存在 state.levels[n]：results（null | 'self' | 'skipped'）、hints（整關共用，最多 2）、
 //   drafts[i] = { photoOk, choice, digits, fields: [a, b], text }（完成後刪除）、startedAt、completedAt、attempts。
-// - 加分題（bonus）：沒有提示、不能揭曉；答對得一顆星。拍照任務（photo）也沒有提示、不能揭曉。
-// - 兩次提示用完後，還沒完成的非加分、非拍照任務（拍照＋文字題要先按「我拍好了」）出現「揭曉答案」。
+// - 加分題（bonus）：沒有提示、不能跳過；答對得一顆星。拍照任務（photo）也沒有提示、不能跳過。
+// - 兩次提示用完後，還沒完成的非加分、非拍照任務（拍照＋文字題要先按「我拍好了」）出現「跳過此題」。
+//   跳過＝放棄作答：不顯示答案，任務列標「已跳過」（以前的「揭曉答案」會被拿來先看答案、再重新開始作弊）。
 
 import { esc, ICONS, icon, CARD_ICONS, starSvg, topbar, openDialog, onUiReset } from './ui.js';
 import { openRules, rulesButton } from './screens-common.js';
@@ -338,7 +339,8 @@ function typeName(t) {
 }
 
 // 完成後列上顯示的答案（原型 summary()）
-function doneSummary(t) {
+function doneSummary(t, r) {
+  if (r === 'skipped') return '放棄作答';
   if (t.type === 'photo') return '已拍照';
   if (t.type === 'choice') {
     const o = (t.options || []).find(x => x[0] === t.answer);
@@ -383,21 +385,21 @@ function levelScreen(params, app) {
 
     if (isSet(r)) {
       let tag = '';
-      if (r === 'revealed') tag = `<span class="tag tag-res">${ICONS.eye}已揭曉</span>`;
+      if (r === 'skipped') tag = `<span class="tag tag-res">${ICONS.skip}已跳過</span>`;
       else if (t.bonus) tag = `<span class="tag tag-bonus">${starSvg()}加分</span>`;
       else tag = `<span class="tag tag-res">${t.type === 'photo' ? '已完成' : '自行解出'}</span>`;
       return `<div class="task-row" id="${id(i, 'row')}" tabindex="-1">
           <span class="task-check">${ICONS.check}</span>
           <span class="task-row-main">
             <span class="task-row-title">${num}．${esc(t.title)}</span>
-            <span class="task-row-sub">${esc(doneSummary(t))}</span>
+            <span class="task-row-sub">${esc(doneSummary(t, r))}</span>
           </span>
           ${tag}
         </div>`;
     }
 
     if (U.open !== i) {
-      const sub = typeName(t) + (hintsOut && helpable ? '・可揭曉答案' : '');
+      const sub = typeName(t) + (hintsOut && helpable ? '・可跳過' : '');
       const aria = '任務 ' + num + '，' + t.title + '，' + typeName(t) + (t.bonus ? '，加分題' : '') + '，點開作答';
       return `<button class="task-toggle" id="${id(i, 'head')}" type="button" data-action="toggle" data-i="${i}" aria-expanded="false" aria-controls="${id(i, 'panel')}" aria-label="${esc(aria)}">
           <span class="num">${num}</span>
@@ -487,8 +489,8 @@ function levelScreen(params, app) {
             </button>`;
     }
     if (helpable && showAnswer && hintsOut) {
-      acts += `<button class="btn btn-reveal" id="${id(i, 'reveal')}" type="button" data-action="reveal" data-i="${i}">
-              <span class="btn-left">${ICONS.eye}揭曉答案</span>
+      acts += `<button class="btn btn-skip" id="${id(i, 'skip')}" type="button" data-action="skip" data-i="${i}">
+              <span class="btn-left">${ICONS.skip}跳過此題</span>
               <span class="meta">提示已用完</span>
             </button>`;
     }
@@ -739,7 +741,7 @@ function levelScreen(params, app) {
         const ok = await openDialog({
           icon: 'hint',
           title: h === 0 ? '要查看提示一嗎？' : '這是本關最後一次提示',
-          body: h === 0 ? '本關共有兩次提示機會，看完還剩 1 次。' : '確定要查看嗎？看完之後，還沒完成的任務可以選擇揭曉答案。',
+          body: h === 0 ? '本關共有兩次提示機會，看完還剩 1 次。' : '確定要查看嗎？看完之後，還沒完成的任務可以選擇跳過。',
           buttons: [
             { label: h === 0 ? '確認查看' : '查看最後提示', value: true, kind: 'primary' },
             { label: '取消', value: false, kind: 'secondary' },
@@ -761,18 +763,18 @@ function levelScreen(params, app) {
         });
         if (!here()) return;
         // 看過的提示會加在頁面上方，下面的內容往下移：把按鈕捲回畫面內
-        const btn = refreshTo('#' + id(i, 'hint'), '#' + id(i, 'reveal'), '#' + id(i, 'submit'), '#' + id(i, 'head'));
+        const btn = refreshTo('#' + id(i, 'hint'), '#' + id(i, 'skip'), '#' + id(i, 'submit'), '#' + id(i, 'head'));
         app.reveal(btn, { block: 'nearest' });
       },
 
-      reveal: async el => {
+      skip: async el => {
         const i = Number(el.dataset.i);
         const ok = await openDialog({
-          icon: 'eye',
-          title: '要揭曉這題的答案嗎？',
-          body: '揭曉後會直接顯示答案，這個任務一樣算完成。',
+          icon: 'skip',
+          title: '要跳過這題嗎？',
+          body: '跳過後不會顯示答案，這個任務會記錄為「已跳過」。',
           buttons: [
-            { label: '揭曉答案', value: true, kind: 'primary' },
+            { label: '跳過此題', value: true, kind: 'primary' },
             { label: '再觀察一下', value: false, kind: 'secondary' },
           ],
         });
@@ -780,7 +782,7 @@ function levelScreen(params, app) {
         const t = tasks[i];
         const M = app.state.levels[String(n)];
         if (!t || t.bonus || t.type === 'photo' || (M && isSet(M.results[i]))) return;
-        complete(i, 'revealed');
+        complete(i, 'skipped');
       },
     },
   };

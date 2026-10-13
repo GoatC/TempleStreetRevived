@@ -46,12 +46,12 @@ body { margin: 0; }
 .btn-primary { background: var(--temple-red); border-color: var(--temple-red); color: var(--cat-white); }
 .btn-secondary { background: var(--cat-white); border-color: var(--ink-brown); color: var(--ink-brown); }
 .btn-hint { background: var(--cat-white); border-color: var(--ink-brown); color: var(--ink-brown); justify-content: space-between; }
-.btn-reveal { background: var(--feather-grey); border-color: var(--ink-brown); color: var(--ink-brown); justify-content: space-between; }
+.btn-skip { background: var(--feather-grey); border-color: var(--ink-brown); color: var(--ink-brown); justify-content: space-between; }
 .btn-destructive { background: var(--cat-white); border-color: var(--temple-red); color: var(--temple-red); }
 .btn-back { width: auto; min-height: 48px; padding: 0 12px 0 6px; background: transparent; border-color: transparent; color: var(--ink-brown); font-size: 17px; gap: 2px; }
 .btn-text { width: auto; min-height: 48px; padding: 0 12px; background: transparent; border-color: transparent; color: var(--ink-brown); font-size: 17px; text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 2px; }
 .btn[disabled] { background: var(--feather-grey); border-color: var(--feather-grey); color: var(--disabled-text); cursor: not-allowed; }
-.btn-hint .meta, .btn-reveal .meta { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; }
+.btn-hint .meta, .btn-skip .meta { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; }
 .btn-left { display: flex; align-items: center; gap: 10px; }
 .pips { display: flex; gap: 4px; }
 .pip { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink-brown); background: var(--dragon-gold); }
@@ -385,7 +385,7 @@ body { margin: 0; }
 /* ---------- site additions: 用 <a> 做的按鈕（填寫遊戲回饋、完成遊戲）不吃頁面的 a:hover 顏色 ---------- */
 a.btn-primary, a.btn-primary:hover { color: var(--cat-white); }
 a.btn-destructive:hover { color: var(--temple-red); }
-a.btn-secondary:hover, a.btn-hint:hover, a.btn-reveal:hover, a.btn-back:hover, a.btn-text:hover { color: var(--ink-brown); }
+a.btn-secondary:hover, a.btn-hint:hover, a.btn-skip:hover, a.btn-back:hover, a.btn-text:hover { color: var(--ink-brown); }
 
 /* ---------- site additions: 320 px 窄螢幕（§5、§14）關卡選單不擠爆 ---------- */
 .lv-top { flex-wrap: wrap; }
@@ -402,9 +402,9 @@ a.btn-secondary:hover, a.btn-hint:hover, a.btn-reveal:hover, a.btn-back:hover, a
   .topbar-tag, .topbar .btn-text { white-space: nowrap; }
   .topbar .btn-text { padding-left: 6px; padding-right: 6px; }
   .topbar-right { gap: 4px; }
-  .btn-hint, .btn-reveal { padding: 0 12px; gap: 6px; }
-  .btn-hint .btn-left, .btn-reveal .btn-left { gap: 6px; white-space: nowrap; }
-  .btn-hint .meta, .btn-reveal .meta { gap: 6px; white-space: nowrap; }
+  .btn-hint, .btn-skip { padding: 0 12px; gap: 6px; }
+  .btn-hint .btn-left, .btn-skip .btn-left { gap: 6px; white-space: nowrap; }
+  .btn-hint .meta, .btn-skip .meta { gap: 6px; white-space: nowrap; }
   .order-head { flex-wrap: wrap; }
   .order-head > * { white-space: nowrap; }
   .order-head > .btn-text { margin-left: auto; }
@@ -435,7 +435,7 @@ a.btn-secondary:hover, a.btn-hint:hover, a.btn-reveal:hover, a.btn-back:hover, a
 .zoom-head { padding-top: max(8px, env(safe-area-inset-top)); padding-right: max(12px, env(safe-area-inset-right)); padding-left: max(20px, env(safe-area-inset-left)); }
 /* 瀏覽器「網頁放大」125% 以上（版面寬度不到 320 px） */
 @media (max-width: 319px) {
-  .btn-hint .pips, .btn-reveal .pips { display: none; }
+  .btn-hint .pips, .btn-skip .pips { display: none; }
   .topbar { gap: 4px; padding-right: 10px; }
   .topbar-tag { font-size: 15px; letter-spacing: 0; }
   .topbar .btn-text { font-size: 15px; padding-left: 4px; padding-right: 4px; }
