@@ -22,7 +22,9 @@ export function sanitize(s) {
     if (!isObj(src)) return o;
     for (const [k, X] of Object.entries(src)) {
       if (!isObj(X) || !Array.isArray(X.results)) continue;
-      o[k] = Object.assign(extra(), X, { drafts: isObj(X.drafts) ? X.drafts : {} });
+      // 舊版的「揭曉答案」（'revealed'）已改成「跳過此題」，舊存檔一律當作跳過
+      const results = X.results.map(r => (r === 'revealed' ? 'skipped' : r));
+      o[k] = Object.assign(extra(), X, { results, drafts: isObj(X.drafts) ? X.drafts : {} });
     }
     return o;
   };

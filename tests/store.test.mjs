@@ -65,3 +65,8 @@ test('不能存檔的瀏覽器：照樣可以玩（存在記憶體）', () => {
   y.update(s => { s.team = '記憶體隊'; });
   assert.equal(y.state.team, '記憶體隊');
 });
+
+test('舊存檔的「揭曉答案」讀進來變成「跳過」', () => {
+  const s = sanitize({ v: 1, team: '隊', levels: { 1: { results: ['self', 'revealed', null], hints: 2, drafts: { 1: { got: '答案' } } } }, npc: {} });
+  assert.deepEqual(s.levels['1'].results, ['self', 'skipped', null]);
+});

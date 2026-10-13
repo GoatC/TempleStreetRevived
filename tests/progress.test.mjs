@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { blankState, levelState, npcState } from '../site/assets/js/store.js';
-import { levelStatus, summary, stars, progressText } from '../site/assets/js/progress.js';
+import { levelStatus, summary, stars, progressText, skippedCount, answerTasks } from '../site/assets/js/progress.js';
 
 const load = f => JSON.parse(readFileSync(new URL(`../site/content/${f}.json`, import.meta.url), 'utf8')).data;
 const youth = load('youth-levels');
@@ -17,7 +17,8 @@ test('youth: levels 2-6 locked until level 1 is done', () => {
   L1.hints = 1;
   assert.equal(levelStatus('youth', youth, s, 1), 'doing');
   L1.results = L1.results.map(() => 'self');
-  L1.results[2] = 'revealed';
+  L1.results[2] = 'skipped';
+  assert.equal(skippedCount(L1), 1);
   assert.equal(levelStatus('youth', youth, s, 1), 'done');
   assert.equal(levelStatus('youth', youth, s, 3), 'todo');
   assert.equal(progressText(summary('youth', youth, npcs, s)), '關卡 1/6、NPC 0/3');
@@ -44,4 +45,16 @@ test('summary: progress and all clear', () => {
   const sum = summary('family', family, npcs, s);
   assert.equal(sum.allClear, true);
   assert.equal(progressText(sum), '關卡 7/7、NPC 3/3');
+});
+
+test('歷史頁「本關答案」每一列都對得到一個任務（跳過的那題才能不顯示答案）', () => {
+  for (const [ed, levels] of [['youth', youth], ['family', family]]) {
+    const hist = load(ed + '-history');
+    levels.forEach((lv, i) => {
+      assert.equal(hist[i].answers.length, answerTasks(lv).length,
+        `${ed} 第 ${i + 1} 關：本關答案 ${hist[i].answers.length} 列，但非拍照任務有 ${answerTasks(lv).length} 題`);
+    });
+  }
+  // 親子場第一關：任務 0 是拍照，答案第 1 列對應任務 1
+  assert.equal(answerTasks(family[0])[0], 1);
 });

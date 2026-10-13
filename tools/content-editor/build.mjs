@@ -127,7 +127,7 @@ yl.forEach((lv, li) => {
     if (t.type === 'choice') {
       t.options.forEach((o, k) => items.push(T(Y, [...P, 'options', k, 1], o[1], `選項 ${o[0]}${o[0] === t.answer ? '（正解）' : ''}`, 'option')));
     }
-    if (t.show) items.push(T(Y, [...P, 'show'], t.show, '揭曉／答對後顯示的答案', 'show'));
+    if (t.show) items.push(T(Y, [...P, 'show'], t.show, '答對後顯示的答案', 'show'));
     sections.push({ heading: `任務 ${ti + 1}`, task: true, items });
   });
   const k = yk[li];
@@ -206,7 +206,7 @@ fl.forEach((lv, li) => {
       if (t.placeholders && t.placeholders[k]) items.push(T(F, [...P, 'placeholders', k], t.placeholders[k], `第 ${k + 1} 格・灰字`, 'placeholder'));
       items.push(L(F, [...P, 'answer', k], t.answer[k], `第 ${k + 1} 格・可接受的答案${t.anyOrder ? '（兩格可對調）' : ''}`, { role: 'answers' }));
     });
-    if (t.show) items.push(T(F, [...P, 'show'], t.show, '揭曉／答對後顯示的答案', 'show'));
+    if (t.show) items.push(T(F, [...P, 'show'], t.show, '答對後顯示的答案', 'show'));
     sections.push({ heading: `任務 ${ti + 1}${t.bonus ? '・加分題' : ''}`, task: true, items });
   });
   const h = fh[li];
@@ -306,14 +306,14 @@ screens.push({
       UI('site/assets/js/youth.js', 'err-select', '有幾格對不上，再對照一次附圖和線索吧。', '對照題答錯', 'err'),
       UI('site/assets/js/youth.js', 'err-order', '順序似乎不正確，再對照一次線索吧。', '排序題答錯', 'err'),
       UI('site/assets/js/youth.js', 'hint1-body', '本關共有兩次提示機會，看完還剩 1 次。', '第一次提示的確認文字', 'small'),
-      UI('site/assets/js/youth.js', 'hint2-body', '確定要查看嗎？看完之後，如果還是想不出來，可以揭曉這個任務的答案。', '最後一次提示的確認文字', 'small'),
+      UI('site/assets/js/youth.js', 'hint2-body', '確定要查看嗎？看完之後，如果還是想不出來，可以跳過這個任務。', '最後一次提示的確認文字', 'small'),
       UI('site/assets/js/youth.js', 'result-self', '你們自己解開了「{關卡名}」，觀察得真仔細！', '本關完成：自己解出', 'p', { probe: '，觀察得真仔細！' }),
-      UI('site/assets/js/youth.js', 'result-revealed', '這一關有揭曉答案，一樣算過關。一起來認識它背後的故事吧！', '本關完成：有揭曉', 'p'),
+      UI('site/assets/js/youth.js', 'result-skipped', '這一關有跳過的任務，一樣算過關。一起來認識它背後的故事吧！', '本關完成：有跳過', 'p'),
     ] },
     { heading: '親子場', items: [
       UI('site/assets/js/family.js', 'err-empty', '請先作答，再按「送出答案」。', '沒作答', 'err'),
       UI('site/assets/js/family.js', 'err-wrong', '答案似乎不正確，再觀察一次現場吧。', '答錯', 'err'),
-      UI('site/assets/js/family.js', 'hint2-body', '確定要查看嗎？看完之後，還沒完成的任務可以選擇揭曉答案。', '最後一次提示的確認文字', 'small'),
+      UI('site/assets/js/family.js', 'hint2-body', '確定要查看嗎？看完之後，還沒完成的任務可以選擇跳過。', '最後一次提示的確認文字', 'small'),
       UI('site/assets/js/family.js', 'photo-note', '照片存在你們自己的手機裡，不需要上傳。', '拍照任務的小字', 'small'),
     ] },
   ],
