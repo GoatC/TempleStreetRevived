@@ -218,9 +218,14 @@ function historyScreen(params, app) {
   const family = app.edition === 'family';
   const L = app.state.levels[String(n)];
   const tag = family ? `${h.no}・已完成` : `${h.no}・${res === 'skipped' ? `跳過 ${skippedCount(L)} 題` : '自行解出'}`;
-  // 跳過的任務不顯示答案（不然跳過後在這裡看答案、再重新開始就能作弊）
+  // 跳過的任務、還沒答的加分題不顯示答案（不然在這裡看答案，再回去填或重新開始就能作弊）
   const ansTask = answerTasks(app.content.levels[n - 1]);
-  const skippedAns = j => L.results[ansTask[j]] === 'skipped';
+  const ansText = (a, j) => {
+    const r = L.results[ansTask[j]];
+    if (r === 'skipped') return '已跳過，不顯示答案';
+    if (r === null || r === undefined) return '未作答，不顯示答案';
+    return a[1];
+  };
   const key = app.edition + n;
   const open = !!historyOpen[key];
   // 暫定（待問 Hugo）：設計稿的「現場照片：{place}」是佔位框；沒有照片時整塊不顯示。§10 只核准拿掉親子場拍照範例圖，這裡要不要顯示佔位框還沒確認。
@@ -231,7 +236,7 @@ function historyScreen(params, app) {
   const more = open ? `
     <section id="history-more" style="display: flex; flex-direction: column; gap: 4px;">
       <h2 class="h2">本關答案</h2>
-      ${h.answers.map((a, j) => `<div class="ans-row"><span class="ans-q">${esc(a[0])}</span><span class="ans-a">${skippedAns(j) ? '已跳過，不顯示答案' : esc(a[1])}</span></div>`).join('')}
+      ${h.answers.map((a, j) => `<div class="ans-row"><span class="ans-q">${esc(a[0])}</span><span class="ans-a">${esc(ansText(a, j))}</span></div>`).join('')}
     </section>
     <section style="display: flex; flex-direction: column; gap: 12px;">
       <h2 class="h2">歷史補充</h2>
