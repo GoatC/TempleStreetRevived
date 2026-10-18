@@ -16,7 +16,7 @@
 // - 兩次提示用完後，還沒完成的非加分、非拍照任務（拍照＋文字題要先按「我拍好了」）出現「跳過此題」。
 //   跳過＝放棄作答：不顯示答案，任務列標「已跳過」（以前的「揭曉答案」會被拿來先看答案、再重新開始作弊）。
 
-import { esc, ICONS, icon, CARD_ICONS, starSvg, topbar, openDialog, onUiReset } from './ui.js';
+import { esc, ICONS, icon, npcTile, CARD_ICONS, starSvg, topbar, openDialog, onUiReset } from './ui.js';
 import { openRules, rulesButton } from './screens-common.js';
 import { checkFamily } from './answers.js';
 import { levelState } from './store.js';
@@ -93,7 +93,7 @@ function menuScreen(params, app) {
     const cls = status === 'doing' ? ' is-doing' : (status === 'done' ? ' is-done' : '');
     const aria = 'NPC ' + m.key + '，' + m.name + '，' + m.who + '，' + STATUS_LABEL[status];
     return `<button class="lv lv-sm${cls}" type="button" data-go="/npc/${esc(m.key)}" aria-label="${esc(aria)}">
-        <span class="lv-img npc-letter" aria-hidden="true">${esc(m.key)}</span>
+        ${npcTile(m)}
         <span class="lv-main">
           <span class="lv-top">
             <span class="lv-no">NPC ${esc(m.key)}</span>

@@ -2,7 +2,7 @@
 // 免得整個場次一打開就顯示「載入失敗」。直接在 GitHub 網頁上改 JSON 時特別有用。
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 
 const DIR = new URL('../site/content/', import.meta.url);
 const raw = f => readFileSync(new URL(f, DIR), 'utf8');
@@ -57,6 +57,11 @@ for (const [ed, count] of [['youth', 6], ['family', 7]]) {
       assert.ok(Array.isArray(h.paras) && h.paras.length > 0, where + ' paras');
     });
     assert.deepEqual(menu.npcs.map(x => x.key), ['A', 'B', 'C'], `${ed}-menu.json 的 NPC 卡片`);
+    // 照片路徑寫錯，卡片會變成破圖
+    const photos = [...menu.npcs.map(x => x.photo), ...history.map(h => h.photo)].filter(Boolean);
+    for (const src of photos) {
+      assert.ok(existsSync(new URL(src, new URL(`../site/${ed}/`, import.meta.url))), `${ed}：找不到圖片 ${src}`);
+    }
   });
 }
 

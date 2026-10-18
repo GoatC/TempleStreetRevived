@@ -224,7 +224,11 @@ fl.forEach((lv, li) => {
 /* ---------------- NPC ---------------- */
 const N = 'site/content/npc.json';
 npc.forEach((n, ni) => {
-  const sections = [{ items: [T(N, [ni, 'name'], n.name, '名字', 'h1'), T(N, [ni, 'role'], n.role, '角色設定（畫面最上方）', 'panel')] }];
+  const card = ym.npcs.find(c => c.key === n.key) || {};
+  const photo = card.photo
+    ? [IMG('img~npc-' + n.key, 'site/assets/img/' + card.photo.split('/').pop(), 'img/' + card.photo.split('/').pop(), '關卡選單 NPC 卡片照片（兩場共用）', { hint: '直式，頭肩入鏡' })]
+    : [];
+  const sections = [{ items: [...photo, T(N, [ni, 'name'], n.name, '名字', 'h1'), T(N, [ni, 'role'], n.role, '角色設定（畫面最上方）', 'panel')] }];
   n.tasks.forEach((t, ti) => {
     const P = [ni, 'tasks', ti];
     const items = [T(N, [...P, 'title'], t.title, '任務名稱', 'task-title')];

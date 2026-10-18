@@ -56,17 +56,20 @@
       {
         "key": "A",
         "name": "安予",
-        "who": "搬運碼頭工人的女兒"
+        "who": "搬運碼頭工人的女兒",
+        "photo": "../assets/img/npc-A.webp"
       },
       {
         "key": "B",
         "name": "山羊、嚕卡",
-        "who": "外地來訪的迷路遊客"
+        "who": "外地來訪的迷路遊客",
+        "photo": "../assets/img/npc-B.webp"
       },
       {
         "key": "C",
         "name": "怡均",
-        "who": "回來跟媽祖娘娘報喜還願"
+        "who": "回來跟媽祖娘娘報喜還願",
+        "photo": "../assets/img/npc-C.webp"
       }
     ]
   }

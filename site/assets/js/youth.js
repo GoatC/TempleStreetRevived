@@ -11,7 +11,7 @@
 //   startedAt / completedAt / attempts
 // 錯誤訊息（還沒改輸入前的紅字）只存在記憶體，不存檔（同原型 draft.error / draft.bad）。
 
-import { esc, ICONS, CARD_ICONS, icon, topbar, verTag, openDialog, openZoom, onUiReset } from './ui.js';
+import { esc, ICONS, CARD_ICONS, icon, npcTile, topbar, verTag, openDialog, openZoom, onUiReset } from './ui.js';
 import { checkYouth, stripYouth } from './answers.js';
 import { levelState } from './store.js';
 import { levelStatus, levelDone, npcDone } from './progress.js';
@@ -232,7 +232,7 @@ function menuScreen(params, app) {
     const s = npcStatus[i];
     const aria = `NPC ${c.key}，${c.name}，${c.who}，${STATUS_LABEL[s]}`;
     return `<button class="lv lv-sm${statusCls(s)}" id="menu-npc${esc(c.key)}" type="button" data-go="/npc/${esc(c.key)}" aria-label="${esc(aria)}">
-        <span class="lv-img npc-letter" aria-hidden="true">${esc(c.key)}</span>
+        ${npcTile(c)}
         <span class="lv-main">
           <span class="lv-top">
             <span class="lv-no">NPC ${esc(c.key)}</span>
