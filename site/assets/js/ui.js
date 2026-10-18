@@ -11,6 +11,7 @@
 //   名稱：back, go, arrow, check, chevDown, chevUp, hint, eye, warn, trash, close,
 //   zoom, pin, lock, camera, route, compass, speech, skip, retry, team, okCircle, info。
 //   icon(name, style) → 同一個圖示，但可以加 style（例如 'width: 28px; height: 28px;'，彈窗圖示用）。
+//   npcTile(card) → 關卡選單 NPC 卡片左邊的方塊（有 photo 放照片，沒有就顯示字母）。
 //
 // CARD_ICONS.<icon> → string
 //   關卡卡片 .lv-img 裡的 64×64 圖示（staff, gate, drum, mask, boat, door, board, window），
@@ -100,6 +101,13 @@ const PATHS = {
 
 export const ICONS = Object.fromEntries(Object.entries(PATHS).map(([k, v]) => [k, svg(v)]));
 export function icon(name, style) { return svg(PATHS[name] || '', style); }
+
+// 關卡選單 NPC 卡片左邊的方塊：menu JSON 的 npcs[i].photo 有照片就放照片，沒有就顯示字母
+export function npcTile(c) {
+  return c.photo
+    ? `<span class="lv-img npc-letter has-photo" aria-hidden="true"><img class="npc-photo" src="${esc(c.photo)}" alt="" width="240" height="300"></span>`
+    : `<span class="lv-img npc-letter" aria-hidden="true">${esc(c.key)}</span>`;
+}
 
 // 關卡卡片圖示（T06Menu / F06Menu）
 const card = inner => `<svg viewBox="0 0 64 64" aria-hidden="true">${inner}</svg>`;
