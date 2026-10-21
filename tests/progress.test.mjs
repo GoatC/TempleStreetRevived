@@ -9,12 +9,12 @@ const youth = load('youth-levels');
 const family = load('family-levels');
 const npcs = load('npc');
 
-test('youth: levels 2-6 locked until level 1 is done', () => {
+test('youth: all six levels open from the start; per-task hints count as doing', () => {
   const s = blankState();
   assert.equal(levelStatus('youth', youth, s, 1), 'todo');
-  assert.equal(levelStatus('youth', youth, s, 3), 'locked');
+  assert.equal(levelStatus('youth', youth, s, 3), 'todo');
   const L1 = levelState(s, 1, youth[0].tasks.length);
-  L1.hints = 1;
+  L1.taskHints = { 1: 1 };
   assert.equal(levelStatus('youth', youth, s, 1), 'doing');
   L1.results = L1.results.map(() => 'self');
   L1.results[2] = 'skipped';

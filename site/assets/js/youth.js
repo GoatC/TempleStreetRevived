@@ -6,7 +6,8 @@
 //
 // 關卡頁進度（store：state.levels[n]，HANDOFF §8）
 //   results[i]  null | 'self' | 'skipped'（提示用完後「跳過此題」：放棄作答，不顯示答案）
-//   hints       已用提示數（0～2，整關共用）
+//   taskHints   各任務已看的提示數 { 任務 i: 0～2 }。提示跟著任務走（tasks[i].hints，最多兩則）；
+//               看完（或這個任務沒有提示）才出現「跳過此題」。
 //   drafts[i]   作答中：{ text, vals: [], order: [], choice }；答對後改成 { got: 列上顯示的答案 }，跳過後改成 {}
 //   startedAt / completedAt / attempts
 // 錯誤訊息（還沒改輸入前的紅字）只存在記憶體，不存檔（同原型 draft.error / draft.bad）。
@@ -17,7 +18,6 @@ import { levelState } from './store.js';
 import { levelStatus, levelDone, npcDone } from './progress.js';
 import { openRules, rulesButton } from './screens-common.js';
 
-const HMAX = 2;
 const isSet = r => r !== null && r !== undefined;
 const INPUT_ATTRS = 'autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done"';
 const IMG = '../assets/img/';
@@ -312,7 +312,7 @@ function menuScreen(params, app) {
       </span>
       ${ICONS.go}
     </button>
-    <p class="route-note">${ICONS.route}第一關慈祐宮完成後，才會開放第二到第六關；之後順序不限。</p>
+    <p class="route-note">${ICONS.route}六個關卡順序不限，從哪一關開始都可以。</p>
     ${levelCards}
     <h2 class="h2" style="font-size: 20px; line-height: 28px; margin-top: 8px;">NPC 任務</h2>
     <p class="small">題目由 NPC 在現場口頭說明，沒有提示。六關和三個 NPC 任務都完成，才算全破。</p>
@@ -426,6 +426,13 @@ function hitText(t, d) {
   return t.show;
 }
 
+// 任務自己的提示（最多兩則）與已看的則數
+const taskHints = t => (Array.isArray(t.hints) ? t.hints.filter(Boolean).slice(0, 2) : []);
+function usedHints(L, i, list) {
+  const T = L && L.taskHints && typeof L.taskHints === 'object' ? L.taskHints : {};
+  return Math.max(0, Math.min(list.length, Number(T[i]) || 0));
+}
+
 function blankDraft() {
   return { text: '', vals: ['', '', '', '', ''], order: [], choice: null };
 }
@@ -436,8 +443,6 @@ function levelScreen(params, app) {
   if (!Number.isInteger(n) || !lv) return app.redirect('/menu');
   // #/level/01 這類寫法 → 換成標準網址（提示、跳過要用 app.path 比對）
   if (String(n) !== params.n) return app.redirect('/level/' + n);
-  // 第一關完成前打開第 2～6 關的網址 → 回關卡選單
-  if (levelStatus('youth', app.content.levels, app.state, n) === 'locked') return app.redirect('/menu');
 
   const tasks = lv.tasks;
   const L = app.store.update(s => {
@@ -447,12 +452,12 @@ function levelScreen(params, app) {
   });
   const results = L.results;
   const current = results.findIndex(r => !isSet(r));
-  const hints = Math.max(0, Math.min(HMAX, L.hints || 0));
-  const hintsOut = hints >= HMAX;
+  const hintList = current >= 0 ? taskHints(tasks[current]) : [];
+  const hints = usedHints(L, current, hintList);
+  const hintsOut = hints >= hintList.length;
   const U = levelUi[n] || (levelUi[n] = { task: -1, error: '', bad: [] });
   if (U.task !== current) { U.task = current; U.error = ''; U.bad = []; }
-  const pip1 = hints >= 1 ? ' is-used' : '';
-  const pip2 = hints >= 2 ? ' is-used' : '';
+  const pips = hintList.map((h, k) => `<span class="pip${hints > k ? ' is-used' : ''}"></span>`).join('');
   const id = (i, suffix) => `yl-task${i}-${suffix}`;
 
   const clueBox = t => `<div class="clue-box">
@@ -619,11 +624,11 @@ function levelScreen(params, app) {
     const help = hintsOut
       ? `<button class="btn btn-skip" id="lv-help" type="button" data-action="skip">
               <span class="btn-left">${ICONS.skip}跳過此題</span>
-              <span class="meta">提示已用完</span>
+              <span class="meta">${hintList.length ? '提示已用完' : '這題沒有提示'}</span>
             </button>`
       : `<button class="btn btn-hint" id="lv-help" type="button" data-action="hint">
               <span class="btn-left">${ICONS.hint}查看提示</span>
-              <span class="meta">已用 ${hints}/${HMAX}<span class="pips"><span class="pip${pip1}"></span><span class="pip${pip2}"></span></span></span>
+              <span class="meta">已用 ${hints}/${hintList.length}<span class="pips">${pips}</span></span>
             </button>`;
     const submitLabel = t.type === 'order' ? '送出順序' : '送出答案';
     const submitDisabled = t.type === 'order' && !orderFull;
@@ -648,9 +653,10 @@ function levelScreen(params, app) {
   const skippedCount = results.filter(r => r === 'skipped').length;
   const allDone = current < 0;
   const segs = tasks.map((t, i) => `<span class="seg-i${isSet(results[i]) ? ' is-done' : (i === current ? ' is-now' : '')}"></span>`).join('');
+  // 只列目前這個任務看過的提示
   const seen = hints > 0 ? `
     <div class="hint-list">
-      ${lv.hints.slice(0, hints).map((h, k) => `<p class="hint-item">${ICONS.hint}<span><b>${k === 0 ? '提示一' : '提示二'}</b>　${esc(h)}</span></p>`).join('')}
+      ${hintList.slice(0, hints).map((h, k) => `<p class="hint-item">${ICONS.hint}<span><b>任務 ${current + 1}・${k === 0 ? '提示一' : '提示二'}</b>　${esc(h)}</span></p>`).join('')}
     </div>` : '';
   const banner = allDone ? `
     <div class="pass-banner" id="lv-done" tabindex="-1">
@@ -703,30 +709,36 @@ function levelScreen(params, app) {
   };
 
   const showHint = async () => {
-    const used = app.state.levels[String(n)].hints || 0;
-    const first = used === 0;
+    const i = app.state.levels[String(n)].results.findIndex(r => !isSet(r));
+    if (i < 0) return;
+    const list = taskHints(tasks[i]);
+    const used = usedHints(app.state.levels[String(n)], i, list);
+    if (used >= list.length) return;
+    const last = used === list.length - 1;
     const ok = await openDialog({
-      title: first ? '要查看提示一嗎？' : '這是本關最後一次提示',
-      body: first ? '本關共有兩次提示機會，看完還剩 1 次。' : '確定要查看嗎？看完之後，如果還是想不出來，可以跳過這個任務。',
+      title: !last ? '要查看提示一嗎？' : (list.length === 1 ? '要查看提示嗎？' : '這是這個任務最後一則提示'),
+      body: !last ? '這個任務有兩則提示，看完還剩 1 則。' : '確定要查看嗎？看完之後，如果還是想不出來，可以跳過這個任務。',
       icon: 'hint',
       buttons: [
-        { label: first ? '確認查看' : '查看最後提示', value: true, kind: 'primary' },
+        { label: last ? '查看最後提示' : '確認查看', value: true, kind: 'primary' },
         { label: '取消', value: false, kind: 'secondary' },
       ],
     });
     if (ok !== true || app.path !== '/level/' + n) return;
+    if (app.state.levels[String(n)].results.findIndex(r => !isSet(r)) !== i) return;
     const h = app.store.update(s => {
       const X = levelState(s, n, tasks.length);
-      X.hints = Math.min(HMAX, (X.hints || 0) + 1);
-      return X.hints;
+      if (!X.taskHints || typeof X.taskHints !== 'object') X.taskHints = {};
+      X.taskHints[i] = Math.min(list.length, usedHints(X, i, list) + 1);
+      return X.taskHints[i];
     });
     app.refresh({ focus: '#lv-help' });
     await openDialog({
       headHtml: `<div class="modal-head" style="justify-content: space-between;">
           <h2 class="h2" id="dlg-title">${h >= 2 ? '提示二' : '提示一'}</h2>
-          <span class="tag tag-done">${h >= HMAX ? '提示已用完' : '剩餘 ' + (HMAX - h) + ' 次提示'}</span>
+          <span class="tag tag-done">${h >= list.length ? '提示已用完' : '剩餘 ' + (list.length - h) + ' 則提示'}</span>
         </div>`,
-      body: lv.hints[Math.max(0, h - 1)] || '',
+      body: list[Math.max(0, h - 1)] || '',
       buttons: [{ label: '我知道了', value: true, kind: 'primary' }],
     });
     // 看過的提示加在頁面上方、下面的內容往下移：把提示／跳過按鈕捲回畫面內
@@ -757,7 +769,7 @@ function levelScreen(params, app) {
   <div class="lvbar">
     <div class="lvbar-row">
       <p class="lvbar-count">任務 ${doneCount}/${tasks.length}</p>
-      <span class="lvbar-hint">提示 已用 ${hints}/${HMAX}<span class="pips" aria-hidden="true"><span class="pip${pip1}"></span><span class="pip${pip2}"></span></span></span>
+      ${hintList.length ? `<span class="lvbar-hint">本題提示 已用 ${hints}/${hintList.length}<span class="pips" aria-hidden="true">${pips}</span></span>` : ''}
     </div>
     <div class="seg" role="img" aria-label="任務進度 ${doneCount}/${tasks.length}">
       ${segs}

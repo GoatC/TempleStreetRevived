@@ -52,6 +52,7 @@ import { createStore } from './store.js';
 import { summary as progressSummary } from './progress.js';
 import { startRouter, go, match, parse } from './router.js';
 import { closeLayers, dropStaleLayerEntry } from './ui.js';
+import { startNpcAlert } from './npc-alert.js';
 
 export const EDITIONS = {
   youth: {
@@ -250,6 +251,7 @@ export async function createApp({ edition, register = [], root: rootSel = '#app'
     routes.map(([pattern, handler]) => [pattern, (params, path) => { closeLayers(); paint(handler, params, path, true); }]),
     path => { if (path !== '/') go('/', { replace: true }); },
   );
+  startNpcAlert(app);
   window.__miaoReady = true;
   return app;
 }
