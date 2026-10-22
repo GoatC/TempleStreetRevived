@@ -253,7 +253,7 @@ screens.push({
   id: 'npc-common', tab: 'npc', title: 'NPC 頁共用文字', where: '#/npc/A',
   sections: [{ items: [
     UI('site/assets/js/npc.js', 'route', '題目由 NPC 在現場口頭說明，順序不限。', '任務清單上方說明', 'small'),
-    UI('site/assets/js/npc-alert.js', 'alert-title', 'NPC 出沒提示', '每天 14:00 跳出的提醒・標題（時間在 config.js）', 'h2'),
+    UI('site/assets/js/npc-alert.js', 'alert-title', 'NPC 出沒提示', '每天 14:00 跳出、17:00 自動關掉的提醒・標題（時間在 config.js）', 'h2'),
     UI('site/assets/js/npc-alert.js', 'alert-body', 'NPC 已經在廟街出沒了！回到選單地圖頁面看看要找誰，完成他們的「NPC 任務」吧。', '每天 14:00 跳出的提醒・內文', 'p'),
     UI('site/assets/js/npc.js', 'wrong', '和 NPC 說的不太一樣，注意同音字，再確認一次吧。', '答錯時的紅字', 'err'),
   ] }],
