@@ -12,7 +12,7 @@
 //   startedAt / completedAt / attempts
 // 錯誤訊息（還沒改輸入前的紅字）只存在記憶體，不存檔（同原型 draft.error / draft.bad）。
 
-import { esc, ICONS, CARD_ICONS, icon, npcTile, topbar, verTag, openDialog, openZoom, onUiReset } from './ui.js';
+import { esc, ICONS, CARD_ICONS, icon, npcTile, npcLegend, topbar, verTag, openDialog, openZoom, onUiReset } from './ui.js';
 import { checkYouth, stripYouth } from './answers.js';
 import { levelState } from './store.js';
 import { levelStatus, levelDone, npcDone } from './progress.js';
@@ -357,7 +357,7 @@ function mapScreen(params, app) {
   <main class="content" style="gap: 12px;">
     <p class="route-note">${ICONS.compass}東在上、北在左；沿新莊路的距離依比例</p>
     <button class="map-fig" id="map-fig" type="button" data-action="zoom">
-      <img src="${src}" width="875" height="1600" alt="廟街地圖示意圖，東在上、北在左。沿新莊路由上往下依序是：6 廣福宮、1 慈祐宮與斜對面的集合點林協記文化館、3 戲館巷、4 米市巷、5 武聖廟。">
+      <img src="${src}" width="875" height="1600" alt="廟街地圖示意圖，東在上、北在左。沿新莊路由上往下依序是：6 廣福宮、1 慈祐宮與斜對面的集合點林協記文化館、3 戲館巷、4 米市巷，米市巷走到底是碧江街上的潮江寺、5 武聖廟。紅色星號是 NPC 出沒地點：A 安予在潮江寺，B 山羊、嚕卡在武聖廟往西約 100 公尺的新莊路上，C 怡均在慈祐宮旁。">
       <span class="fig-cap">${ICONS.zoom}點開放大</span>
     </button>
     <h2 class="h2" style="font-size: 20px; line-height: 28px; margin-top: 4px;">圖例</h2>
@@ -368,6 +368,7 @@ function mapScreen(params, app) {
       <li class="lg-item"><span class="lg-mark lg-pin">5</span><span><b>武聖廟</b><span class="lg-addr">（新莊路 340 號）</span></span></li>
       <li class="lg-item"><span class="lg-mark lg-pin">6</span><span><b>廣福宮</b><span class="lg-addr">（新莊路 150 號）</span></span></li>
       <li class="lg-item"><span class="lg-meet" aria-hidden="true"></span><span><b>集合點：林協記文化館</b><span class="lg-addr">（新莊路 317 號 2 樓，慈祐宮斜對面）</span></span></li>
+      ${npcLegend()}
     </ul>
     <p class="route-note">${ICONS.info}第二關「五間老店」的位置是謎題的一部分，地圖上不標示。</p>
   </main>

@@ -41,19 +41,13 @@ export function startNpcAlert(app) {
       const go = await openDialog({
         icon: 'speech',
         title: 'NPC 出沒提示',
-        body: 'NPC 已經在廟街出沒了！到關卡選單的「NPC 任務」看看要找誰，完成他們的任務吧。',
+        body: 'NPC 已經在廟街出沒了！回到選單地圖頁面看看要找誰，完成他們的「NPC 任務」吧。',
         buttons: [
-          { label: '查看 NPC 任務', value: true, kind: 'primary' },
+          { label: '查看地圖', value: true, kind: 'primary' },
           { label: '我知道了', value: false, kind: 'secondary' },
         ],
       });
-      if (go === true) {
-        app.go('/menu');
-        setTimeout(() => {
-          const card = app.root.querySelector('[data-go^="/npc/"]');
-          if (card) app.reveal(card, { block: 'start' });
-        }, 100);
-      }
+      if (go === true) app.go('/map'); // 地圖上用星號標出 NPC 出沒的地點
     }
     // 下一次檢查：今天的時間還沒到就等到那時候，否則等明天
     let next = alertAt(now).getTime() - now.getTime();

@@ -16,7 +16,7 @@
 // - 兩次提示用完後，還沒完成的非加分、非拍照任務（拍照＋文字題要先按「我拍好了」）出現「跳過此題」。
 //   跳過＝放棄作答：不顯示答案，任務列標「已跳過」（以前的「揭曉答案」會被拿來先看答案、再重新開始作弊）。
 
-import { esc, ICONS, icon, npcTile, CARD_ICONS, starSvg, topbar, openDialog, onUiReset } from './ui.js';
+import { esc, ICONS, icon, npcTile, npcStar, npcLegend, CARD_ICONS, starSvg, topbar, openDialog, onUiReset } from './ui.js';
 import { openRules, rulesButton } from './screens-common.js';
 import { checkFamily } from './answers.js';
 import { levelState } from './store.js';
@@ -196,7 +196,7 @@ function menuScreen(params, app) {
 /* ====================================================================
    廟街地圖（F06Map）— SVG 與圖例逐字複製；只把固定 350×640 的外框改成可縮放
    ==================================================================== */
-const FAMILY_MAP_SVG = `<svg class="fmap" viewBox="0 0 700 1280" width="350" height="640" role="img" aria-label="廟街地圖，東在上、北在左。沿新莊路由上往下依序是：翁裕美商行、6 廣福宮、金合和糕餅、1 慈祐宮與斜對面的集合點林協記文化館、億德堂蔘藥行、3 戲館巷、4 米市巷與巷底的 7 潮江寺、5 武聖廟、日日用打鐵舖；响仁和在中正路上。">
+const FAMILY_MAP_SVG = `<svg class="fmap" viewBox="0 0 700 1280" width="350" height="640" role="img" aria-label="廟街地圖，東在上、北在左。沿新莊路由上往下依序是：翁裕美商行、6 廣福宮、金合和糕餅、1 慈祐宮與斜對面的集合點林協記文化館、億德堂蔘藥行、3 戲館巷、4 米市巷與巷底的 7 潮江寺、5 武聖廟、日日用打鐵舖；响仁和在中正路上。紅色星號是 NPC 出沒地點：A 安予在潮江寺旁，B 山羊、嚕卡在武聖廟往西約 100 公尺的新莊路上，C 怡均在慈祐宮旁。">
         <rect class="bg" x="0" y="0" width="700" height="1280"></rect>
 
         <rect class="street" x="94" y="148" width="20" height="244"></rect>
@@ -279,6 +279,10 @@ const FAMILY_MAP_SVG = `<svg class="fmap" viewBox="0 0 700 1280" width="350" hei
         <text class="mid fig-sq" x="400" y="442">2</text>
         <text class="mid fig-sq" x="400" y="648">2</text>
         <text class="mid fig-sq" x="280" y="1203">2</text>
+
+        ${npcStar('A', 662, 772)}
+        ${npcStar('B', 400, 1074)}
+        ${npcStar('C', 280, 500)}
       </svg>`;
 
 function mapScreen(params, app) {
@@ -317,6 +321,7 @@ function mapScreen(params, app) {
       <li class="lg-item"><span class="lg-mark lg-pin">6</span><span><b>廣福宮</b><span class="lg-addr">（新莊路 150 號）</span></span></li>
       <li class="lg-item"><span class="lg-mark lg-pin">7</span><span><b>潮江寺</b><span class="lg-addr">（碧江街 47 號，米市巷底）</span></span></li>
       <li class="lg-item"><span class="lg-meet" aria-hidden="true"></span><span><b>集合點：林協記文化館</b><span class="lg-addr">（新莊路 317 號 2 樓，慈祐宮斜對面）</span></span></li>
+      ${npcLegend()}
     </ul>
   </main>
 </div>`,
