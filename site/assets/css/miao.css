@@ -284,6 +284,10 @@ body { margin: 0; }
 .fmap text.end { text-anchor: end; }
 .fmap text.mid { text-anchor: middle; }
 .fmap text.light { fill: var(--cat-white); }
+.fmap .npc-star path, .lg-star path { fill: var(--temple-red); stroke: var(--ink-brown); stroke-width: 3; stroke-linejoin: round; }
+.fmap .npc-star text { fill: var(--cat-white); font-size: 23px; text-anchor: middle; }
+.lg-star { flex: none; width: 30px; height: 30px; overflow: visible; }
+.lg-star text { fill: var(--cat-white); font-family: var(--font); font-weight: 700; font-size: 22px; text-anchor: middle; }
 
 /* map legend */
 .legend2 { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }

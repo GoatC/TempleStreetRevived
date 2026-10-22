@@ -40,10 +40,23 @@ for (const [ed, count] of [['youth', 6], ['family', 7]]) {
       const where = `${ed}-levels.json 第 ${i + 1} 關`;
       nonEmpty(lv.no, where + ' no');
       nonEmpty(lv.title, where + ' title');
-      assert.ok(Array.isArray(lv.hints) && lv.hints.length === 2, where + ' 要有 2 則提示');
-      lv.hints.forEach((h, k) => nonEmpty(h, `${where} 提示${k + 1}`));
+      if (ed === 'family') {
+        // 親子場：整關共用兩則提示
+        assert.ok(Array.isArray(lv.hints) && lv.hints.length === 2, where + ' 要有 2 則提示');
+        lv.hints.forEach((h, k) => nonEmpty(h, `${where} 提示${k + 1}`));
+      } else {
+        // 青年場：提示跟著任務走（tasks[i].hints，0～2 則）
+        assert.ok(!('hints' in lv), where + ' 的提示要放在各任務的 hints，不是整關');
+      }
       assert.ok(Array.isArray(lv.tasks) && lv.tasks.length > 0, where + ' 沒有任務');
-      lv.tasks.forEach((t, k) => nonEmpty(t.title, `${where} 任務${k + 1} title`));
+      lv.tasks.forEach((t, k) => {
+        nonEmpty(t.title, `${where} 任務${k + 1} title`);
+        if ('hints' in t) {
+          assert.ok(ed === 'youth', `${where} 任務${k + 1}：親子場的提示要放在整關的 hints`);
+          assert.ok(Array.isArray(t.hints) && t.hints.length <= 2, `${where} 任務${k + 1} 最多 2 則提示`);
+          t.hints.forEach((h, j) => nonEmpty(h, `${where} 任務${k + 1} 提示${j + 1}`));
+        }
+      });
     });
     menu.levels.forEach((c, i) => {
       if ('n' in c) assert.equal(c.n, i + 1, `${ed}-menu.json 第 ${i + 1} 張卡片的 n`);

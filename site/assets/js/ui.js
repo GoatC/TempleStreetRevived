@@ -12,6 +12,8 @@
 //   zoom, pin, lock, camera, route, compass, speech, skip, retry, team, okCircle, info。
 //   icon(name, style) → 同一個圖示，但可以加 style（例如 'width: 28px; height: 28px;'，彈窗圖示用）。
 //   npcTile(card) → 關卡選單 NPC 卡片左邊的方塊（有 photo 放照片，沒有就顯示字母）。
+//   npcStar(letter, x, y) / npcStarMark(letter) → 地圖上的 NPC 出沒地點星號／圖例用的星號。
+//   npcLegend() → 地圖頁圖例的 NPC 出沒地點（<li>）。
 //
 // CARD_ICONS.<icon> → string
 //   關卡卡片 .lv-img 裡的 64×64 圖示（staff, gate, drum, mask, boat, door, board, window），
@@ -101,6 +103,21 @@ const PATHS = {
 
 export const ICONS = Object.fromEntries(Object.entries(PATHS).map(([k, v]) => [k, svg(v)]));
 export function icon(name, style) { return svg(PATHS[name] || '', style); }
+
+// 地圖上的 NPC 出沒地點：紅色星號＋NPC 字母（2026-10-21 Hugo 要求）。npcStar 放在地圖 SVG 裡，npcStarMark 給圖例用。
+const STAR = 'M0.0 -30.0L7.6 -10.5L28.5 -9.3L12.4 4.0L17.6 24.3L0.0 13.0L-17.6 24.3L-12.4 4.0L-28.5 -9.3L-7.6 -10.5Z';
+export function npcStar(letter, x, y) {
+  return `<g class="npc-star" transform="translate(${x} ${y}) scale(1.2)"><path d="${STAR}"></path><text y="7">${esc(letter)}</text></g>`;
+}
+export function npcStarMark(letter) {
+  return `<svg class="lg-star" viewBox="-32 -32 64 64" aria-hidden="true"><path d="${STAR}"></path><text y="8">${esc(letter)}</text></svg>`;
+}
+// 兩場地圖頁的圖例：NPC 出沒地點（位置是 Hugo 給的；地圖上的星號在 family.js 的 FAMILY_MAP_SVG 和 assets-src/img/youth-map.svg）
+const NPC_SPOTS = [['A', '安予', '潮江寺'], ['B', '山羊、嚕卡', '武聖廟往西約 100 公尺'], ['C', '怡均', '慈祐宮旁']];
+export function npcLegend() {
+  return NPC_SPOTS.map(([k, name, where]) =>
+    `<li class="lg-item">${npcStarMark(k)}<span><b>NPC ${k}・${name}</b><span class="lg-addr">（${where}）</span></span></li>`).join('');
+}
 
 // 關卡選單 NPC 卡片左邊的方塊：menu JSON 的 npcs[i].photo 有照片就放照片，沒有就顯示字母
 export function npcTile(c) {

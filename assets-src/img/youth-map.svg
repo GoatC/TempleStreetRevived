@@ -1,0 +1,74 @@
+<!--
+  青年場廟街地圖的原始檔（2026-10-21 起）。改這個檔，再執行 node tools/render-youth-map.mjs
+  產生 site/assets/img/youth-map.webp。版面和親子場地圖（site/assets/js/family.js 的 FAMILY_MAP_SVG）
+  同一套座標；樣式用 site/assets/css/miao.css 的 .fmap。{{STAR 字母 x y}} 會換成 ui.js 的 npcStar()。
+-->
+<svg class="fmap" viewBox="0 0 700 1280" width="350" height="640" role="img" aria-label="廟街地圖示意圖，東在上、北在左。沿新莊路由上往下依序是：6 廣福宮、1 慈祐宮與斜對面的集合點林協記文化館、3 戲館巷、4 米市巷，米市巷走到底是碧江街上的潮江寺、5 武聖廟。紅色星號是 NPC 出沒地點：A 安予在潮江寺，B 山羊、嚕卡在武聖廟往西約 100 公尺的新莊路上，C 怡均在慈祐宮旁。">
+        <rect class="bg" x="0" y="0" width="700" height="1280"></rect>
+
+        <rect class="street" x="366" y="695" width="81" height="21"></rect>
+        <path class="lane-edge" d="M366 694H447M366 717H447"></path>
+        <rect class="street" x="366" y="801" width="232" height="21"></rect>
+        <path class="lane-edge" d="M366 800H596.5M366 823H596.5"></path>
+
+        <rect class="street" x="598" y="776" width="20" height="264"></rect>
+        <path class="street-edge" d="M596.5 776V800M596.5 823V1040M619.5 776V1040"></path>
+        <path class="street-dash" d="M608 732V772M608 1044V1084"></path>
+
+        <path class="road-dash" d="M316.5 28V68M362.5 28V68M316.5 1256V1280M362.5 1256V1280"></path>
+        <rect class="road" x="316" y="72" width="48" height="1180"></rect>
+
+        <rect class="knock" x="552" y="866" width="112" height="42"></rect>
+
+        <rect class="tagbox" x="16.5" y="16.5" width="127" height="47" rx="10"></rect>
+        <path class="shaft" d="M628 60H586"></path>
+        <path class="solid" d="M558 60L592 45L585 60L592 75Z"></path>
+        <path class="bar" d="M624 1096.5H648M636 1096.5V1227.5M624 1227.5H648"></path>
+
+        <circle class="pin" cx="280" cy="207" r="27.5"></circle>
+        <circle class="pin" cx="280" cy="566" r="27.5"></circle>
+        <circle class="pin" cx="472" cy="706" r="27.5"></circle>
+        <circle class="pin" cx="472" cy="812" r="27.5"></circle>
+        
+        <circle class="pin" cx="280" cy="943" r="27.5"></circle>
+
+        <rect class="meet" x="372" y="555" width="128" height="51" rx="8"></rect>
+
+        <text class="mid" x="80" y="51">示意圖</text>
+        <text class="mid" x="660" y="73">北</text>
+
+        <text class="end big" x="240" y="220">廣福宮</text>
+
+        <text class="end big" x="240" y="579">慈祐宮</text>
+        <text class="mid light" x="436" y="592">集合點</text>
+        <text x="514" y="592">林協記</text>
+        
+        <text class="big" x="514" y="718">戲館巷</text>
+        <text class="mid big" x="472" y="884">米市巷</text>
+        <text class="mid big" x="608" y="900">潮江寺</text>
+        <text class="end big" x="240" y="955">武聖廟</text>
+
+        <text class="mid" x="340" y="301">新</text>
+        <text class="mid" x="340" y="337">莊</text>
+        <text class="mid" x="340" y="373">路</text>
+        <text class="mid" x="340" y="1057">新</text>
+        <text class="mid" x="340" y="1093">莊</text>
+        <text class="mid" x="340" y="1129">路</text>
+        <text class="mid" x="664" y="951">碧</text>
+        <text class="mid" x="664" y="987">江</text>
+        <text class="mid" x="664" y="1023">街</text>
+
+        <text class="end reg" x="611" y="1156">沿街</text>
+        <text class="end reg" x="611" y="1192">100 公尺</text>
+
+        <text class="mid fig" x="280" y="218">6</text>
+        <text class="mid fig" x="280" y="577">1</text>
+        <text class="mid fig" x="472" y="717">3</text>
+        <text class="mid fig" x="472" y="823">4</text>
+        
+        <text class="mid fig" x="280" y="954">5</text>
+
+        {{STAR A 608 824}}
+        {{STAR B 400 1074}}
+        {{STAR C 280 500}}
+      </svg>

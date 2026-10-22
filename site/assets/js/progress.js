@@ -28,8 +28,8 @@ export function levelStatus(edition, levels, state, n) {
   const level = levels[n - 1];
   const L = peekLevel(state, n);
   if (levelDone(edition, level, L)) return 'done';
-  if (edition === 'youth' && n !== 1 && !levelDone(edition, levels[0], peekLevel(state, 1))) return 'locked';
-  if (L && (L.hints > 0 || L.results.some(isSet))) return 'doing';
+  // 2026-10-21 Hugo 決定：青年場不再要求先破第一關，六關都直接開放
+  if (L && (L.hints > 0 || Object.values(L.taskHints || {}).some(x => x > 0) || L.results.some(isSet))) return 'doing';
   return 'todo';
 }
 

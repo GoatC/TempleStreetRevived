@@ -66,7 +66,7 @@ screens.push({
       T(YM, ['npcs', i, 'who'], c.who, `NPC ${c.key}・角色簡介`, 'card-task', { group: 'NPC ' + c.key }),
     ]) },
     { heading: '選單上的說明', items: [
-      UI('site/assets/js/youth.js', 'menu-route', '第一關慈祐宮完成後，才會開放第二到第六關；之後順序不限。', '鎖關說明', 'small'),
+      UI('site/assets/js/youth.js', 'menu-route', '六個關卡順序不限，從哪一關開始都可以。', '關卡順序說明', 'small'),
       UI('site/assets/js/youth.js', 'menu-npc', '題目由 NPC 在現場口頭說明，沒有提示。六關和三個 NPC 任務都完成，才算全破。', 'NPC 區塊說明', 'small'),
       UI('site/assets/js/youth.js', 'menu-safety', '過馬路請注意安全。只需要用眼睛觀察，不必攀爬或觸摸廟裡的文物。', '安全提醒', 'small'),
     ] },
@@ -100,7 +100,6 @@ yl.forEach((lv, li) => {
     T(Y, [li, 'title'], lv.title, '關卡名稱', 'h1'),
     ...(lv.intro ? [T(Y, [li, 'intro'], lv.intro, '關卡介紹', 'panel')] : []),
   ] });
-  sections.push({ heading: '提示（整關共用，依序給）', items: lv.hints.map((h, k) => T(Y, [li, 'hints', k], h, k ? '提示二' : '提示一', 'hint')) });
   lv.tasks.forEach((t, ti) => {
     const P = [li, 'tasks', ti];
     const items = [T(Y, [...P, 'title'], t.title, '任務名稱', 'task-title')];
@@ -128,6 +127,11 @@ yl.forEach((lv, li) => {
       t.options.forEach((o, k) => items.push(T(Y, [...P, 'options', k, 1], o[1], `選項 ${o[0]}${o[0] === t.answer ? '（正解）' : ''}`, 'option')));
     }
     if (t.show) items.push(T(Y, [...P, 'show'], t.show, '答對後顯示的答案', 'show'));
+    // 青年場的提示跟著任務走（最多兩則）；沒有的可以新增
+    const th = t.hints || [];
+    [0, 1].forEach(k => items.push(th[k] !== undefined
+      ? T(Y, [...P, 'hints', k], th[k], k ? '提示二' : '提示一', 'hint')
+      : { kind: 'add', key: keyOf(Y, [...P, 'hints', k]), file: Y, path: [...P, 'hints', k], label: `${k ? '提示二' : '提示一'}（目前沒有）`, role: 'hint' }));
     sections.push({ heading: `任務 ${ti + 1}`, task: true, items });
   });
   const k = yk[li];
@@ -249,6 +253,8 @@ screens.push({
   id: 'npc-common', tab: 'npc', title: 'NPC 頁共用文字', where: '#/npc/A',
   sections: [{ items: [
     UI('site/assets/js/npc.js', 'route', '題目由 NPC 在現場口頭說明，順序不限。', '任務清單上方說明', 'small'),
+    UI('site/assets/js/npc-alert.js', 'alert-title', 'NPC 出沒提示', '每天 14:00 跳出的提醒・標題（時間在 config.js）', 'h2'),
+    UI('site/assets/js/npc-alert.js', 'alert-body', 'NPC 已經在廟街出沒了！回到選單地圖頁面看看要找誰，完成他們的「NPC 任務」吧。', '每天 14:00 跳出的提醒・內文', 'p'),
     UI('site/assets/js/npc.js', 'wrong', '和 NPC 說的不太一樣，注意同音字，再確認一次吧。', '答錯時的紅字', 'err'),
   ] }],
 });
@@ -309,7 +315,7 @@ screens.push({
       UI('site/assets/js/youth.js', 'err-wrong', '答案似乎不正確，再觀察一次現場吧。', '答錯', 'err'),
       UI('site/assets/js/youth.js', 'err-select', '有幾格對不上，再對照一次附圖和線索吧。', '對照題答錯', 'err'),
       UI('site/assets/js/youth.js', 'err-order', '順序似乎不正確，再對照一次線索吧。', '排序題答錯', 'err'),
-      UI('site/assets/js/youth.js', 'hint1-body', '本關共有兩次提示機會，看完還剩 1 次。', '第一次提示的確認文字', 'small'),
+      UI('site/assets/js/youth.js', 'hint1-body', '這個任務有兩則提示，看完還剩 1 則。', '第一次提示的確認文字（這個任務有兩則提示時）', 'small'),
       UI('site/assets/js/youth.js', 'hint2-body', '確定要查看嗎？看完之後，如果還是想不出來，可以跳過這個任務。', '最後一次提示的確認文字', 'small'),
       UI('site/assets/js/youth.js', 'result-self', '你們自己解開了「{關卡名}」，觀察得真仔細！', '本關完成：自己解出', 'p', { probe: '，觀察得真仔細！' }),
       UI('site/assets/js/youth.js', 'result-skipped', '這一關有跳過的任務，一樣算過關。一起來認識它背後的故事吧！', '本關完成：有跳過', 'p'),
