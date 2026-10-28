@@ -74,6 +74,16 @@ test('youth: design error example T08L4Error (米市興旺 is wrong)', () => {
   assert.ok(checkYouth(t, { text: '米市興盛' }).ok);
 });
 
+test('youth: 題目答案本 v4 decisions (Hugo 2026-10-28)', () => {
+  const zodiac = youth[0].tasks[2];
+  assert.ok(checkYouth(zodiac, { vals: ['羊', '未', '辰時'] }).ok);   // 辰時、未時都算對
+  assert.ok(checkYouth(zodiac, { vals: ['羊', '未', '未時'] }).ok);
+  const orders = youth[4].tasks[2];
+  assert.ok(checkYouth(orders, { vals: ['魚', '屋', '仙', '獅'] }).ok);
+  assert.deepEqual(checkYouth(orders, { vals: ['魚', '祠', '人', '獅'] }).bad, [false, true, true, false]); // 只收 PDF 的字
+  assert.ok(checkYouth(youth[1].tasks[0], { vals: ['翁裕美', '老順香餅店', '億德堂', '日日用', '响仁和'] }).ok);
+});
+
 test('npc: every accepted answer passes; homophones fail', () => {
   for (const n of npcs) n.tasks.forEach((t, i) => {
     const name = `NPC ${n.key} 任務${i + 1}`;
