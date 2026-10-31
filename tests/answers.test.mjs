@@ -80,7 +80,9 @@ test('youth: 題目答案本 v4 decisions (Hugo 2026-10-28)', () => {
   assert.ok(checkYouth(zodiac, { vals: ['羊', '未', '未時'] }).ok);
   const orders = youth[4].tasks[2];
   assert.ok(checkYouth(orders, { vals: ['魚', '屋', '仙', '獅'] }).ok);
-  assert.deepEqual(checkYouth(orders, { vals: ['魚', '祠', '人', '獅'] }).bad, [false, true, true, false]); // 只收 PDF 的字
+  assert.ok(checkYouth(orders, { vals: ['魚', '祠', '人', '獅'] }).ok); // Hugo 2026-10-31：第二令也收寺、祠，第三令也收人
+  assert.ok(checkYouth(orders, { vals: ['魚', '寺', '仙', '獅'] }).ok);
+  assert.deepEqual(checkYouth(orders, { vals: ['魚', '廟', '神', '獅'] }).bad, [false, true, true, false]);
   assert.ok(checkYouth(youth[1].tasks[0], { vals: ['翁裕美', '老順香餅店', '億德堂', '日日用', '响仁和'] }).ok);
 });
 
